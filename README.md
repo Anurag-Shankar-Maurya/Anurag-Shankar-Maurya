@@ -1,113 +1,104 @@
 # Hi there 👋 I'm Anurag Shankar Maurya!
 
-### Android & Full-Stack Developer | AI & Software Developer
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/anurag-shankar-maurya/)
+[![Gmail](https://img.shields.io/badge/Gmail-Drop%20a%20mail-red)](mailto:anuragshankarmaurya@gmail.com)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Visit%20my%20work-9cf)](https://github.com/Anurag-Shankar-Maurya)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-Chat-25D366)](https://wa.me/918707297564)
 
-I'm an innovative Android & Full-Stack Developer with expertise in Kotlin, Python, Django, and AI-driven applications. I have experience in Retrieval-Augmented Generation (RAG), real-time transcription, compliance AI, and UI/UX design. I'm passionate about building scalable, efficient, and user-centric software solutions.
+**Android & Full-Stack Developer | AI & Robotics Enthusiast**
 
----
+Innovative developer with expertise in **Android development, AI integration, and embedded systems**. Passionate about building **scalable mobile applications, AI-driven solutions, and IoT projects**.
 
-## 🛠️ Skills
+## 🔧 Technical Skills
 
-[cite_start]**Mobile Development:** Kotlin, Java, Android SDK, Firebase, Room DB, SQLite, REST APIs, XML, Material Design, Constraint Layout, Recycler View [cite: 11, 82]
-[cite_start]**AI & ML:** Python, LangChain, OpenAI, Pinecone, Deepgram, Gemini API, RAG Systems, Fine-Tuned AI Models [cite: 12, 47]
-[cite_start]**Web Development:** Django (Intermediate), React.js (Intermediate), HTML/CSS, JavaScript, WebSocket [cite: 13]
-[cite_start]**Databases:** MongoDB, SQLite, Vector Search [cite: 14, 82]
-[cite_start]**UI/UX Design:** Figma, Canva, Adobe Photoshop, Material Design, Responsive Web [cite: 15, 82]
-[cite_start]**Robotics & Embedded Systems:** Arduino Programming, Microcontroller Programming, TinkerCAD, Embedded Systems Design, Sensor and Actuator Integration [cite: 82, 120]
-[cite_start]**Programming & Tools:** Python (Tkinter, PyQt6, Image Processing), C/C++, Linux/Unix, Shell Scripting [cite: 16, 82, 120]
-[cite_start]**DevOps & Tools:** Git, GitHub [cite: 16]
-[cite_start]**Soft Skills:** Adaptability, Problem-Solving, Productivity, Teamwork, Innovation, Teaching [cite: 120]
+### Mobile Development
+![Kotlin](https://img.shields.io/badge/-Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
+![Android](https://img.shields.io/badge/-Android-3DDC84?style=flat-square&logo=android&logoColor=white)
+![Java](https://img.shields.io/badge/-Java-007396?style=flat-square&logo=java&logoColor=white)
+![Firebase](https://img.shields.io/badge/-Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black)
 
----
+### AI & ML
+![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![TensorFlow](https://img.shields.io/badge/-TensorFlow-FF6F00?style=flat-square&logo=tensorflow&logoColor=white)
+![LangChain](https://img.shields.io/badge/-LangChain-00A67D?style=flat-square)
+![Gemini_API](https://img.shields.io/badge/-Gemini_API-4285F4?style=flat-square&logo=google&logoColor=white)
 
-## 💼 Experience
+### Web Development
+![Django](https://img.shields.io/badge/-Django-092E20?style=flat-square&logo=django&logoColor=white)
+![React](https://img.shields.io/badge/-React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+
+### IoT & Embedded Systems
+![Arduino](https://img.shields.io/badge/-Arduino-00979D?style=flat-square&logo=arduino&logoColor=white)
+![Embedded_C](https://img.shields.io/badge/-Embedded_C-A8B9CC?style=flat-square&logo=c&logoColor=black)
+![TinkerCAD](https://img.shields.io/badge/-TinkerCAD-FF6F00?style=flat-square)
+
+## 🚀 Featured Projects
+
+### AI & Mobile Applications
+1. **[DeepTranscribe](https://github.com/Anurag-Shankar-Maurya/DeepTranscribe)**  
+   Real-time speech transcription with speaker diarization using Django, Deepgram & WebSocket  
+   ![Django](https://img.shields.io/badge/-Django-092E20?style=flat-square&logo=django&logoColor=white)
+   ![WebSocket](https://img.shields.io/badge/-WebSocket-010101?style=flat-square&logo=websocket&logoColor=white)
+
+2. **[Sparkle AI](https://github.com/Anurag-Shankar-Maurya/Sparkle-AI)**  
+   Personalized chat Android app with Gemini API integration  
+   ![Kotlin](https://img.shields.io/badge/-Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
+   ![Gemini_API](https://img.shields.io/badge/-Gemini_API-4285F4?style=flat-square)
+
+3. **[FakeHai](https://github.com/Anurag-Shankar-Maurya/FakeHai)**  
+   Fake news detection Android app with fine-tuned AI model  
+   ![Android](https://img.shields.io/badge/-Android-3DDC84?style=flat-square&logo=android&logoColor=white)
+
+### Web & Compliance Tools
+4. **[Censor AI](https://github.com/Anurag-Shankar-Maurya/Censor-AI)**  
+   AI-driven email validator for GDPR/CCPA compliance  
+   ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)
+   ![OpenAI](https://img.shields.io/badge/-OpenAI-412991?style=flat-square)
+
+### IoT & Embedded Systems
+5. **Arduino Burglar Alarm System**  
+   Motion-sensing alarm with ultrasonic sensor and buzzer  
+   ![Arduino](https://img.shields.io/badge/-Arduino-00979D?style=flat-square&logo=arduino&logoColor=white)
+
+6. **Auto Street Light with Dusk Detection**  
+   Smart lighting system using LDR sensor  
+   ![Embedded_C](https://img.shields.io/badge/-Embedded_C-A8B9CC?style=flat-square&logo=c&logoColor=black)
+
+## 💼 Professional Experience
 
 ### Software Developer Intern
-**TechOTD Solutions Pvt. Ltd.** | [cite_start]March 2025 - Present [cite: 18, 19, 20]
-* [cite_start]Developed AI-powered compliance tools for GDPR/CCPA adherence, building RAG systems with MongoDB & Pinecone and implementing LangChain for context-aware chatbots[cite: 21].
-* [cite_start]Created real-time speech transcription with speaker diarization using Django, Deepgram & WebSocket, plus designed responsive frontend interfaces[cite: 22].
+**TechOTD Solutions Pvt. Ltd.** (March 2025 - Present)  
+- Developed AI-powered compliance tools with RAG systems (MongoDB & Pinecone)
+- Implemented LangChain for context-aware chatbots
+- Built real-time speech transcription with speaker diarization
 
-### Android Application Development Intern
-**Institute of Engineering & Technology, Lucknow** | [cite_start]June 2024 - August 2024 [cite: 23, 24, 93, 94]
-* [cite_start]Designed AI-enhanced Android applications, incorporating Gemini API for personalized interactions[cite: 25, 95].
-* [cite_start]Collaborated on real-world problems with a focus on modern UI/UX and efficient app performance[cite: 25, 96].
+### Android Development Intern
+**Institute of Engineering & Technology, Lucknow** (2024)  
+- Created AI-enhanced Android apps using Gemini API
+- Optimized UI/UX for performance and accessibility
 
 ### Tutor
-**ByteCode Learners Club, Mahendragarh** | [cite_start]November 2022 - Present [cite: 83, 84, 89]
-* [cite_start]Conducted workshops on Android application development fundamentals [cite: 85] and Arduino programming/robotics fundamentals.
-* [cite_start]Mentored students in designing and debugging mobile applications [cite: 85] and embedded systems projects and debugging microcontroller programs.
-* [cite_start]Organized hands-on sessions for building real-world projects[cite: 86], introducing TinkerCAD for rapid prototyping.
+**ByteCode Learners Club, Mahendragarh**  
+- Conducted workshops on Android development and Arduino programming
+- Mentored students in building real-world projects
 
-### Public Outreach Intern
-**Sanchar Mitra, Department of Telecommunications (DOT), GOI** | [cite_start]February 2024 - August 2024 [cite: 26, 28, 90]
-* [cite_start]Delivered workshops on digital tools and cybersecurity, emphasizing online safety and data privacy [cite: 29, 91][cite_start], impacting 500+ participants[cite: 29].
+## 📚 Education
+**B.Tech in Computer Science & Engineering**  
+Central University of Haryana, Mahendragarh (GPA: 8+/10)  
 
----
+**Senior Secondary (XII)** - 93.4% | **Secondary (X)** - 93.2%  
+CBSE, Parvati Prema Jagati Saraswati Vihar, Nainital  
 
-## 🚀 Projects
+## 📈 GitHub Stats
 
-### [Deep Transcribe: Real-Time Speech Transcription & AI Chatbot](https://github.com/Anurag-Shankar-Maurya/Deep-Transcribe)
-* [cite_start]Built a speaker diarization system with real-time transcription and AI-powered Q&A[cite: 34].
-* [cite_start]Integrated LangChain & Pinecone for contextual memory in chatbot responses[cite: 35].
-* [cite_start]**Technologies:** Django, Deepgram, WebSocket [cite: 33]
+![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=Anurag-Shankar-Maurya&show_icons=true&theme=radical&hide_border=true)
 
-### [Censor AI: Email Compliance & Risk Mitigation Tool](https://github.com/Anurag-Shankar-Maurya/Censor-AI)
-* [cite_start]Developed an AI-driven email validator for policy compliance (GDPR/CCPA)[cite: 39].
-* [cite_start]Implemented automated manager approval workflows for high-risk emails[cite: 39].
-* [cite_start]**Technologies:** Python, Django, OpenAI, REST APIs [cite: 38]
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=Anurag-Shankar-Maurya&layout=compact&theme=radical&hide_border=true)
 
-### [Sparkle AI: Personalized Chat Android App](https://github.com/Anurag-Shankar-Maurya/Sparkle-AI)
-* [cite_start]Integrated Google's Gemini API for dynamic AI personalities and chat interactions[cite: 43, 97].
-* [cite_start]Included diverse personalities for interactive user experiences[cite: 98].
-* [cite_start]**Technologies:** Kotlin, Gemini API, Firebase [cite: 42, 97]
+## 📫 Let's Connect
+I'm always open to collaborating on interesting projects or discussing new ideas!
 
-### [FakeHai: Fake News Detection Android App](https://github.com/Anurag-Shankar-Maurya/FakeHai)
-* [cite_start]Designed an AI model to detect fake news with real-time analysis and visual indicators[cite: 48, 101].
-* [cite_start]Developed an AI-powered Android app to detect fake news using Google's Gemini API[cite: 100].
-* [cite_start]**Technologies:** Kotlin, Gemini API, Fine-Tuned AI Model [cite: 47, 99]
-
-### [We Parcel Courier Service Landing Page](https://github.com/Anurag-Shankar-Maurya/We-Parcel)
-* [cite_start]Created a responsive UI with real-time tracking and booking system[cite: 52].
-* [cite_start]**Technologies:** HTML, CSS, JavaScript [cite: 51]
-
-### Arduino-Based Burglar Alarm System
-* Developed a motion-sensing alarm using an ultrasonic sensor and buzzer.
-* Designed the system to detect unauthorized entry and sound an alert.
-
-### Auto Street Light with Dusk Detection
-* Built a smart street light system that turns on automatically at dusk using an LDR (Light Dependent Resistor) or mini photocell.
-* Demonstrated energy efficiency by automating lighting based on ambient light levels.
-
----
-
-## 🎓 Education
-
-**B.Tech. in Computer Science & Engineering** | [cite_start]Expected in June 2025 [cite: 54, 55, 103, 104, 112]
-[cite_start]Central University of Haryana, Mahendragarh [cite: 56, 104]
-* [cite_start]GPA: $8+/10$ [cite: 57, 105]
-* [cite_start]Relevant Coursework: AI, DBMS, Web Development, Algorithms [cite: 57]
-
-**Senior Secondary School (XII), CBSE** | [cite_start]March 2020 [cite: 58, 59, 106, 113]
-[cite_start]Parvati Prema Jagati Saraswati Vihar, Nainital [cite: 60, 107]
-* [cite_start]Percentage: 93.4% [cite: 61, 108]
-
-**Secondary School (X), CBSE** | [cite_start]March 2018 [cite: 62, 63, 109, 114]
-[cite_start]Parvati Prema Jagati Saraswati Vihar, Nainital [cite: 64, 110]
-* [cite_start]Percentage: 93.2% [cite: 65, 110]
-
----
-
-## 🏆 Certifications & Achievements
-
-* [cite_start]Android App Development Training - Internshala [cite: 69, 111]
-* [cite_start]Top Performer, National Science Day (Attendance Management App [cite: 67] [cite_start]/ Smart Irrigation System [cite: 115])
-* [cite_start]Smart India Hackathon AI Career Guidance System [cite: 68, 116]
-* [cite_start]Intra-College Hackathon Direct Market Access for Farmers [cite: 70, 117]
-
----
-
-## 🔗 Connect with me:
-
-* [cite_start]**Email:** anuragshankarmaurya@gmail.com [cite: 5, 74, 120]
-* [cite_start]**LinkedIn:** [linkedin.com/in/anurag-shankar-maurya](https://www.linkedin.com/in/anurag-shankar-maurya) [cite: 5, 74, 120]
-* [cite_start]**GitHub:** [github.com/Anurag-Shankar-Maurya](https://github.com/Anurag-Shankar-Maurya) [cite: 6, 74, 120]
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/anurag-shankar-maurya/)
+[![Gmail](https://img.shields.io/badge/Gmail-Drop%20a%20mail-red?style=for-the-badge&logo=gmail)](mailto:anuragshankarmaurya@gmail.com)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-Chat-25D366?style=for-the-badge&logo=whatsapp)](https://wa.me/918707297564)

@@ -9,7 +9,7 @@ export const ThemeToggle: React.FC = () => {
   const { reapplyConfig } = useBackendConfig();
   const [mounted, setMounted] = useState(false);
 
-  // Handle hydration - this is a common pattern and the ESLint rule is overly strict
+  // Handle hydration - only render after client-side hydration
   useEffect(() => {
     setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
@@ -25,12 +25,16 @@ export const ThemeToggle: React.FC = () => {
     }, 100);
   };
 
+  // Only render after hydration to prevent mismatch
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <ToggleButton
       prefixIcon={icon}
       onClick={handleThemeToggle}
       aria-label={`Switch to ${nextTheme} mode`}
-      suppressHydrationWarning
     />
   );
 };

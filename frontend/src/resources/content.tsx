@@ -14,7 +14,7 @@ const person: Person = {
 
 const newsletter: Newsletter = {
   display: true,
-  title: <>Subscribe to {person.firstName}'s Newsletter</>,
+  title: <>Subscribe to {person.firstName}&apos;s Newsletter</>,
   description: <>My weekly newsletter about creativity and engineering</>,
 };
 
@@ -60,7 +60,7 @@ const home: Home = {
   },
   subline: (
     <>
-      I'm Anurag, an Android & Full-Stack Developer passionate about building scalable, efficient, and user-centric software solutions.
+      I&apos;m Anurag, an Android & Full-Stack Developer passionate about building scalable, efficient, and user-centric software solutions.
     </>
   ),
 };

@@ -58,7 +58,7 @@ export function ContactFormExample() {
       
       {submitted && (
         <div className="success-message">
-          ✅ Message sent successfully! I'll get back to you soon.
+          ✅ Message sent successfully! I&apos;ll get back to you soon.
         </div>
       )}
 

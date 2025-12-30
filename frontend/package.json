@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@eslint/eslintrc": "^3.3.3",
     "@types/cookie": "^0.6.0",
     "@types/node": "^20.17.30",
     "@types/react": "^19.0.0",

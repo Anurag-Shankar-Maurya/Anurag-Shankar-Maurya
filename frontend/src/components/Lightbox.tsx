@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Flex, Button, Icon } from "@once-ui-system/core";
 import Image from "next/image";
 import styles from "./Lightbox.module.scss";
@@ -30,6 +30,14 @@ export const Lightbox: React.FC<LightboxProps> = ({
     setCurrentIndex(initialIndex);
   }, [initialIndex]);
 
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  }, [images.length]);
+
+  const goToPrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  }, [images.length]);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -46,15 +54,7 @@ export const Lightbox: React.FC<LightboxProps> = ({
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
-  }, [isOpen, currentIndex]);
-
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-  };
-
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+  }, [isOpen, goToNext, goToPrevious, onClose]);
 
   if (!isOpen) return null;
 

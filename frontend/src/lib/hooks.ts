@@ -46,7 +46,7 @@ export function useApi<T>(
     return () => {
       isMounted = false;
     };
-  }, dependencies);
+  }, [apiCall, ...dependencies]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { data, loading, error };
 }

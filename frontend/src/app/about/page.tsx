@@ -1,6 +1,7 @@
 import {
   Avatar,
   Button,
+  RevealFx,
   Column,
   Heading,
   Icon,
@@ -164,28 +165,32 @@ export default async function About() {
           flex={3}
           horizontal="center"
         >
-          <Avatar 
-            src={profile.profile_image || '/images/avatar.jpg'} 
-            size="xl" 
-          />
-          {profile.location && (
-            <Row gap="8" vertical="center">
-              <Icon onBackground="accent-weak" name="globe" />
-              {profile.location}
-            </Row>
-          )}
-          {profile.email && (
-            <Row gap="8" vertical="center">
-              <Icon onBackground="accent-weak" name="email" />
-              <Text variant="body-default-s">{profile.email}</Text>
-            </Row>
-          )}
-          {profile.phone && (
-            <Row gap="8" vertical="center">
-              <Icon onBackground="accent-weak" name="phone" />
-              <Text variant="body-default-s">{profile.phone}</Text>
-            </Row>
-          )}
+          <RevealFx translateY="8" fillWidth horizontal="center" paddingBottom="12">
+            <Column fillWidth gap="8" horizontal="center">
+              <Avatar 
+                src={profile.profile_image || '/images/avatar.jpg'} 
+                size="xl" 
+              />
+              {profile.location && (
+                <Row gap="8" vertical="center">
+                  <Icon onBackground="accent-weak" name="globe" />
+                  {profile.location}
+                </Row>
+              )}
+              {profile.email && (
+                <Row gap="8" vertical="center">
+                  <Icon onBackground="accent-weak" name="email" />
+                  <Text variant="body-default-s">{profile.email}</Text>
+                </Row>
+              )}
+              {profile.phone && (
+                <Row gap="8" vertical="center">
+                  <Icon onBackground="accent-weak" name="phone" />
+                  <Text variant="body-default-s">{profile.phone}</Text>
+                </Row>
+              )}
+            </Column>
+          </RevealFx>
         </Column>
 
         <Column className={styles.blockAlign} flex={9} maxWidth={40}>
@@ -197,236 +202,248 @@ export default async function About() {
             vertical="center"
             marginBottom="32"
           >
-            <Heading className={styles.textAlign} variant="display-strong-xl">
-              {profile.full_name}
-            </Heading>
+            <RevealFx translateY="4" fillWidth horizontal="center" paddingBottom="16">
+              <Heading className={styles.textAlign} variant="display-strong-xl">
+                {profile.full_name}
+              </Heading>
+            </RevealFx>
             {profile.headline && (
-              <Text
-                className={styles.textAlign}
-                variant="heading-default-xl"
-                onBackground="neutral-weak"
-              >
-                {profile.headline}
-              </Text>
+              <RevealFx translateY="8" delay={0.2} fillWidth paddingBottom="16">
+                <Text
+                  className={styles.textAlign}
+                  variant="heading-default-xl"
+                  onBackground="neutral-weak"
+                >
+                  {profile.headline}
+                </Text>
+              </RevealFx>
             )}
 
             {/* Social Links */}
             {profileSocialLinks.length > 0 && (
-              <Row
-                className={styles.blockAlign}
-                paddingTop="20"
-                paddingBottom="8"
-                gap="8"
-                wrap
-                horizontal="center"
-                fitWidth
-                data-border="rounded"
-              >
-                {profileSocialLinks.map((item) => (
-                  <React.Fragment key={item.id}>
-                    <Row s={{ hide: true }}>
-                      <Button
-                        href={item.url}
-                        prefixIcon={item.icon || item.platform}
-                        label={item.platform.charAt(0).toUpperCase() + item.platform.slice(1)}
-                        size="s"
-                        weight="default"
-                        variant="secondary"
-                      />
-                    </Row>
-                    <Row hide s={{ hide: false }}>
-                      <IconButton
-                        size="l"
-                        href={item.url}
-                        icon={item.icon || item.platform}
-                        variant="secondary"
-                      />
-                    </Row>
-                  </React.Fragment>
-                ))}
-              </Row>
+              <RevealFx translateY="12" delay={0.4} fillWidth paddingTop="4">
+                <Row
+                  className={styles.blockAlign}
+                  paddingTop="20"
+                  paddingBottom="8"
+                  gap="8"
+                  wrap
+                  horizontal="center"
+                  fitWidth
+                  data-border="rounded"
+                >
+                  {profileSocialLinks.map((item) => (
+                    <React.Fragment key={item.id}>
+                      <Row s={{ hide: true }}>
+                        <Button
+                          href={item.url}
+                          prefixIcon={item.icon || item.platform}
+                          label={item.platform.charAt(0).toUpperCase() + item.platform.slice(1)}
+                          size="s"
+                          weight="default"
+                          variant="secondary"
+                        />
+                      </Row>
+                      <Row hide s={{ hide: false }}>
+                        <IconButton
+                          size="l"
+                          href={item.url}
+                          icon={item.icon || item.platform}
+                          variant="secondary"
+                        />
+                      </Row>
+                    </React.Fragment>
+                  ))}
+                </Row>
+              </RevealFx>
             )}
           </Column>
 
           {/* Bio Section */}
-          <Column textVariant="body-default-l" fillWidth gap="m" marginBottom="xl">
-            <Text>{profile.bio}</Text>
-            
-            {/* Profile Details Grid */}
-            <Row wrap gap="m" marginTop="m">
-              {profile.available_for_hire && (
-                <Tag size="l" prefixIcon="checkCircle" onBackground="success-medium">
-                  Available for hire
-                </Tag>
-              )}
-              {profile.years_of_experience && (
-                <Tag size="l" prefixIcon="calendar">
-                  {profile.years_of_experience} years experience
-                </Tag>
-              )}
-              {profile.current_role && (
-                <Tag size="l" prefixIcon="briefcase">
-                  {profile.current_role}
-                </Tag>
-              )}
-              {profile.current_company && (
-                <Tag size="l" prefixIcon="building">
-                  {profile.current_company}
-                </Tag>
-              )}
-            </Row>
-
-            {/* Resume Download */}
-            {profile.resume_url && profile.resume_filename && (
-              <Row marginTop="m">
-                <Button
-                  href={profile.resume_url}
-                  prefixIcon="download"
-                  label={`Download Resume (${profile.resume_filename})`}
-                  size="m"
-                  variant="secondary"
-                  target="_blank"
-                />
+          <RevealFx translateY="12" delay={0.3} fillWidth>
+            <Column textVariant="body-default-l" fillWidth gap="m" marginBottom="xl">
+              <Text>{profile.bio}</Text>
+              
+              {/* Profile Details Grid */}
+              <Row wrap gap="m" marginTop="m">
+                {profile.available_for_hire && (
+                  <Tag size="l" prefixIcon="checkCircle" onBackground="success-medium">
+                    Available for hire
+                  </Tag>
+                )}
+                {profile.years_of_experience && (
+                  <Tag size="l" prefixIcon="calendar">
+                    {profile.years_of_experience} years experience
+                  </Tag>
+                )}
+                {profile.current_role && (
+                  <Tag size="l" prefixIcon="briefcase">
+                    {profile.current_role}
+                  </Tag>
+                )}
+                {profile.current_company && (
+                  <Tag size="l" prefixIcon="building">
+                    {profile.current_company}
+                  </Tag>
+                )}
               </Row>
-            )}
 
-            {/* Gallery Images */}
-            {profile.images && profile.images.length > 0 && (
-              <Column fillWidth gap="m" marginTop="xl">
-                <Heading as="h3" variant="heading-strong-l">
-                  Gallery
-                </Heading>
-                <Row wrap gap="m">
-                  {profile.images.map((image) => (
-                    <Column 
-                      key={image.id} 
-                      style={{ width: '200px' }}
-                      gap="4"
-                    >
-                      <img
-                        src={image.data_uri}
-                        alt={image.alt_text || image.filename}
-                        style={{ 
-                          width: '100%', 
-                          height: 'auto',
-                          borderRadius: '8px',
-                          objectFit: 'cover'
-                        }}
-                      />
-                      {image.caption && (
-                        <Text variant="body-default-s" onBackground="neutral-weak">
-                          {image.caption}
-                        </Text>
-                      )}
-                    </Column>
-                  ))}
+              {/* Resume Download */}
+              {profile.resume_url && profile.resume_filename && (
+                <Row marginTop="m">
+                  <Button
+                    href={profile.resume_url}
+                    prefixIcon="download"
+                    label={`Download Resume (${profile.resume_filename})`}
+                    size="m"
+                    variant="secondary"
+                    target="_blank"
+                  />
                 </Row>
-              </Column>
-            )}
+              )}
 
-            {/* Timestamps */}
-            <Row wrap gap="m" marginTop="l" paddingTop="l" style={{ borderTop: '1px solid var(--neutral-alpha-weak)' }}>
-              <Text variant="body-default-xs" onBackground="neutral-weak">
-                Profile created: {new Date(profile.created_at).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-              </Text>
-              <Text variant="body-default-xs" onBackground="neutral-weak">
-                •
-              </Text>
-              <Text variant="body-default-xs" onBackground="neutral-weak">
-                Last updated: {new Date(profile.updated_at).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-              </Text>
-            </Row>
-          </Column>
+              {/* Gallery Images */}
+              {profile.images && profile.images.length > 0 && (
+                <Column fillWidth gap="m" marginTop="xl">
+                  <Heading as="h3" variant="heading-strong-l">
+                    Gallery
+                  </Heading>
+                  <Row wrap gap="m">
+                    {profile.images.map((image) => (
+                      <Column 
+                        key={image.id} 
+                        style={{ width: '200px' }}
+                        gap="4"
+                      >
+                        <img
+                          src={image.data_uri}
+                          alt={image.alt_text || image.filename}
+                          style={{ 
+                            width: '100%', 
+                            height: 'auto',
+                            borderRadius: '8px',
+                            objectFit: 'cover'
+                          }}
+                        />
+                        {image.caption && (
+                          <Text variant="body-default-s" onBackground="neutral-weak">
+                            {image.caption}
+                          </Text>
+                        )}
+                      </Column>
+                    ))}
+                  </Row>
+                </Column>
+              )}
+
+              {/* Timestamps */}
+              <Row wrap gap="m" marginTop="l" paddingTop="l" style={{ borderTop: '1px solid var(--neutral-alpha-weak)' }}>
+                <Text variant="body-default-xs" onBackground="neutral-weak">
+                  Profile created: {new Date(profile.created_at).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </Text>
+                <Text variant="body-default-xs" onBackground="neutral-weak">
+                  •
+                </Text>
+                <Text variant="body-default-xs" onBackground="neutral-weak">
+                  Last updated: {new Date(profile.updated_at).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </Text>
+              </Row>
+            </Column>
+          </RevealFx>
 
           {/* Work Experience Section */}
           {workExperiences.length > 0 && (
             <>
-              <Heading as="h2" id="Experience" variant="display-strong-s" marginBottom="m">
-                Experience
-              </Heading>
+              <RevealFx translateY="8" delay={0.1} fillWidth>
+                <Heading as="h2" id="Experience" variant="display-strong-s" marginBottom="m">
+                  Experience
+                </Heading>
+              </RevealFx>
               <Column fillWidth gap="l" marginBottom="40">
-                {workExperiences.map((experience) => (
-                  <Column key={experience.id} fillWidth>
-                    <Row fillWidth horizontal="between" vertical="end" marginBottom="4">
-                      <Row gap="m" vertical="center">
-                        {experience.company_logo && (
-                          <img
-                            src={experience.company_logo}
-                            alt={`${experience.company_name} logo`}
-                            style={{ width: '40px', height: '40px', objectFit: 'contain' }}
-                          />
-                        )}
-                        <Text id={experience.company_name} variant="heading-strong-l">
-                          {experience.company_name}
+                {workExperiences.map((experience, idx) => (
+                  <RevealFx key={experience.id} translateY="8" delay={0.05 * idx} fillWidth>
+                    <Column fillWidth>
+                      <Row fillWidth horizontal="between" vertical="end" marginBottom="4">
+                        <Row gap="m" vertical="center">
+                          {experience.company_logo && (
+                            <img
+                              src={experience.company_logo}
+                              alt={`${experience.company_name} logo`}
+                              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+                            />
+                          )}
+                          <Text id={experience.company_name} variant="heading-strong-l">
+                            {experience.company_name}
+                          </Text>
+                        </Row>
+                        <Text variant="heading-default-xs" onBackground="neutral-weak">
+                          {formatDate(experience.start_date)} - {experience.is_current ? 'Present' : formatDate(experience.end_date)}
+                          {experience.is_current && (
+                            <> • {calculateDuration(experience.start_date, null)}</>
+                          )}
                         </Text>
                       </Row>
-                      <Text variant="heading-default-xs" onBackground="neutral-weak">
-                        {formatDate(experience.start_date)} - {experience.is_current ? 'Present' : formatDate(experience.end_date)}
-                        {experience.is_current && (
-                          <> • {calculateDuration(experience.start_date, null)}</>
-                        )}
+                      <Text variant="body-default-s" onBackground="brand-weak" marginBottom="m">
+                        {experience.job_title}
+                        {experience.employment_type && ` • ${experience.employment_type}`}
+                        {experience.work_mode && ` • ${experience.work_mode}`}
                       </Text>
-                    </Row>
-                    <Text variant="body-default-s" onBackground="brand-weak" marginBottom="m">
-                      {experience.job_title}
-                      {experience.employment_type && ` • ${experience.employment_type}`}
-                      {experience.work_mode && ` • ${experience.work_mode}`}
-                    </Text>
-                    <Text variant="body-default-m" marginBottom="s">
-                      {experience.description}
-                    </Text>
-                    {experience.achievements && (
-                      <Column as="ul" gap="8" marginBottom="s">
-                        {experience.achievements.split('\n').map((achievement, idx) => (
-                          achievement.trim() && (
-                            <Text as="li" variant="body-default-m" key={idx}>
-                              {achievement.trim()}
-                            </Text>
-                          )
-                        ))}
-                      </Column>
-                    )}
-                    {experience.technologies_used && (
-                      <Row wrap gap="8" paddingTop="8">
-                        {experience.technologies_used.split(',').map((tech, idx) => (
-                          <Tag key={idx} size="l">
-                            {tech.trim()}
-                          </Tag>
-                        ))}
-                      </Row>
-                    )}
-                    {experience.images && experience.images.length > 0 && (
-                      <Row wrap gap="m" marginTop="m">
-                        {experience.images.map((image) => (
-                          <Column key={image.id} style={{ width: '150px' }} gap="4">
-                            <img
-                              src={image.data_uri}
-                              alt={image.alt_text || image.filename}
-                              style={{ 
-                                width: '100%', 
-                                height: 'auto',
-                                borderRadius: '8px',
-                                objectFit: 'cover'
-                              }}
-                            />
-                            {image.caption && (
-                              <Text variant="body-default-xs" onBackground="neutral-weak">
-                                {image.caption}
+                      <Text variant="body-default-m" marginBottom="s">
+                        {experience.description}
+                      </Text>
+                      {experience.achievements && (
+                        <Column as="ul" gap="8" marginBottom="s">
+                          {experience.achievements.split('\n').map((achievement, idx2) => (
+                            achievement.trim() && (
+                              <Text as="li" variant="body-default-m" key={idx2}>
+                                {achievement.trim()}
                               </Text>
-                            )}
-                          </Column>
-                        ))}
-                      </Row>
-                    )}
-                  </Column>
+                            )
+                          ))}
+                        </Column>
+                      )}
+                      {experience.technologies_used && (
+                        <Row wrap gap="8" paddingTop="8">
+                          {experience.technologies_used.split(',').map((tech, idx3) => (
+                            <Tag key={idx3} size="l">
+                              {tech.trim()}
+                            </Tag>
+                          ))}
+                        </Row>
+                      )}
+                      {experience.images && experience.images.length > 0 && (
+                        <Row wrap gap="m" marginTop="m">
+                          {experience.images.map((image) => (
+                            <Column key={image.id} style={{ width: '150px' }} gap="4">
+                              <img
+                                src={image.data_uri}
+                                alt={image.alt_text || image.filename}
+                                style={{ 
+                                  width: '100%', 
+                                  height: 'auto',
+                                  borderRadius: '8px',
+                                  objectFit: 'cover'
+                                }}
+                              />
+                              {image.caption && (
+                                <Text variant="body-default-xs" onBackground="neutral-weak">
+                                  {image.caption}
+                                </Text>
+                              )}
+                            </Column>
+                          ))}
+                        </Row>
+                      )}
+                    </Column>
+                  </RevealFx>
                 ))}
               </Column>
             </>
@@ -435,62 +452,66 @@ export default async function About() {
           {/* Education Section */}
           {education.length > 0 && (
             <>
-              <Heading as="h2" id="Education" variant="display-strong-s" marginBottom="m">
-                Education
-              </Heading>
+              <RevealFx translateY="8" delay={0.1} fillWidth>
+                <Heading as="h2" id="Education" variant="display-strong-s" marginBottom="m">
+                  Education
+                </Heading>
+              </RevealFx>
               <Column fillWidth gap="l" marginBottom="40">
-                {education.map((edu) => (
-                  <Column key={edu.id} fillWidth gap="4">
-                    <Row gap="m" vertical="center">
-                      {edu.logo && (
-                        <img
-                          src={edu.logo}
-                          alt={`${edu.institution} logo`}
-                          style={{ width: '40px', height: '40px', objectFit: 'contain' }}
-                        />
-                      )}
-                      <Text id={edu.institution} variant="heading-strong-l">
-                        {edu.institution}
-                      </Text>
-                    </Row>
-                    <Row fillWidth horizontal="between" vertical="end">
-                      <Text variant="body-default-m" onBackground="brand-weak">
-                        {edu.degree} {edu.field_of_study && `in ${edu.field_of_study}`}
-                      </Text>
-                      <Text variant="heading-default-xs" onBackground="neutral-weak">
-                        {formatDate(edu.start_date)} - {edu.is_current ? 'Present' : formatDate(edu.end_date)}
-                      </Text>
-                    </Row>
-                    {edu.grade && (
-                      <Text variant="body-default-s">Grade: {edu.grade}</Text>
-                    )}
-                    {edu.description && (
-                      <Text variant="body-default-m">{edu.description}</Text>
-                    )}
-                    {edu.images && edu.images.length > 0 && (
-                      <Row wrap gap="m" marginTop="m">
-                        {edu.images.map((image) => (
-                          <Column key={image.id} style={{ width: '150px' }} gap="4">
-                            <img
-                              src={image.data_uri}
-                              alt={image.alt_text || image.filename}
-                              style={{ 
-                                width: '100%', 
-                                height: 'auto',
-                                borderRadius: '8px',
-                                objectFit: 'cover'
-                              }}
-                            />
-                            {image.caption && (
-                              <Text variant="body-default-xs" onBackground="neutral-weak">
-                                {image.caption}
-                              </Text>
-                            )}
-                          </Column>
-                        ))}
+                {education.map((edu, idx) => (
+                  <RevealFx key={edu.id} translateY="8" delay={0.05 * idx} fillWidth>
+                    <Column fillWidth gap="4">
+                      <Row gap="m" vertical="center">
+                        {edu.logo && (
+                          <img
+                            src={edu.logo}
+                            alt={`${edu.institution} logo`}
+                            style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+                          />
+                        )}
+                        <Text id={edu.institution} variant="heading-strong-l">
+                          {edu.institution}
+                        </Text>
                       </Row>
-                    )}
-                  </Column>
+                      <Row fillWidth horizontal="between" vertical="end">
+                        <Text variant="body-default-m" onBackground="brand-weak">
+                          {edu.degree} {edu.field_of_study && `in ${edu.field_of_study}`}
+                        </Text>
+                        <Text variant="heading-default-xs" onBackground="neutral-weak">
+                          {formatDate(edu.start_date)} - {edu.is_current ? 'Present' : formatDate(edu.end_date)}
+                        </Text>
+                      </Row>
+                      {edu.grade && (
+                        <Text variant="body-default-s">Grade: {edu.grade}</Text>
+                      )}
+                      {edu.description && (
+                        <Text variant="body-default-m">{edu.description}</Text>
+                      )}
+                      {edu.images && edu.images.length > 0 && (
+                        <Row wrap gap="m" marginTop="m">
+                          {edu.images.map((image) => (
+                            <Column key={image.id} style={{ width: '150px' }} gap="4">
+                              <img
+                                src={image.data_uri}
+                                alt={image.alt_text || image.filename}
+                                style={{ 
+                                  width: '100%', 
+                                  height: 'auto',
+                                  borderRadius: '8px',
+                                  objectFit: 'cover'
+                                }}
+                              />
+                              {image.caption && (
+                                <Text variant="body-default-xs" onBackground="neutral-weak">
+                                  {image.caption}
+                                </Text>
+                              )}
+                            </Column>
+                          ))}
+                        </Row>
+                      )}
+                    </Column>
+                  </RevealFx>
                 ))}
               </Column>
             </>
@@ -499,34 +520,38 @@ export default async function About() {
           {/* Skills Section */}
           {profileSkills.length > 0 && (
             <>
-              <Heading
-                as="h2"
-                id="Skills"
-                variant="display-strong-s"
-                marginBottom="40"
-              >
-                Skills
-              </Heading>
+              <RevealFx translateY="8" delay={0.1} fillWidth>
+                <Heading
+                  as="h2"
+                  id="Skills"
+                  variant="display-strong-s"
+                  marginBottom="40"
+                >
+                  Skills
+                </Heading>
+              </RevealFx>
               <Column fillWidth gap="l">
                 {Object.keys(groupedSkills).length > 0 ? (
-                  Object.entries(groupedSkills).map(([type, typeSkills]) => (
-                    <Column key={type} fillWidth gap="4">
-                      <Text id={type} variant="heading-strong-l">
-                        {type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ').replace('-', ' ')}
-                      </Text>
-                      <Row wrap gap="8" paddingTop="8">
-                        {typeSkills.map((skill) => (
-                          <Tag 
-                            key={skill.id} 
-                            size="l" 
-                            prefixIcon={skill.icon}
-                          >
-                            {skill.name}
-                            {skill.proficiency && ` • ${skill.proficiency}`}
-                          </Tag>
-                        ))}
-                      </Row>
-                    </Column>
+                  Object.entries(groupedSkills).map(([type, typeSkills], idx) => (
+                    <RevealFx key={type} translateY="8" delay={0.05 * idx} fillWidth>
+                      <Column fillWidth gap="4">
+                        <Text id={type} variant="heading-strong-l">
+                          {type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ').replace('-', ' ')}
+                        </Text>
+                        <Row wrap gap="8" paddingTop="8">
+                          {typeSkills.map((skill) => (
+                            <Tag 
+                              key={skill.id} 
+                              size="l" 
+                              prefixIcon={skill.icon}
+                            >
+                              {skill.name}
+                              {skill.proficiency && ` • ${skill.proficiency}`}
+                            </Tag>
+                          ))}
+                        </Row>
+                      </Column>
+                    </RevealFx>
                   ))
                 ) : (
                   <Row wrap gap="8">

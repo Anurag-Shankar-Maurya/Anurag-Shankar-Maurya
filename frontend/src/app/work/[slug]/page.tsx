@@ -238,10 +238,11 @@ export default async function Project({
                     }}
                   >
                     <Image
-                      src={img.image_url}
+                      src={img.data_uri || img.image_url}
                       alt={img.alt_text || img.caption || project.title}
                       fill
                       style={{ objectFit: "cover" }}
+                      unoptimized={!!img.data_uri}
                     />
                   </div>
                   {img.caption && (

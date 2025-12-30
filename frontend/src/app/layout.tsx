@@ -42,6 +42,7 @@ export default async function RootLayout({
 
   // Use backend config if available, otherwise fall back to static config
   const activeStyle = backendConfig?.style || {
+    theme: style.theme,
     brand: style.brand,
     accent: style.accent,
     neutral: style.neutral,
@@ -51,6 +52,7 @@ export default async function RootLayout({
     surface: style.surface,
     transition: style.transition,
     scaling: style.scaling,
+    'viz-style': dataStyle.variant,
   };
 
   const activeDataStyle = backendConfig?.style?.["viz-style"] || dataStyle.variant;

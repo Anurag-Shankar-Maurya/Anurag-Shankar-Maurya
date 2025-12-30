@@ -26,7 +26,7 @@ export interface SiteConfig {
     surface: string;
     transition: string;
     scaling: string;
-    'viz-style'?: string; // Optional visualization style
+    'viz-style'?: string;
   };
   schema: {
     logo: string;
@@ -103,6 +103,7 @@ function getDefaultConfig(): SiteConfig {
       surface: 'translucent',
       transition: 'all',
       scaling: '100',
+      'viz-style': 'gradient',
     },
     schema: {
       logo: '',

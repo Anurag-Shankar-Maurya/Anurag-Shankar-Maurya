@@ -753,6 +753,12 @@ class SiteConfiguration(models.Model):
         default=100,
         choices=[(90, '90%'), (95, '95%'), (100, '100%'), (105, '105%'), (110, '110%')]
     )
+    viz_style = models.CharField(
+        max_length=20,
+        choices=[('flat', 'Flat'), ('gradient', 'Gradient'), ('outline', 'Outline')],
+        default='gradient',
+        help_text='Visualization style for charts and data displays'
+    )
     
     # Display options
     display_location = models.BooleanField(default=True)

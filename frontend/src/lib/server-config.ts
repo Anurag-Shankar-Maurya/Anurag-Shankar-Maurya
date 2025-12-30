@@ -51,6 +51,7 @@ export function getDefaultServerConfig(): SiteConfig {
       surface: 'translucent',
       transition: 'all',
       scaling: '100',
+      'viz-style': 'gradient',
     },
     schema: {
       logo: '',

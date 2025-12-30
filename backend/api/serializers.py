@@ -434,6 +434,7 @@ class SiteConfigurationSerializer(serializers.ModelSerializer):
             'surface': obj.surface_style,
             'transition': obj.transition_style,
             'scaling': str(obj.scaling),
+            'viz-style': obj.viz_style,
         }
     
     def get_schema(self, obj):

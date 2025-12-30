@@ -1,4 +1,4 @@
-import { Column, Text, Heading, Grid } from "@once-ui-system/core";
+import { Column, Text, Heading } from "@once-ui-system/core";
 import { ProjectCard } from "@/components";
 import { projectsApi } from "@/lib";
 
@@ -74,10 +74,14 @@ export async function Projects({ range, exclude }: ProjectsProps) {
               All Projects
             </Heading>
           )}
-          <Grid
-            columns="repeat(auto-fill, minmax(min(100%, 400px), 1fr))"
-            gap="24"
-            paddingX="l"
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 400px), 1fr))",
+              gap: "24px",
+              paddingLeft: "var(--static-space-l)",
+              paddingRight: "var(--static-space-l)",
+            }}
           >
             {regularProjects.map((project) => (
               <ProjectCard
@@ -86,7 +90,7 @@ export async function Projects({ range, exclude }: ProjectsProps) {
                 featured={false}
               />
             ))}
-          </Grid>
+          </div>
         </Column>
       )}
     </Column>

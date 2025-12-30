@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import {
   Meta,
   Schema,
-  Badge,
   Button,
   Column,
   Flex,
@@ -11,7 +10,6 @@ import {
   SmartLink,
   Tag,
   Line,
-  Grid,
 } from "@once-ui-system/core";
 import { baseURL, about, person, work } from "@/resources";
 import { formatDate } from "@/utils/formatDate";
@@ -113,9 +111,9 @@ export default async function Project({
       {/* Status and metadata */}
       <Flex horizontal="center" gap="16" wrap>
         {project.status && (
-          <Badge variant={statusColors[project.status] || "gray"}>
+          <Tag variant={statusColors[project.status] || "neutral"} size="m">
             {project.status.replace("-", " ")}
-          </Badge>
+          </Tag>
         )}
         {project.role && (
           <Text variant="label-default-m" onBackground="neutral-weak">
@@ -221,36 +219,39 @@ export default async function Project({
             <Heading as="h3" variant="heading-strong-m">
               Gallery
             </Heading>
-            <Grid columns="repeat(auto-fit, minmax(200px, 1fr))" gap="16">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "16px",
+              }}
+            >
               {project.images.map((img) => (
-                <div
-                  key={img.id}
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    aspectRatio: "16/9",
-                    borderRadius: "var(--radius-m)",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Image
-                    src={img.image_url}
-                    alt={img.alt_text || img.caption || project.title}
-                    fill
-                    style={{ objectFit: "cover" }}
-                  />
+                <Column key={img.id} gap="8">
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      aspectRatio: "16/9",
+                      borderRadius: "var(--radius-m)",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Image
+                      src={img.image_url}
+                      alt={img.alt_text || img.caption || project.title}
+                      fill
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
                   {img.caption && (
-                    <Text
-                      variant="body-default-xs"
-                      onBackground="neutral-weak"
-                      style={{ marginTop: "8px" }}
-                    >
+                    <Text variant="body-default-xs" onBackground="neutral-weak">
                       {img.caption}
                     </Text>
                   )}
-                </div>
+                </Column>
               ))}
-            </Grid>
+            </div>
           </Column>
         )}
       </Column>

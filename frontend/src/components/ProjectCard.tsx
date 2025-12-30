@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Badge,
   Column,
   Flex,
   Heading,
@@ -48,7 +47,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
           </div>
         )}
         <Column fillWidth gap="12" padding="16">
-          <Flex fillWidth justifyContent="space-between" alignItems="flex-start" gap="8">
+          <Flex fillWidth horizontal="between" vertical="start" gap="8">
             <Heading
               as="h3"
               wrap="balance"
@@ -57,9 +56,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
               {project.title}
             </Heading>
             {project.status && (
-              <Badge variant={statusColors[project.status] || "gray"}>
+              <Tag variant={statusColors[project.status] || "neutral"} size="s">
                 {project.status.replace("-", " ")}
-              </Badge>
+              </Tag>
             )}
           </Flex>
 

@@ -4,7 +4,8 @@ import base64
 from .models import (
     Image, Profile, SocialLink, Skill, Education,
     WorkExperience, Project, Certificate, Achievement,
-    BlogCategory, BlogTag, BlogPost, Testimonial, ContactMessage
+    BlogCategory, BlogTag, BlogPost, Testimonial, ContactMessage,
+    SiteConfiguration
 )
 
 
@@ -356,4 +357,129 @@ class ContactMessageSerializer(serializers.ModelSerializer):
         fields = ['name', 'email', 'phone', 'subject', 'message']
         extra_kwargs = {
             'phone': {'required': False}
+        }
+
+
+# ============================================
+# SITE CONFIGURATION SERIALIZER
+# ============================================
+
+class SiteConfigurationSerializer(serializers.ModelSerializer):
+    """Serializer for site configuration - used by frontend to fetch UI configuration"""
+    
+    # Deserialize protected_routes from JSON string to list and vice versa
+    protected_routes = serializers.SerializerMethodField()
+    
+    # Compose display config
+    display = serializers.SerializerMethodField()
+    
+    # Compose style config
+    style = serializers.SerializerMethodField()
+    
+    # Compose schema config
+    schema = serializers.SerializerMethodField()
+    
+    # Compose social links (same_as)
+    same_as = serializers.SerializerMethodField()
+    
+    # Compose social sharing config
+    social_sharing = serializers.SerializerMethodField()
+    
+    # Compose routes config
+    routes = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = SiteConfiguration
+        fields = [
+            'site_name',
+            'site_description',
+            'base_url',
+            'display',
+            'style',
+            'schema',
+            'same_as',
+            'social_sharing',
+            'protected_routes',
+            'routes',
+        ]
+    
+    def get_protected_routes(self, obj):
+        """Parse protected routes from JSON string"""
+        import json
+        if obj.protected_routes:
+            try:
+                return json.loads(obj.protected_routes)
+            except json.JSONDecodeError:
+                return []
+        return []
+    
+    def get_display(self, obj):
+        """Compose display configuration"""
+        return {
+            'location': obj.display_location,
+            'time': obj.display_time,
+            'themeSwitcher': obj.display_theme_switcher,
+        }
+    
+    def get_style(self, obj):
+        """Compose style configuration"""
+        return {
+            'theme': obj.theme,
+            'neutral': obj.neutral_color,
+            'brand': obj.brand_color,
+            'accent': obj.accent_color,
+            'solid': 'contrast',  # This is typically fixed in UI
+            'solidStyle': obj.solid_style,
+            'border': obj.border_style,
+            'surface': obj.surface_style,
+            'transition': obj.transition_style,
+            'scaling': str(obj.scaling),
+        }
+    
+    def get_schema(self, obj):
+        """Compose schema configuration"""
+        return {
+            'logo': '',
+            'type': obj.schema_type,
+            'name': obj.site_name,
+            'description': obj.site_description,
+            'email': obj.schema_email,
+        }
+    
+    def get_same_as(self, obj):
+        """Compose same_as (social links) configuration"""
+        same_as = {}
+        if obj.threads_url:
+            same_as['threads'] = obj.threads_url
+        if obj.linkedin_url:
+            same_as['linkedin'] = obj.linkedin_url
+        if obj.discord_url:
+            same_as['discord'] = obj.discord_url
+        return same_as
+    
+    def get_social_sharing(self, obj):
+        """Compose social sharing configuration"""
+        return {
+            'display': obj.enable_social_sharing,
+            'platforms': {
+                'x': obj.share_on_x,
+                'linkedin': obj.share_on_linkedin,
+                'facebook': obj.share_on_facebook,
+                'pinterest': obj.share_on_pinterest,
+                'whatsapp': obj.share_on_whatsapp,
+                'reddit': obj.share_on_reddit,
+                'telegram': obj.share_on_telegram,
+                'email': obj.share_email,
+                'copyLink': obj.share_copy_link,
+            }
+        }
+    
+    def get_routes(self, obj):
+        """Compose routes configuration"""
+        return {
+            '/': obj.enable_route_home,
+            '/about': obj.enable_route_about,
+            '/work': obj.enable_route_work,
+            '/blog': obj.enable_route_blog,
+            '/gallery': obj.enable_route_gallery,
         }

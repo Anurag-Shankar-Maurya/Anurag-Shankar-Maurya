@@ -11,7 +11,8 @@ import base64
 from .models import (
     Image, Profile, SocialLink, Skill, Education,
     WorkExperience, Project, Certificate, Achievement,
-    BlogCategory, BlogTag, BlogPost, Testimonial, ContactMessage
+    BlogCategory, BlogTag, BlogPost, Testimonial, ContactMessage,
+    SiteConfiguration
 )
 from .serializers import (
     ImageSerializer, ProfileSerializer, ProfileDetailSerializer,
@@ -20,7 +21,7 @@ from .serializers import (
     CertificateSerializer, AchievementSerializer,
     BlogCategorySerializer, BlogTagSerializer, 
     BlogPostSerializer, BlogPostDetailSerializer, BlogPostListSerializer,
-    TestimonialSerializer, ContactMessageSerializer
+    TestimonialSerializer, ContactMessageSerializer, SiteConfigurationSerializer
 )
 
 
@@ -316,3 +317,31 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['image_type', 'content_type', 'object_id', 'show_on_home']
+
+
+# ============================================
+# SITE CONFIGURATION VIEWSET
+# ============================================
+
+@extend_schema_view(
+    list=extend_schema(tags=['Configuration'], description='Get site configuration for frontend'),
+)
+class SiteConfigurationViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for SiteConfiguration.
+    GET /api/config/ - Get the current site configuration
+    """
+    queryset = SiteConfiguration.objects.all()
+    serializer_class = SiteConfigurationSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        # Always return the singleton configuration
+        return SiteConfiguration.objects.filter(pk=1)
+    
+    @action(detail=False, methods=['get'])
+    def current(self, request):
+        """Get current site configuration - preferred endpoint"""
+        config = SiteConfiguration.get_config()
+        serializer = self.get_serializer(config)
+        return Response(serializer.data)

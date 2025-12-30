@@ -686,3 +686,132 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"Message from {self.name} - {self.subject}"
+
+
+# ============================================
+# SITE CONFIGURATION
+# ============================================
+
+class SiteConfiguration(models.Model):
+    """
+    Centralized site configuration manageable from Django admin.
+    This allows frontend configuration to be managed from the backend.
+    """
+    # Base settings
+    site_name = models.CharField(max_length=255, default='Magic Portfolio')
+    site_description = models.TextField(default='A portfolio website')
+    base_url = models.URLField(default='https://demo.magic-portfolio.com')
+    
+    # Theme configuration (JSON)
+    theme = models.CharField(
+        max_length=20, 
+        choices=[('dark', 'Dark'), ('light', 'Light'), ('system', 'System')],
+        default='system'
+    )
+    neutral_color = models.CharField(
+        max_length=20,
+        choices=[('sand', 'Sand'), ('gray', 'Gray'), ('slate', 'Slate'), ('custom', 'Custom')],
+        default='gray'
+    )
+    brand_color = models.CharField(
+        max_length=20,
+        choices=[('blue', 'Blue'), ('indigo', 'Indigo'), ('violet', 'Violet'), ('magenta', 'Magenta'),
+                 ('pink', 'Pink'), ('red', 'Red'), ('orange', 'Orange'), ('yellow', 'Yellow'),
+                 ('moss', 'Moss'), ('green', 'Green'), ('emerald', 'Emerald'), ('aqua', 'Aqua'),
+                 ('cyan', 'Cyan'), ('custom', 'Custom')],
+        default='cyan'
+    )
+    accent_color = models.CharField(
+        max_length=20,
+        choices=[('blue', 'Blue'), ('indigo', 'Indigo'), ('violet', 'Violet'), ('magenta', 'Magenta'),
+                 ('pink', 'Pink'), ('red', 'Red'), ('orange', 'Orange'), ('yellow', 'Yellow'),
+                 ('moss', 'Moss'), ('green', 'Green'), ('emerald', 'Emerald'), ('aqua', 'Aqua'),
+                 ('cyan', 'Cyan'), ('custom', 'Custom')],
+        default='red'
+    )
+    solid_style = models.CharField(
+        max_length=20,
+        choices=[('flat', 'Flat'), ('plastic', 'Plastic')],
+        default='flat'
+    )
+    border_style = models.CharField(
+        max_length=20,
+        choices=[('rounded', 'Rounded'), ('playful', 'Playful'), ('conservative', 'Conservative')],
+        default='playful'
+    )
+    surface_style = models.CharField(
+        max_length=20,
+        choices=[('filled', 'Filled'), ('translucent', 'Translucent')],
+        default='translucent'
+    )
+    transition_style = models.CharField(
+        max_length=20,
+        choices=[('all', 'All'), ('micro', 'Micro'), ('macro', 'Macro')],
+        default='all'
+    )
+    scaling = models.PositiveIntegerField(
+        default=100,
+        choices=[(90, '90%'), (95, '95%'), (100, '100%'), (105, '105%'), (110, '110%')]
+    )
+    
+    # Display options
+    display_location = models.BooleanField(default=True)
+    display_time = models.BooleanField(default=True)
+    display_theme_switcher = models.BooleanField(default=True)
+    
+    # Mailchimp configuration
+    mailchimp_action = models.URLField(blank=True, help_text='Mailchimp subscribe form action URL')
+    
+    # Schema/SEO
+    schema_type = models.CharField(
+        max_length=50,
+        choices=[('Organization', 'Organization'), ('Person', 'Person')],
+        default='Organization'
+    )
+    schema_email = models.EmailField(blank=True)
+    
+    # Social links
+    threads_url = models.URLField(blank=True)
+    linkedin_url = models.URLField(blank=True)
+    discord_url = models.URLField(blank=True)
+    
+    # Social sharing
+    enable_social_sharing = models.BooleanField(default=True)
+    share_on_x = models.BooleanField(default=True)
+    share_on_linkedin = models.BooleanField(default=True)
+    share_on_facebook = models.BooleanField(default=False)
+    share_on_pinterest = models.BooleanField(default=False)
+    share_on_whatsapp = models.BooleanField(default=False)
+    share_on_reddit = models.BooleanField(default=False)
+    share_on_telegram = models.BooleanField(default=False)
+    share_email = models.BooleanField(default=True)
+    share_copy_link = models.BooleanField(default=True)
+    
+    # Protected routes (JSON field would be better, but using text for simplicity)
+    protected_routes = models.TextField(
+        blank=True,
+        help_text='JSON array of protected routes, e.g., ["/work/automate-design-handovers-with-a-figma-to-code-pipeline"]'
+    )
+    
+    # Available routes
+    enable_route_home = models.BooleanField(default=True)
+    enable_route_about = models.BooleanField(default=True)
+    enable_route_work = models.BooleanField(default=True)
+    enable_route_blog = models.BooleanField(default=True)
+    enable_route_gallery = models.BooleanField(default=True)
+    
+    # Metadata
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Site Configuration'
+        verbose_name_plural = 'Site Configuration'
+    
+    def __str__(self):
+        return 'Site Configuration'
+    
+    @classmethod
+    def get_config(cls):
+        """Get or create the singleton configuration object"""
+        config, created = cls.objects.get_or_create(pk=1)
+        return config

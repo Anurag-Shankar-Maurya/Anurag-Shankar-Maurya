@@ -6,7 +6,8 @@ from .views import (
     EducationViewSet, WorkExperienceViewSet,
     ProjectViewSet, CertificateViewSet, AchievementViewSet,
     BlogCategoryViewSet, BlogTagViewSet, BlogPostViewSet,
-    TestimonialViewSet, ContactMessageViewSet, ImageViewSet
+    TestimonialViewSet, ContactMessageViewSet, ImageViewSet,
+    SiteConfigurationViewSet
 )
 
 # Create a router and register our viewsets
@@ -41,6 +42,9 @@ router.register(r'contact', ContactMessageViewSet, basename='contact')
 
 # Images
 router.register(r'images', ImageViewSet, basename='image')
+
+# Configuration
+router.register(r'config', SiteConfigurationViewSet, basename='config')
 
 # The API URLs are now determined automatically by the router
 urlpatterns = [

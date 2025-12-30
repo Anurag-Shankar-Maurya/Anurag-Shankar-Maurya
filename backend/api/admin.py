@@ -7,7 +7,8 @@ import base64
 from .models import (
     Image, Profile, SocialLink, Skill, Education,
     WorkExperience, Project, Certificate, Achievement,
-    BlogCategory, BlogTag, BlogPost, Testimonial, ContactMessage
+    BlogCategory, BlogTag, BlogPost, Testimonial, ContactMessage,
+    SiteConfiguration
 )
 
 
@@ -947,6 +948,75 @@ class ContactMessageAdmin(admin.ModelAdmin):
     @admin.action(description='Archive selected messages')
     def archive(self, request, queryset):
         queryset.update(status='archived')
+
+
+# ============================================
+# SITE CONFIGURATION ADMIN
+# ============================================
+
+@admin.register(SiteConfiguration)
+class SiteConfigurationAdmin(admin.ModelAdmin):
+    """Admin interface for SiteConfiguration"""
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('site_name', 'site_description', 'base_url')
+        }),
+        ('Theme & Style', {
+            'fields': (
+                'theme', 'neutral_color', 'brand_color', 'accent_color',
+                'solid_style', 'border_style', 'surface_style',
+                'transition_style', 'scaling'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Display Options', {
+            'fields': ('display_location', 'display_time', 'display_theme_switcher')
+        }),
+        ('Mailchimp Configuration', {
+            'fields': ('mailchimp_action',),
+            'classes': ('collapse',)
+        }),
+        ('SEO & Schema', {
+            'fields': ('schema_type', 'schema_email'),
+            'classes': ('collapse',)
+        }),
+        ('Social Links', {
+            'fields': ('threads_url', 'linkedin_url', 'discord_url'),
+            'classes': ('collapse',)
+        }),
+        ('Social Sharing Platforms', {
+            'fields': (
+                'enable_social_sharing',
+                'share_on_x', 'share_on_linkedin', 'share_on_facebook',
+                'share_on_pinterest', 'share_on_whatsapp', 'share_on_reddit',
+                'share_on_telegram', 'share_email', 'share_copy_link'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Routes Configuration', {
+            'fields': (
+                'enable_route_home', 'enable_route_about', 'enable_route_work',
+                'enable_route_blog', 'enable_route_gallery'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Protected Routes', {
+            'fields': ('protected_routes',),
+            'classes': ('collapse',),
+            'description': 'Enter a JSON array of protected routes'
+        }),
+    )
+    
+    readonly_fields = ('updated_at',)
+    
+    def has_add_permission(self, request):
+        """Only allow one configuration instance"""
+        return SiteConfiguration.objects.count() == 0
+    
+    def has_delete_permission(self, request, obj=None):
+        """Prevent deletion of the configuration"""
+        return False
 
 
 # ============================================

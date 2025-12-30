@@ -19,5 +19,11 @@ export { contactApi } from './api/contact';
 // Re-export client utilities
 export { apiClient, APIError, fetchWithErrorHandling, serverFetchOptions, dynamicFetchOptions } from './api-client';
 
+// Re-export hooks
+export { useApi, useLazyApi } from './hooks';
+
+// Re-export utility functions
+export * from './api-utils';
+
 // Re-export types
 export type * from '@/types/api.types';

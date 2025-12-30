@@ -174,3 +174,46 @@ Features:
 - Inline editing for related models
 - Bulk actions for blog posts and contact messages
 - SEO field management
+
+---
+
+## Running with ASGI servers (uvicorn / gunicorn) 🔧
+
+This project exposes an ASGI application at `portfolio.asgi:application` so you can run it with modern ASGI servers.
+
+**Uvicorn (recommended, supports Windows and UNIX)**
+
+```bash
+# install (already added to requirements)
+pip install -r requirements.txt
+
+# development (auto-reload)
+uvicorn portfolio.asgi:application --reload --host 127.0.0.1 --port 8000
+
+# production (no reload, multiple workers)
+uvicorn portfolio.asgi:application --host 0.0.0.0 --port 8000 --workers 4
+```
+
+**Gunicorn with Uvicorn worker (recommended for UNIX production servers)**
+
+```bash
+# install (already added to requirements)
+pip install -r requirements.txt
+
+# run with uvicorn worker (NOTE: Gunicorn is not supported on Windows)
+gunicorn -k uvicorn.workers.UvicornWorker portfolio.asgi:application --bind 0.0.0.0:8000 --workers 4
+```
+
+> ⚠️ Note: `gunicorn` does **not** run on Windows. If you're developing on Windows, use `uvicorn` locally or run Gunicorn in a Linux container or remote server.
+
+**Heroku / Procfile**
+
+If deploying to Heroku or similar platforms, add a `Procfile` with:
+
+```
+web: gunicorn -k uvicorn.workers.UvicornWorker portfolio.asgi:application --bind 0.0.0.0:$PORT
+```
+
+---
+
+If you'd like, I can also add small helper scripts (`run-uvicorn.sh`, `run-uvicorn.ps1`) to make local development easier. Let me know which you'd prefer.

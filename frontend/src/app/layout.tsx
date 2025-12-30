@@ -15,6 +15,7 @@ import {
 } from "@once-ui-system/core";
 import { Footer, Header, RouteGuard, Providers } from "@/components";
 import { baseURL, effects, fonts, style, dataStyle, home } from "@/resources";
+import { fetchSiteConfig } from "@/lib/config-client";
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -31,6 +32,34 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetch configuration from backend
+  let backendConfig = null;
+  try {
+    backendConfig = await fetchSiteConfig();
+  } catch (error) {
+    console.warn('Failed to fetch backend config:', error);
+  }
+
+  // Use backend config if available, otherwise fall back to static config
+  const activeStyle = backendConfig?.style || {
+    brand: style.brand,
+    accent: style.accent,
+    neutral: style.neutral,
+    solid: style.solid,
+    solidStyle: style.solidStyle,
+    border: style.border,
+    surface: style.surface,
+    transition: style.transition,
+    scaling: style.scaling,
+  };
+
+  const activeDataStyle = backendConfig?.style?.["viz-style"] || dataStyle.variant;
+  const activeDisplay = backendConfig?.display || {
+    location: true,
+    time: true,
+    themeSwitcher: true,
+  };
+
   return (
     <Flex
       suppressHydrationWarning
@@ -56,16 +85,16 @@ export default async function RootLayout({
                   
                   // Set defaults from config
                   const config = ${JSON.stringify({
-                    brand: style.brand,
-                    accent: style.accent,
-                    neutral: style.neutral,
-                    solid: style.solid,
-                    "solid-style": style.solidStyle,
-                    border: style.border,
-                    surface: style.surface,
-                    transition: style.transition,
-                    scaling: style.scaling,
-                    "viz-style": dataStyle.variant,
+                    brand: activeStyle.brand,
+                    accent: activeStyle.accent,
+                    neutral: activeStyle.neutral,
+                    solid: activeStyle.solid,
+                    "solid-style": activeStyle.solidStyle,
+                    border: activeStyle.border,
+                    surface: activeStyle.surface,
+                    transition: activeStyle.transition,
+                    scaling: activeStyle.scaling,
+                    "viz-style": activeDataStyle,
                   })};
                   
                   // Apply default values

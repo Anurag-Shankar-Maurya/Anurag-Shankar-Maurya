@@ -3,7 +3,8 @@
  * This allows the frontend configuration to be managed from the Django admin
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_PATH = process.env.NEXT_PUBLIC_API_BASE_PATH || '/api';
 
 export interface SiteConfig {
   site_name: string;
@@ -54,7 +55,8 @@ export async function fetchSiteConfig(): Promise<SiteConfig> {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/config/current/`, {
+    const url = `${API_BASE_URL}${API_BASE_PATH}/config/current/`;
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

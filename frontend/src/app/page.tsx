@@ -451,7 +451,7 @@ export default async function Home() {
                     </Column>
                   </Row>
                   <Text variant="body-default-m">
-                    "{testimonial.content}"
+                    &ldquo;{testimonial.content}&rdquo;
                   </Text>
                   {testimonial.rating && (
                     <Row gap="4">
@@ -566,7 +566,7 @@ export default async function Home() {
         </Heading>
         <Column maxWidth="s" fillWidth>
           <Text variant="body-default-l" align="center">
-            I'm always interested in hearing about new projects and opportunities.
+            I&apos;m always interested in hearing about new projects and opportunities.
           </Text>
         </Column>
         <Row gap="m" marginTop="m" horizontal="center">

@@ -27,11 +27,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@eslint/eslintrc": "^3.3.3",
     "@types/cookie": "^0.6.0",
     "@types/node": "^20.17.30",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.25.0",
+    "eslint-config-next": "^16.1.1",
     "typescript": "^5.8.3",
     "tzdata": "^1.0.44"
   }

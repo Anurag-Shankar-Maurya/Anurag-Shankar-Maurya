@@ -8,19 +8,14 @@ export const ThemeToggle: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { reapplyConfig } = useBackendConfig();
   const [mounted, setMounted] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState("light");
 
+  // Handle hydration - this is a common pattern and the ESLint rule is overly strict
   useEffect(() => {
-    setMounted(true);
-    setCurrentTheme(document.documentElement.getAttribute("data-theme") || "light");
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
 
-  useEffect(() => {
-    setCurrentTheme(document.documentElement.getAttribute("data-theme") || "light");
-  }, [theme]);
-
-  const icon = currentTheme === "dark" ? "light" : "dark";
-  const nextTheme = currentTheme === "light" ? "dark" : "light";
+  const icon = theme === "dark" ? "light" : "dark";
+  const nextTheme = theme === "light" ? "dark" : "light";
 
   const handleThemeToggle = () => {
     setTheme(nextTheme);

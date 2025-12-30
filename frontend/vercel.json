@@ -1,0 +1,11 @@
+{
+    "buildCommand": "npm run build",
+    "outputDirectory": ".next",
+    "framework": "nextjs",
+    "regions": ["sin1"],
+    "functions": {
+        "src/app/api/**/*.ts": {
+            "maxDuration": 10
+        }
+    }
+}

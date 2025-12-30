@@ -29,15 +29,20 @@ import React from "react";
 export async function generateMetadata() {
   let profile;
   try {
-    const profileData = await profileApi.list();
-    profile = profileData.results[0];
+    const profileList = await profileApi.list();
+    if (profileList.results.length > 0) {
+      profile = await profileApi.get(profileList.results[0].id);
+    }
   } catch (error) {
-    profile = { full_name: 'Portfolio', bio: 'About page' };
+    // Fallback on error
   }
 
+  const fullName = profile?.full_name || 'Portfolio';
+  const bio = profile?.bio || 'About page';
+
   return Meta.generate({
-    title: `About – ${profile.full_name}`,
-    description: profile.bio || 'About page',
+    title: `About – ${fullName}`,
+    description: bio,
     baseURL: baseURL,
     image: `/api/og/generate?title=${encodeURIComponent('About')}`,
     path: '/about',
@@ -45,23 +50,30 @@ export async function generateMetadata() {
 }
 
 export default async function About() {
-  // Fetch all data from API
-  let profile, workExperiences, education, skills, socialLinks;
+  // Fetch profile with full details
+  let profile, workExperiences, education, profileSkills, profileSocialLinks;
   
   try {
-    const [profileData, workData, eduData, skillsData, socialData] = await Promise.all([
-      profileApi.list(),
+    // Get profile list first to find ID
+    const profileList = await profileApi.list();
+    if (profileList.results.length === 0) {
+      throw new Error('No profile found');
+    }
+    
+    // Get full profile details with related data
+    const [profileDetail, workData, eduData] = await Promise.all([
+      profileApi.get(profileList.results[0].id),
       workExperienceApi.list({ ordering: '-start_date', show_on_home: true }),
       educationApi.list({ show_on_home: true }),
-      skillsApi.list({ show_on_home: true }),
-      socialLinksApi.list({ show_on_home: true }),
     ]);
 
-    profile = profileData.results[0];
+    profile = profileDetail;
     workExperiences = workData.results;
     education = eduData.results;
-    skills = skillsData.results;
-    socialLinks = socialData.results;
+    
+    // Use profile's embedded social links and skills if available
+    profileSocialLinks = profile.social_links || [];
+    profileSkills = profile.skills || [];
   } catch (error) {
     console.error('Failed to fetch about page data:', error);
     return (
@@ -76,13 +88,13 @@ export default async function About() {
     return (
       <Column maxWidth="m" paddingY="24">
         <Heading>No profile found</Heading>
-        <Text>Please add a profile to the database.</Text>
+        <Text>Please ensure a profile exists in the database.</Text>
       </Column>
     );
   }
 
   // Group skills by type
-  const groupedSkills = groupBy(skills, 'skill_type');
+  const groupedSkills = groupBy(profileSkills, 'skill_type');
 
   // Build table of contents structure
   const structure = [
@@ -103,7 +115,7 @@ export default async function About() {
     },
     {
       title: "Skills",
-      display: skills.length > 0,
+      display: profileSkills.length > 0,
       items: Object.keys(groupedSkills),
     },
   ];
@@ -114,7 +126,7 @@ export default async function About() {
         as="webPage"
         baseURL={baseURL}
         title={`About – ${profile.full_name}`}
-        description={profile.bio}
+        description={profile.bio || ''}
         path="/about"
         image={`/api/og/generate?title=${encodeURIComponent('About')}`}
         author={{
@@ -156,13 +168,24 @@ export default async function About() {
             src={profile.profile_image || '/images/avatar.jpg'} 
             size="xl" 
           />
-          <Row gap="8" vertical="center">
-            <Icon onBackground="accent-weak" name="globe" />
-            {profile.location || 'Remote'}
-          </Row>
-          <Row wrap gap="8">
-            <Tag size="l">English</Tag>
-          </Row>
+          {profile.location && (
+            <Row gap="8" vertical="center">
+              <Icon onBackground="accent-weak" name="globe" />
+              {profile.location}
+            </Row>
+          )}
+          {profile.email && (
+            <Row gap="8" vertical="center">
+              <Icon onBackground="accent-weak" name="email" />
+              <Text variant="body-default-s">{profile.email}</Text>
+            </Row>
+          )}
+          {profile.phone && (
+            <Row gap="8" vertical="center">
+              <Icon onBackground="accent-weak" name="phone" />
+              <Text variant="body-default-s">{profile.phone}</Text>
+            </Row>
+          )}
         </Column>
 
         <Column className={styles.blockAlign} flex={9} maxWidth={40}>
@@ -177,16 +200,18 @@ export default async function About() {
             <Heading className={styles.textAlign} variant="display-strong-xl">
               {profile.full_name}
             </Heading>
-            <Text
-              className={styles.textAlign}
-              variant="display-default-xs"
-              onBackground="neutral-weak"
-            >
-              {profile.headline}
-            </Text>
-            
+            {profile.headline && (
+              <Text
+                className={styles.textAlign}
+                variant="heading-default-xl"
+                onBackground="neutral-weak"
+              >
+                {profile.headline}
+              </Text>
+            )}
+
             {/* Social Links */}
-            {socialLinks.length > 0 && (
+            {profileSocialLinks.length > 0 && (
               <Row
                 className={styles.blockAlign}
                 paddingTop="20"
@@ -197,7 +222,7 @@ export default async function About() {
                 fitWidth
                 data-border="rounded"
               >
-                {socialLinks.map((item) => (
+                {profileSocialLinks.map((item) => (
                   <React.Fragment key={item.id}>
                     <Row s={{ hide: true }}>
                       <Button
@@ -226,12 +251,30 @@ export default async function About() {
           {/* Bio Section */}
           <Column textVariant="body-default-l" fillWidth gap="m" marginBottom="xl">
             <Text>{profile.bio}</Text>
-            {profile.available_for_hire && (
-              <Text onBackground="success-medium">✅ Available for hire</Text>
-            )}
-            {profile.years_of_experience && (
-              <Text>Experience: {profile.years_of_experience} years</Text>
-            )}
+            
+            {/* Profile Details Grid */}
+            <Row wrap gap="m" marginTop="m">
+              {profile.available_for_hire && (
+                <Tag size="l" prefixIcon="checkCircle" onBackground="success-medium">
+                  Available for hire
+                </Tag>
+              )}
+              {profile.years_of_experience && (
+                <Tag size="l" prefixIcon="calendar">
+                  {profile.years_of_experience} years experience
+                </Tag>
+              )}
+              {profile.current_role && (
+                <Tag size="l" prefixIcon="briefcase">
+                  {profile.current_role}
+                </Tag>
+              )}
+              {profile.current_company && (
+                <Tag size="l" prefixIcon="building">
+                  {profile.current_company}
+                </Tag>
+              )}
+            </Row>
           </Column>
 
           {/* Work Experience Section */}
@@ -248,9 +291,9 @@ export default async function About() {
                         {experience.company_name}
                       </Text>
                       <Text variant="heading-default-xs" onBackground="neutral-weak">
-                        {formatDate(experience.start_date)} - {formatDate(experience.end_date)}
+                        {formatDate(experience.start_date)} - {experience.is_current ? 'Present' : formatDate(experience.end_date)}
                         {experience.is_current && (
-                          <> • {calculateDuration(experience.start_date, experience.end_date)}</>
+                          <> • {calculateDuration(experience.start_date, null)}</>
                         )}
                       </Text>
                     </Row>
@@ -300,13 +343,17 @@ export default async function About() {
                     <Text id={edu.institution} variant="heading-strong-l">
                       {edu.institution}
                     </Text>
-                    <Text variant="heading-default-s">
-                      {edu.degree} in {edu.field_of_study}
-                    </Text>
-                    <Text variant="heading-default-xs" onBackground="neutral-weak">
-                      {formatDate(edu.start_date)} - {formatDate(edu.end_date)}
-                      {edu.grade && ` • ${edu.grade}`}
-                    </Text>
+                    <Row fillWidth horizontal="between" vertical="end">
+                      <Text variant="body-default-m" onBackground="brand-weak">
+                        {edu.degree} {edu.field_of_study && `in ${edu.field_of_study}`}
+                      </Text>
+                      <Text variant="heading-default-xs" onBackground="neutral-weak">
+                        {formatDate(edu.start_date)} - {edu.is_current ? 'Present' : formatDate(edu.end_date)}
+                      </Text>
+                    </Row>
+                    {edu.grade && (
+                      <Text variant="body-default-s">Grade: {edu.grade}</Text>
+                    )}
                     {edu.description && (
                       <Text variant="body-default-m">{edu.description}</Text>
                     )}
@@ -317,7 +364,7 @@ export default async function About() {
           )}
 
           {/* Skills Section */}
-          {skills.length > 0 && (
+          {profileSkills.length > 0 && (
             <>
               <Heading
                 as="h2"
@@ -328,25 +375,40 @@ export default async function About() {
                 Skills
               </Heading>
               <Column fillWidth gap="l">
-                {Object.entries(groupedSkills).map(([type, typeSkills]) => (
-                  <Column key={type} fillWidth gap="4">
-                    <Text id={type} variant="heading-strong-l">
-                      {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')} Skills
-                    </Text>
-                    <Row wrap gap="8" paddingTop="8">
-                      {typeSkills.map((skill) => (
-                        <Tag 
-                          key={skill.id} 
-                          size="l" 
-                          prefixIcon={skill.icon}
-                        >
-                          {skill.name}
-                          {skill.proficiency && ` • ${skill.proficiency}`}
-                        </Tag>
-                      ))}
-                    </Row>
-                  </Column>
-                ))}
+                {Object.keys(groupedSkills).length > 0 ? (
+                  Object.entries(groupedSkills).map(([type, typeSkills]) => (
+                    <Column key={type} fillWidth gap="4">
+                      <Text id={type} variant="heading-strong-l">
+                        {type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ').replace('-', ' ')}
+                      </Text>
+                      <Row wrap gap="8" paddingTop="8">
+                        {typeSkills.map((skill) => (
+                          <Tag 
+                            key={skill.id} 
+                            size="l" 
+                            prefixIcon={skill.icon}
+                          >
+                            {skill.name}
+                            {skill.proficiency && ` • ${skill.proficiency}`}
+                          </Tag>
+                        ))}
+                      </Row>
+                    </Column>
+                  ))
+                ) : (
+                  <Row wrap gap="8">
+                    {profileSkills.map((skill) => (
+                      <Tag 
+                        key={skill.id} 
+                        size="l" 
+                        prefixIcon={skill.icon}
+                      >
+                        {skill.name}
+                        {skill.proficiency && ` • ${skill.proficiency}`}
+                      </Tag>
+                    ))}
+                  </Row>
+                )}
               </Column>
             </>
           )}

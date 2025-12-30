@@ -70,7 +70,7 @@ class SocialLinkViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SocialLinkSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['profile', 'platform']
+    filterset_fields = ['profile', 'platform', 'show_on_home']
 
 
 class SkillViewSet(viewsets.ReadOnlyModelViewSet):
@@ -79,7 +79,7 @@ class SkillViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SkillSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['profile', 'skill_type', 'proficiency']
+    filterset_fields = ['profile', 'skill_type', 'proficiency', 'show_on_home']
 
 
 class EducationViewSet(viewsets.ReadOnlyModelViewSet):
@@ -88,7 +88,7 @@ class EducationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = EducationSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['profile', 'is_current']
+    filterset_fields = ['profile', 'is_current', 'show_on_home']
 
 
 class WorkExperienceViewSet(viewsets.ReadOnlyModelViewSet):
@@ -97,7 +97,7 @@ class WorkExperienceViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = WorkExperienceSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['profile', 'employment_type', 'work_mode', 'is_current']
+    filterset_fields = ['profile', 'employment_type', 'work_mode', 'is_current', 'show_on_home']
     search_fields = ['company_name', 'job_title', 'description', 'technologies_used']
     ordering_fields = ['start_date', 'company_name']
 
@@ -122,7 +122,7 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
     lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['profile', 'status', 'is_featured']
+    filterset_fields = ['profile', 'status', 'is_featured', 'show_on_home']
     search_fields = ['title', 'short_description', 'description', 'technologies']
     ordering_fields = ['created_at', 'order', 'title']
     
@@ -149,7 +149,7 @@ class CertificateViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CertificateSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['profile', 'does_not_expire']
+    filterset_fields = ['profile', 'does_not_expire', 'show_on_home']
     search_fields = ['title', 'issuing_organization', 'skills']
     ordering_fields = ['issue_date', 'order']
 
@@ -160,7 +160,7 @@ class AchievementViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AchievementSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['profile', 'achievement_type']
+    filterset_fields = ['profile', 'achievement_type', 'show_on_home']
     search_fields = ['title', 'issuer', 'description']
     ordering_fields = ['date', 'order']
 
@@ -206,7 +206,7 @@ class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
     lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['profile', 'category', 'tags', 'is_featured']
+    filterset_fields = ['profile', 'category', 'tags', 'is_featured', 'show_on_home']
     search_fields = ['title', 'excerpt', 'content', 'meta_keywords']
     ordering_fields = ['published_at', 'views_count', 'reading_time']
     ordering = ['-published_at']
@@ -265,7 +265,7 @@ class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TestimonialSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['profile', 'is_featured', 'rating']
+    filterset_fields = ['profile', 'is_featured', 'rating', 'show_on_home']
     ordering_fields = ['date', 'order', 'rating']
     
     @action(detail=False, methods=['get'])
@@ -314,4 +314,4 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ImageSerializer
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['image_type', 'content_type', 'object_id']
+    filterset_fields = ['image_type', 'content_type', 'object_id', 'show_on_home']

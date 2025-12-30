@@ -49,6 +49,9 @@ class Image(models.Model):
     order = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Display on homepage
+    show_on_home = models.BooleanField(default=False, help_text="Display this image on homepage gallery")
 
     class Meta:
         ordering = ['order', '-created_at']
@@ -174,6 +177,9 @@ class SocialLink(models.Model):
     url = models.URLField()
     icon = models.CharField(max_length=50, blank=True, help_text="Icon class or name")
     order = models.PositiveIntegerField(default=0)
+    
+    # Display on homepage
+    show_on_home = models.BooleanField(default=True, help_text="Display this social link on homepage")
 
     class Meta:
         ordering = ['order']
@@ -206,6 +212,9 @@ class Skill(models.Model):
     proficiency = models.CharField(max_length=20, choices=PROFICIENCY_CHOICES, default='intermediate')
     icon = models.CharField(max_length=50, blank=True)
     order = models.PositiveIntegerField(default=0)
+    
+    # Display on homepage
+    show_on_home = models.BooleanField(default=False, help_text="Display this skill on homepage")
 
     class Meta:
         ordering = ['order', 'name']
@@ -234,6 +243,9 @@ class Education(models.Model):
     # Logo stored as BLOB
     logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Institution logo as binary")
     logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
+    
+    # Display on homepage
+    show_on_home = models.BooleanField(default=False, help_text="Display this education on homepage")
     
     # Related images (gallery)
     images = GenericRelation(Image)
@@ -286,6 +298,9 @@ class WorkExperience(models.Model):
     achievements = models.TextField(blank=True, help_text="Key achievements in this role")
     technologies_used = models.CharField(max_length=500, blank=True, help_text="Comma-separated list")
     order = models.PositiveIntegerField(default=0)
+    
+    # Display on homepage
+    show_on_home = models.BooleanField(default=False, help_text="Display this work experience on homepage")
     
     # Related images (gallery)
     images = GenericRelation(Image)
@@ -344,6 +359,7 @@ class Project(models.Model):
     # Display options
     is_featured = models.BooleanField(default=False)
     is_visible = models.BooleanField(default=True)
+    show_on_home = models.BooleanField(default=False, help_text="Display this project on homepage")
     order = models.PositiveIntegerField(default=0)
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -389,6 +405,9 @@ class Certificate(models.Model):
     skills = models.CharField(max_length=500, blank=True, help_text="Related skills, comma-separated")
     order = models.PositiveIntegerField(default=0)
     
+    # Display on homepage
+    show_on_home = models.BooleanField(default=False, help_text="Display this certificate on homepage")
+    
     # Related images (gallery)
     images = GenericRelation(Image)
 
@@ -425,6 +444,9 @@ class Achievement(models.Model):
     
     order = models.PositiveIntegerField(default=0)
     
+    # Display on homepage
+    show_on_home = models.BooleanField(default=False, help_text="Display this achievement on homepage")
+    
     # Related images (gallery)
     images = GenericRelation(Image)
 
@@ -445,6 +467,7 @@ class BlogCategory(models.Model):
     slug = models.SlugField(max_length=120, unique=True, blank=True)
     description = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
+    show_on_home = models.BooleanField(default=False, help_text="Display this category on homepage")
 
     class Meta:
         ordering = ['order', 'name']
@@ -463,6 +486,7 @@ class BlogTag(models.Model):
     """Tags for blog posts"""
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=60, unique=True, blank=True)
+    show_on_home = models.BooleanField(default=False, help_text="Display this tag on homepage")
 
     class Meta:
         ordering = ['name']
@@ -513,6 +537,7 @@ class BlogPost(models.Model):
     reading_time = models.PositiveIntegerField(default=5, help_text="Estimated reading time in minutes")
     views_count = models.PositiveIntegerField(default=0)
     is_featured = models.BooleanField(default=False)
+    show_on_home = models.BooleanField(default=False, help_text="Display this blog post on homepage")
     allow_comments = models.BooleanField(default=True)
     
     # SEO Fields
@@ -583,6 +608,7 @@ class Testimonial(models.Model):
     linkedin_url = models.URLField(blank=True)
     is_featured = models.BooleanField(default=False)
     is_visible = models.BooleanField(default=True)
+    show_on_home = models.BooleanField(default=False, help_text="Display this testimonial on homepage")
     date = models.DateField(default=timezone.now)
     order = models.PositiveIntegerField(default=0)
     

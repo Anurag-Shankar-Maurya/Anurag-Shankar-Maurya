@@ -356,9 +356,18 @@ export default async function About() {
                 {workExperiences.map((experience) => (
                   <Column key={experience.id} fillWidth>
                     <Row fillWidth horizontal="between" vertical="end" marginBottom="4">
-                      <Text id={experience.company_name} variant="heading-strong-l">
-                        {experience.company_name}
-                      </Text>
+                      <Row gap="m" vertical="center">
+                        {experience.company_logo && (
+                          <img
+                            src={experience.company_logo}
+                            alt={`${experience.company_name} logo`}
+                            style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+                          />
+                        )}
+                        <Text id={experience.company_name} variant="heading-strong-l">
+                          {experience.company_name}
+                        </Text>
+                      </Row>
                       <Text variant="heading-default-xs" onBackground="neutral-weak">
                         {formatDate(experience.start_date)} - {experience.is_current ? 'Present' : formatDate(experience.end_date)}
                         {experience.is_current && (
@@ -394,6 +403,29 @@ export default async function About() {
                         ))}
                       </Row>
                     )}
+                    {experience.images && experience.images.length > 0 && (
+                      <Row wrap gap="m" marginTop="m">
+                        {experience.images.map((image) => (
+                          <Column key={image.id} style={{ width: '150px' }} gap="4">
+                            <img
+                              src={image.data_uri}
+                              alt={image.alt_text || image.filename}
+                              style={{ 
+                                width: '100%', 
+                                height: 'auto',
+                                borderRadius: '8px',
+                                objectFit: 'cover'
+                              }}
+                            />
+                            {image.caption && (
+                              <Text variant="body-default-xs" onBackground="neutral-weak">
+                                {image.caption}
+                              </Text>
+                            )}
+                          </Column>
+                        ))}
+                      </Row>
+                    )}
                   </Column>
                 ))}
               </Column>
@@ -409,9 +441,18 @@ export default async function About() {
               <Column fillWidth gap="l" marginBottom="40">
                 {education.map((edu) => (
                   <Column key={edu.id} fillWidth gap="4">
-                    <Text id={edu.institution} variant="heading-strong-l">
-                      {edu.institution}
-                    </Text>
+                    <Row gap="m" vertical="center">
+                      {edu.logo && (
+                        <img
+                          src={edu.logo}
+                          alt={`${edu.institution} logo`}
+                          style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+                        />
+                      )}
+                      <Text id={edu.institution} variant="heading-strong-l">
+                        {edu.institution}
+                      </Text>
+                    </Row>
                     <Row fillWidth horizontal="between" vertical="end">
                       <Text variant="body-default-m" onBackground="brand-weak">
                         {edu.degree} {edu.field_of_study && `in ${edu.field_of_study}`}
@@ -425,6 +466,29 @@ export default async function About() {
                     )}
                     {edu.description && (
                       <Text variant="body-default-m">{edu.description}</Text>
+                    )}
+                    {edu.images && edu.images.length > 0 && (
+                      <Row wrap gap="m" marginTop="m">
+                        {edu.images.map((image) => (
+                          <Column key={image.id} style={{ width: '150px' }} gap="4">
+                            <img
+                              src={image.data_uri}
+                              alt={image.alt_text || image.filename}
+                              style={{ 
+                                width: '100%', 
+                                height: 'auto',
+                                borderRadius: '8px',
+                                objectFit: 'cover'
+                              }}
+                            />
+                            {image.caption && (
+                              <Text variant="body-default-xs" onBackground="neutral-weak">
+                                {image.caption}
+                              </Text>
+                            )}
+                          </Column>
+                        ))}
+                      </Row>
                     )}
                   </Column>
                 ))}

@@ -11,7 +11,7 @@ export const ThemeToggle: React.FC = () => {
 
   // Handle hydration - only render after client-side hydration
   useEffect(() => {
-    setMounted(true);
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
 
   const icon = theme === "dark" ? "light" : "dark";

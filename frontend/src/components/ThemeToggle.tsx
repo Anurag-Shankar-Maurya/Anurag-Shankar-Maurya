@@ -30,6 +30,7 @@ export const ThemeToggle: React.FC = () => {
       prefixIcon={icon}
       onClick={handleThemeToggle}
       aria-label={`Switch to ${nextTheme} mode`}
+      suppressHydrationWarning
     />
   );
 };

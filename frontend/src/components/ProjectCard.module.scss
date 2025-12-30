@@ -1,7 +1,6 @@
 .featuredCard {
   display: block;
   width: 100%;
-  text-decoration: none;
   border-radius: var(--radius-l);
   overflow: hidden;
   background: var(--neutral-alpha-weak);
@@ -22,7 +21,6 @@
 .regularCard {
   display: block;
   width: 100%;
-  text-decoration: none;
   border-radius: var(--radius-m);
   overflow: hidden;
   background: var(--neutral-alpha-weak);
@@ -44,6 +42,11 @@
   height: 100%;
 }
 
+.imageLink {
+  display: block;
+  text-decoration: none;
+}
+
 .imageWrapper {
   position: relative;
   width: 100%;
@@ -55,6 +58,16 @@
 .image {
   object-fit: cover;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.titleLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  
+  &:hover {
+    color: var(--brand-on-background-strong);
+  }
 }
 
 @media (max-width: 768px) {

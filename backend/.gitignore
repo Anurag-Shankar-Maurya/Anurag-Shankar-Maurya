@@ -133,8 +133,8 @@ dmypy.json
 media/
 gda/staticfiles/
 gda/static/
-# *.sqlite3
-# *.sqlite3-journal
+*.sqlite3
+*.sqlite3-journal
 
 # IDE
 .vscode/

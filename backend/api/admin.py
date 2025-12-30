@@ -413,9 +413,24 @@ class SocialLinkAdminForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Auto-fill icon if platform is selected but icon is empty
-        if self.instance.pk and self.instance.platform and not self.instance.icon:
-            self.fields['icon'].initial = SocialLink.ICON_MAPPING.get(self.instance.platform, '')
+        # Get the current platform if editing
+        platform = self.instance.platform if self.instance.pk else None
+        
+        # Auto-fill icon based on platform
+        if platform and platform in SocialLink.ICON_MAPPING:
+            icon_value = SocialLink.ICON_MAPPING[platform]
+            self.fields['icon'].initial = icon_value
+            self.fields['icon'].help_text = f"Auto-assigned icon for {platform}: {icon_value}"
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        platform = cleaned_data.get('platform')
+        
+        # Auto-fill icon based on platform when saving
+        if platform and platform in SocialLink.ICON_MAPPING:
+            cleaned_data['icon'] = SocialLink.ICON_MAPPING[platform]
+        
+        return cleaned_data
 
 
 class SocialLinkInline(admin.TabularInline):
@@ -423,9 +438,13 @@ class SocialLinkInline(admin.TabularInline):
     form = SocialLinkAdminForm
     extra = 1
     ordering = ['order']
+    readonly_fields = ['icon_display']
     
-    class Media:
-        js = ('js/sociallink_admin.js',)
+    def icon_display(self, obj):
+        if obj.icon:
+            return f"{obj.icon}"
+        return "-"
+    icon_display.short_description = "Icon (Auto-filled)"
 
 
 class SkillInline(admin.TabularInline):
@@ -505,13 +524,29 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(SocialLink)
 class SocialLinkAdmin(admin.ModelAdmin):
     form = SocialLinkAdminForm
-    list_display = ['platform', 'profile', 'url', 'icon', 'order']
+    list_display = ['platform', 'profile', 'url', 'icon_display', 'order']
     list_filter = ['platform']
     search_fields = ['profile__full_name', 'url']
     ordering = ['profile', 'order']
+    readonly_fields = ['icon_display']
+    fieldsets = (
+        ('Social Link', {
+            'fields': ('profile', 'platform', 'url', 'order')
+        }),
+        ('Icon (Auto-assigned)', {
+            'fields': ('icon', 'icon_display'),
+            'description': 'Icon is automatically assigned based on the selected platform'
+        }),
+        ('Display', {
+            'fields': ('show_on_home',)
+        }),
+    )
     
-    class Media:
-        js = ('js/sociallink_admin.js',)
+    def icon_display(self, obj):
+        if obj.icon:
+            return f"✓ {obj.icon}"
+        return "-"
+    icon_display.short_description = "Auto-filled Icon"
 
 
 @admin.register(Skill)

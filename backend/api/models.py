@@ -169,13 +169,44 @@ class SocialLink(models.Model):
         ('dev', 'Dev.to'),
         ('stackoverflow', 'Stack Overflow'),
         ('website', 'Personal Website'),
+        ('discord', 'Discord'),
+        ('threads', 'Threads'),
+        ('pinterest', 'Pinterest'),
+        ('reddit', 'Reddit'),
+        ('telegram', 'Telegram'),
+        ('whatsapp', 'WhatsApp'),
+        ('email', 'Email'),
         ('other', 'Other'),
     ]
+    
+    # Mapping of platform to icon name
+    ICON_MAPPING = {
+        'linkedin': 'linkedin',
+        'github': 'github',
+        'twitter': 'twitter',
+        'instagram': 'instagram',
+        'facebook': 'facebook',
+        'youtube': 'youtube',
+        'dribbble': 'dribbble',
+        'behance': 'behance',
+        'medium': 'medium',
+        'dev': 'dev',
+        'stackoverflow': 'stackoverflow',
+        'website': 'website',
+        'discord': 'discord',
+        'threads': 'threads',
+        'pinterest': 'pinterest',
+        'reddit': 'reddit',
+        'telegram': 'telegram',
+        'whatsapp': 'whatsapp',
+        'email': 'email',
+        'other': 'other',
+    }
     
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='social_links')
     platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES)
     url = models.URLField()
-    icon = models.CharField(max_length=50, blank=True, help_text="Icon class or name")
+    icon = models.CharField(max_length=50, blank=True, help_text="Icon class or name (leave blank for default)")
     order = models.PositiveIntegerField(default=0)
     
     # Display on homepage
@@ -183,6 +214,12 @@ class SocialLink(models.Model):
 
     class Meta:
         ordering = ['order']
+
+    def save(self, *args, **kwargs):
+        # Auto-fill icon based on platform if not provided
+        if not self.icon and self.platform in self.ICON_MAPPING:
+            self.icon = self.ICON_MAPPING[self.platform]
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.platform} - {self.profile.full_name}"

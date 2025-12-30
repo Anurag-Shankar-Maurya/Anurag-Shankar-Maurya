@@ -405,10 +405,27 @@ class ImageAdmin(admin.ModelAdmin):
 # PROFILE SECTION
 # ============================================
 
+class SocialLinkAdminForm(forms.ModelForm):
+    """Custom form for SocialLink with auto icon assignment"""
+    class Meta:
+        model = SocialLink
+        fields = '__all__'
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Auto-fill icon if platform is selected but icon is empty
+        if self.instance.pk and self.instance.platform and not self.instance.icon:
+            self.fields['icon'].initial = SocialLink.ICON_MAPPING.get(self.instance.platform, '')
+
+
 class SocialLinkInline(admin.TabularInline):
     model = SocialLink
+    form = SocialLinkAdminForm
     extra = 1
     ordering = ['order']
+    
+    class Media:
+        js = ('js/sociallink_admin.js',)
 
 
 class SkillInline(admin.TabularInline):
@@ -487,10 +504,14 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(SocialLink)
 class SocialLinkAdmin(admin.ModelAdmin):
-    list_display = ['platform', 'profile', 'url', 'order']
+    form = SocialLinkAdminForm
+    list_display = ['platform', 'profile', 'url', 'icon', 'order']
     list_filter = ['platform']
     search_fields = ['profile__full_name', 'url']
     ordering = ['profile', 'order']
+    
+    class Media:
+        js = ('js/sociallink_admin.js',)
 
 
 @admin.register(Skill)

@@ -1,6 +1,6 @@
-import { getPosts } from "@/utils/utils";
-import { Grid } from "@once-ui-system/core";
+import { Grid, Text } from "@once-ui-system/core";
 import Post from "./Post";
+import { blogApi } from "@/lib";
 
 interface PostsProps {
   range?: [number] | [number, number];
@@ -10,36 +10,60 @@ interface PostsProps {
   exclude?: string[];
 }
 
-export function Posts({
+export async function Posts({
   range,
   columns = "1",
   thumbnail = false,
   exclude = [],
   direction,
 }: PostsProps) {
-  let allBlogs = getPosts(["src", "app", "blog", "posts"]);
+  let posts;
+
+  try {
+    const response = await blogApi.list({
+      ordering: '-published_at',
+      show_on_home: true
+    });
+    posts = response.results;
+  } catch (error) {
+    console.error('Failed to fetch blog posts:', error);
+    return <Text>Unable to load blog posts. Please try again later.</Text>;
+  }
 
   // Exclude by slug (exact match)
   if (exclude.length) {
-    allBlogs = allBlogs.filter((post) => !exclude.includes(post.slug));
+    posts = posts.filter((post) => !exclude.includes(post.slug));
   }
 
-  const sortedBlogs = allBlogs.sort((a, b) => {
-    return new Date(b.metadata.publishedAt).getTime() - new Date(a.metadata.publishedAt).getTime();
-  });
-
   const displayedBlogs = range
-    ? sortedBlogs.slice(range[0] - 1, range.length === 2 ? range[1] : sortedBlogs.length)
-    : sortedBlogs;
+    ? posts.slice(range[0] - 1, range.length === 2 ? range[1] : posts.length)
+    : posts;
 
   return (
     <>
-      {displayedBlogs.length > 0 && (
+      {displayedBlogs.length > 0 ? (
         <Grid columns={columns} s={{ columns: 1 }} fillWidth marginBottom="40" gap="16">
           {displayedBlogs.map((post) => (
-            <Post key={post.slug} post={post} thumbnail={thumbnail} direction={direction} />
+            <Post 
+              key={post.slug} 
+              post={{
+                slug: post.slug,
+                metadata: {
+                  title: post.title,
+                  publishedAt: post.published_at || post.created_at,
+                  summary: post.excerpt,
+                  images: post.featured_image ? [post.featured_image] : [],
+                  tag: post.category?.name || '',
+                },
+                content: ''
+              }} 
+              thumbnail={thumbnail} 
+              direction={direction} 
+            />
           ))}
         </Grid>
+      ) : (
+        <Text>No blog posts available.</Text>
       )}
     </>
   );

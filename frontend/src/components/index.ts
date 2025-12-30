@@ -8,4 +8,5 @@ export { Providers } from "@/components/Providers";
 export { ConfigProvider, useBackendConfig } from "@/components/ConfigProvider";
 export { ScrollToHash } from "@/components/ScrollToHash";
 export { ThemeToggle } from "@/components/ThemeToggle";
+export { Lightbox } from "@/components/Lightbox";
 export { CustomMDX } from "@/components/mdx";

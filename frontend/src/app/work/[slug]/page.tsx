@@ -18,6 +18,7 @@ import { Projects } from "@/components/work/Projects";
 import { projectsApi } from "@/lib";
 import type { ProjectDetail } from "@/types/api.types";
 import Image from "next/image";
+import { ProjectGallery } from "./ProjectGallery";
 
 export async function generateMetadata({
   params,
@@ -219,40 +220,7 @@ export default async function Project({
             <Heading as="h3" variant="heading-strong-m">
               Gallery
             </Heading>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "16px",
-              }}
-            >
-              {project.images.map((img) => (
-                <Column key={img.id} gap="8">
-                  <div
-                    style={{
-                      position: "relative",
-                      width: "100%",
-                      aspectRatio: "16/9",
-                      borderRadius: "var(--radius-m)",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <Image
-                      src={img.data_uri || img.image_url}
-                      alt={img.alt_text || img.caption || project.title}
-                      fill
-                      style={{ objectFit: "cover" }}
-                      unoptimized={!!img.data_uri}
-                    />
-                  </div>
-                  {img.caption && (
-                    <Text variant="body-default-xs" onBackground="neutral-weak">
-                      {img.caption}
-                    </Text>
-                  )}
-                </Column>
-              ))}
-            </div>
+            <ProjectGallery images={project.images} projectTitle={project.title} />
           </Column>
         )}
       </Column>

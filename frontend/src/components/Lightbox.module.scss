@@ -1,0 +1,237 @@
+.lightboxOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lightboxContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 120px;
+}
+
+.closeButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--neutral-alpha-medium);
+  border: none;
+  border-radius: var(--radius-m);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10001;
+  transition: all 0.2s ease;
+  color: var(--neutral-on-background-strong);
+
+  &:hover {
+    background: var(--neutral-alpha-strong);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.navButton {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--neutral-alpha-medium);
+  border: none;
+  border-radius: var(--radius-m);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10001;
+  transition: all 0.2s ease;
+  color: var(--neutral-on-background-strong);
+
+  &:hover {
+    background: var(--neutral-alpha-strong);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+}
+
+.navButtonPrev {
+  left: 20px;
+}
+
+.navButtonNext {
+  right: 20px;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  height: calc(100vh - 200px);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageInfo {
+  position: fixed;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 800px;
+  text-align: center;
+  z-index: 10001;
+}
+
+.caption {
+  color: var(--neutral-on-background-weak);
+  font-size: var(--font-size-s);
+  margin-bottom: 8px;
+  background: var(--neutral-alpha-medium);
+  padding: 8px 16px;
+  border-radius: var(--radius-s);
+  backdrop-filter: blur(10px);
+}
+
+.counter {
+  color: var(--neutral-on-background-weak);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.thumbnails {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background: var(--neutral-alpha-medium);
+  border-radius: var(--radius-m);
+  overflow-x: auto;
+  max-width: calc(100vw - 40px);
+  backdrop-filter: blur(10px);
+  z-index: 10001;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--neutral-alpha-weak);
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--neutral-alpha-strong);
+    border-radius: 2px;
+  }
+}
+
+.thumbnail {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-s);
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  background: var(--neutral-alpha-weak);
+
+  &:hover {
+    border-color: var(--brand-alpha-medium);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.thumbnailActive {
+  border-color: var(--brand-on-background-strong);
+  transform: scale(1.1);
+
+  &:hover {
+    border-color: var(--brand-on-background-strong);
+  }
+}
+
+@media (max-width: 768px) {
+  .lightboxContent {
+    padding: 60px 10px 100px;
+  }
+
+  .closeButton {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .navButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  .navButtonPrev {
+    left: 10px;
+  }
+
+  .navButtonNext {
+    right: 10px;
+  }
+
+  .imageContainer {
+    height: calc(100vh - 160px);
+  }
+
+  .imageInfo {
+    bottom: 120px;
+    max-width: calc(100vw - 40px);
+  }
+
+  .thumbnails {
+    max-width: calc(100vw - 20px);
+  }
+
+  .thumbnail {
+    width: 50px;
+    height: 50px;
+  }
+}

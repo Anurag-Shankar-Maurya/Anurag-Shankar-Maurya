@@ -26,7 +26,7 @@ class Image(models.Model):
     ]
     
     # Image data stored as BLOB
-    image_data = models.BinaryField(help_text="Image stored as binary data")
+    image_data = models.BinaryField(editable=True, help_text="Image stored as binary data")
     
     # Image metadata
     filename = models.CharField(max_length=255)
@@ -118,11 +118,11 @@ class Profile(models.Model):
     bio = models.TextField(help_text="About me section content")
     
     # Cover image stored as BLOB
-    profile_image_data = models.BinaryField(blank=True, null=True, help_text="Profile image as binary")
+    profile_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Profile image as binary")
     profile_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
     
     # Resume as BLOB
-    resume_data = models.BinaryField(blank=True, null=True, help_text="Resume file as binary")
+    resume_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Resume file as binary")
     resume_filename = models.CharField(max_length=255, blank=True)
     resume_mime = models.CharField(max_length=100, blank=True)
     
@@ -232,7 +232,7 @@ class Education(models.Model):
     location = models.CharField(max_length=100, blank=True)
     
     # Logo stored as BLOB
-    logo_data = models.BinaryField(blank=True, null=True, help_text="Institution logo as binary")
+    logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Institution logo as binary")
     logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
     
     # Related images (gallery)
@@ -271,7 +271,7 @@ class WorkExperience(models.Model):
     company_name = models.CharField(max_length=200)
     
     # Company logo stored as BLOB
-    company_logo_data = models.BinaryField(blank=True, null=True, help_text="Company logo as binary")
+    company_logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Company logo as binary")
     company_logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
     
     company_url = models.URLField(blank=True)
@@ -319,7 +319,7 @@ class Project(models.Model):
     description = models.TextField(help_text="Detailed project description")
     
     # Featured/Cover image stored as BLOB
-    featured_image_data = models.BinaryField(blank=True, null=True, help_text="Featured image as binary")
+    featured_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Featured image as binary")
     featured_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
     featured_image_alt = models.CharField(max_length=255, blank=True, help_text="Alt text for SEO")
     
@@ -372,7 +372,7 @@ class Certificate(models.Model):
     issuing_organization = models.CharField(max_length=200)
     
     # Organization logo stored as BLOB
-    organization_logo_data = models.BinaryField(blank=True, null=True, help_text="Organization logo as binary")
+    organization_logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Organization logo as binary")
     organization_logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
     
     issue_date = models.DateField()
@@ -382,7 +382,7 @@ class Certificate(models.Model):
     credential_url = models.URLField(blank=True, help_text="URL to verify certificate")
     
     # Certificate image stored as BLOB
-    certificate_image_data = models.BinaryField(blank=True, null=True, help_text="Certificate image as binary")
+    certificate_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Certificate image as binary")
     certificate_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
     
     description = models.TextField(blank=True)
@@ -420,7 +420,7 @@ class Achievement(models.Model):
     url = models.URLField(blank=True, help_text="Link to achievement or proof")
     
     # Achievement image stored as BLOB
-    image_data = models.BinaryField(blank=True, null=True, help_text="Achievement image as binary")
+    image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Achievement image as binary")
     image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
     
     order = models.PositiveIntegerField(default=0)
@@ -494,7 +494,7 @@ class BlogPost(models.Model):
     content = models.TextField(help_text="Full blog post content (supports Markdown)")
     
     # Featured image stored as BLOB
-    featured_image_data = models.BinaryField(blank=True, null=True, help_text="Featured image as binary")
+    featured_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Featured image as binary")
     featured_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
     featured_image_alt = models.CharField(max_length=200, blank=True, help_text="Alt text for SEO")
     
@@ -526,7 +526,7 @@ class BlogPost(models.Model):
     og_description = models.CharField(max_length=200, blank=True, help_text="Open Graph description")
     
     # OG image stored as BLOB
-    og_image_data = models.BinaryField(blank=True, null=True, help_text="Social sharing image as binary (1200x630)")
+    og_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Social sharing image as binary (1200x630)")
     og_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
     
     # Schema.org structured data
@@ -574,7 +574,7 @@ class Testimonial(models.Model):
     author_company = models.CharField(max_length=100, blank=True)
     
     # Author image stored as BLOB
-    author_image_data = models.BinaryField(blank=True, null=True, help_text="Author image as binary")
+    author_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Author image as binary")
     author_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
     
     content = models.TextField()

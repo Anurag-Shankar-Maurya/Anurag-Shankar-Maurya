@@ -5,7 +5,7 @@ export { ProjectCard } from "@/components/ProjectCard";
 export { HeadingLink } from "@/components/HeadingLink";
 export { RouteGuard } from "@/components/RouteGuard";
 export { Providers } from "@/components/Providers";
-export { ConfigProvider } from "@/components/ConfigProvider";
+export { ConfigProvider, useBackendConfig } from "@/components/ConfigProvider";
 export { ScrollToHash } from "@/components/ScrollToHash";
 export { ThemeToggle } from "@/components/ThemeToggle";
 export { CustomMDX } from "@/components/mdx";

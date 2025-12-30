@@ -26,6 +26,7 @@ export interface SiteConfig {
     surface: string;
     transition: string;
     scaling: string;
+    'viz-style'?: string; // Optional visualization style
   };
   schema: {
     logo: string;

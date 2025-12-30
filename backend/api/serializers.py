@@ -57,6 +57,7 @@ class SkillSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     """Basic profile serializer for list view"""
     profile_image = serializers.SerializerMethodField()
+    resume_url = serializers.SerializerMethodField()
     
     class Meta:
         model = Profile
@@ -64,7 +65,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             'id', 'full_name', 'headline', 'bio', 'profile_image',
             'email', 'phone', 'location',
             'years_of_experience', 'current_role', 'current_company',
-            'available_for_hire', 'created_at', 'updated_at'
+            'available_for_hire', 'resume_filename', 'resume_url',
+            'created_at', 'updated_at'
         ]
     
     def get_profile_image(self, obj):
@@ -72,6 +74,14 @@ class ProfileSerializer(serializers.ModelSerializer):
         if obj.profile_image_data:
             b64 = base64.b64encode(obj.profile_image_data).decode('utf-8')
             return f"data:{obj.profile_image_mime};base64,{b64}"
+        return None
+    
+    def get_resume_url(self, obj):
+        """Return resume download URL"""
+        if obj.resume_data and obj.resume_filename:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/profiles/{obj.pk}/resume/')
         return None
 
 

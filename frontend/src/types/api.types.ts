@@ -78,6 +78,8 @@ export interface Profile {
   current_role?: string;
   current_company?: string;
   available_for_hire: boolean;
+  resume_filename?: string;
+  resume_url?: string;
   created_at: string;
   updated_at: string;
 }

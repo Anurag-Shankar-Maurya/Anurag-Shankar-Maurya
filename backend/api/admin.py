@@ -55,8 +55,16 @@ class ImageAdminForm(forms.ModelForm):
 
 class ProfileAdminForm(forms.ModelForm):
     """Custom form for Profile model with file uploads"""
-    profile_image_file = forms.ImageField(required=False, label='Upload Profile Image')
-    resume_file = forms.FileField(required=False, label='Upload Resume')
+    profile_image_file = forms.ImageField(
+        required=False, 
+        label='Upload Profile Image',
+        help_text='Current profile image will be replaced if new file is uploaded'
+    )
+    resume_file = forms.FileField(
+        required=False, 
+        label='Upload Resume',
+        help_text='Upload PDF, DOC, DOCX or TXT file. Current resume will be replaced if new file is uploaded'
+    )
     
     class Meta:
         model = Profile
@@ -66,21 +74,47 @@ class ProfileAdminForm(forms.ModelForm):
             'resume_data': forms.HiddenInput(),
         }
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Show current file status
+        if self.instance and self.instance.pk:
+            if self.instance.profile_image_data:
+                self.fields['profile_image_file'].help_text = f'✓ Current: Profile image uploaded ({len(self.instance.profile_image_data)} bytes). Upload new file to replace.'
+            if self.instance.resume_data:
+                resume_name = self.instance.resume_filename or 'resume file'
+                self.fields['resume_file'].help_text = f'✓ Current: {resume_name} ({len(self.instance.resume_data)} bytes). Upload new file to replace.'
+    
     def save(self, commit=True):
         instance = super().save(commit=False)
         
         # Handle profile image
         profile_image = self.cleaned_data.get('profile_image_file')
         if profile_image:
-            instance.profile_image_data = profile_image.read()
+            image_data = profile_image.read()
+            instance.profile_image_data = image_data
             instance.profile_image_mime = profile_image.content_type or 'image/jpeg'
         
-        # Handle resume
+        # Handle resume - accept various file types
         resume = self.cleaned_data.get('resume_file')
         if resume:
-            instance.resume_data = resume.read()
+            resume_data = resume.read()
+            instance.resume_data = resume_data
             instance.resume_filename = resume.name
-            instance.resume_mime = resume.content_type or 'application/pdf'
+            # Determine MIME type
+            content_type = resume.content_type
+            if not content_type:
+                # Fallback based on file extension
+                if resume.name.lower().endswith('.pdf'):
+                    content_type = 'application/pdf'
+                elif resume.name.lower().endswith('.doc'):
+                    content_type = 'application/msword'
+                elif resume.name.lower().endswith('.docx'):
+                    content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                elif resume.name.lower().endswith('.txt'):
+                    content_type = 'text/plain'
+                else:
+                    content_type = 'application/octet-stream'
+            instance.resume_mime = content_type
         
         if commit:
             instance.save()
@@ -390,7 +424,7 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display_links = ['full_name']
     list_filter = ['available_for_hire', 'created_at']
     search_fields = ['full_name', 'headline', 'email', 'bio']
-    readonly_fields = ['profile_preview_large', 'created_at', 'updated_at']
+    readonly_fields = ['profile_preview_large', 'resume_info', 'created_at', 'updated_at']
     inlines = [SocialLinkInline, SkillInline, ImageInline]
 
     fieldsets = (
@@ -407,8 +441,8 @@ class ProfileAdmin(admin.ModelAdmin):
             'fields': ('current_role', 'current_company', 'years_of_experience', 'available_for_hire')
         }),
         ('Resume', {
-            'fields': ('resume_file', 'resume_filename'),
-            'classes': ('collapse',)
+            'fields': ('resume_info', 'resume_file', 'resume_filename'),
+            'description': 'Upload PDF, DOC, DOCX, or TXT files. The resume filename will be auto-filled from uploaded file.'
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
@@ -423,6 +457,32 @@ class ProfileAdmin(admin.ModelAdmin):
     def profile_preview_large(self, obj):
         return get_image_preview(obj.profile_image_data, obj.profile_image_mime, 150, 150)
     profile_preview_large.short_description = 'Profile Image'
+
+    def resume_info(self, obj):
+        """Display current resume information"""
+        if obj.resume_data and obj.resume_filename:
+            size_kb = len(obj.resume_data) / 1024
+            download_url = f'/api/profiles/{obj.pk}/resume/' if obj.pk else '#'
+            return format_html(
+                '<div style="padding: 10px; background: #e8f5e9; border-radius: 4px;">'
+                '<strong>✓ Resume Uploaded</strong><br>'
+                'Filename: {}<br>'
+                'Size: {:.2f} KB<br>'
+                'Type: {}<br>'
+                '<a href="{}" target="_blank" style="color: #1976d2;">Download Current Resume</a>'
+                '</div>',
+                obj.resume_filename,
+                size_kb,
+                obj.resume_mime or 'Unknown',
+                download_url
+            )
+        return format_html(
+            '<div style="padding: 10px; background: #fff3e0; border-radius: 4px;">'
+            '<strong>⚠ No Resume Uploaded</strong><br>'
+            'Use the "Upload Resume" field below to add a resume file.'
+            '</div>'
+        )
+    resume_info.short_description = 'Current Resume Status'
 
 
 @admin.register(SocialLink)

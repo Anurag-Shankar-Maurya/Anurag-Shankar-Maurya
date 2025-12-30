@@ -49,11 +49,12 @@ class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=['get'])
     def resume(self, request, pk=None):
         """Download resume file"""
+        from django.http import HttpResponse
         profile = self.get_object()
-        if profile.resume_data:
-            response = Response(
-                base64.b64encode(profile.resume_data).decode('utf-8'),
-                content_type=profile.resume_mime
+        if profile.resume_data and profile.resume_filename:
+            response = HttpResponse(
+                profile.resume_data,
+                content_type=profile.resume_mime or 'application/pdf'
             )
             response['Content-Disposition'] = f'attachment; filename="{profile.resume_filename}"'
             return response

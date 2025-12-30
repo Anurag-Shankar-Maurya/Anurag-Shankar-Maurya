@@ -275,6 +275,75 @@ export default async function About() {
                 </Tag>
               )}
             </Row>
+
+            {/* Resume Download */}
+            {profile.resume_url && profile.resume_filename && (
+              <Row marginTop="m">
+                <Button
+                  href={profile.resume_url}
+                  prefixIcon="download"
+                  label={`Download Resume (${profile.resume_filename})`}
+                  size="m"
+                  variant="secondary"
+                  target="_blank"
+                />
+              </Row>
+            )}
+
+            {/* Gallery Images */}
+            {profile.images && profile.images.length > 0 && (
+              <Column fillWidth gap="m" marginTop="xl">
+                <Heading as="h3" variant="heading-strong-l">
+                  Gallery
+                </Heading>
+                <Row wrap gap="m">
+                  {profile.images.map((image) => (
+                    <Column 
+                      key={image.id} 
+                      style={{ width: '200px' }}
+                      gap="4"
+                    >
+                      <img
+                        src={image.data_uri}
+                        alt={image.alt_text || image.filename}
+                        style={{ 
+                          width: '100%', 
+                          height: 'auto',
+                          borderRadius: '8px',
+                          objectFit: 'cover'
+                        }}
+                      />
+                      {image.caption && (
+                        <Text variant="body-default-s" onBackground="neutral-weak">
+                          {image.caption}
+                        </Text>
+                      )}
+                    </Column>
+                  ))}
+                </Row>
+              </Column>
+            )}
+
+            {/* Timestamps */}
+            <Row wrap gap="m" marginTop="l" paddingTop="l" style={{ borderTop: '1px solid var(--neutral-alpha-weak)' }}>
+              <Text variant="body-default-xs" onBackground="neutral-weak">
+                Profile created: {new Date(profile.created_at).toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </Text>
+              <Text variant="body-default-xs" onBackground="neutral-weak">
+                •
+              </Text>
+              <Text variant="body-default-xs" onBackground="neutral-weak">
+                Last updated: {new Date(profile.updated_at).toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </Text>
+            </Row>
           </Column>
 
           {/* Work Experience Section */}

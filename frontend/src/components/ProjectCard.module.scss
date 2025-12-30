@@ -1,0 +1,67 @@
+.featuredCard {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  background: var(--neutral-alpha-weak);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--neutral-alpha-medium);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    border-color: var(--brand-alpha-medium);
+    
+    .image {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.regularCard {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  background: var(--neutral-alpha-weak);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--neutral-alpha-medium);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-color: var(--brand-alpha-medium);
+    
+    .image {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.cardContent {
+  height: 100%;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--neutral-alpha-medium);
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 768px) {
+  .featuredCard,
+  .regularCard {
+    &:hover {
+      transform: none;
+    }
+  }
+}

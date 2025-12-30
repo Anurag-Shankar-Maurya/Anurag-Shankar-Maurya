@@ -21,8 +21,12 @@ import {
   profileApi, 
   achievementsApi,
   testimonialsApi,
-  skillsApi
+  skillsApi,
+  certificatesApi,
+  educationApi,
+  workExperienceApi
 } from "@/lib";
+import type { Profile, Achievement, Testimonial, Skill, Certificate, Education, WorkExperience } from "@/types";
 
 export async function generateMetadata() {
   let profile;
@@ -47,20 +51,32 @@ export async function generateMetadata() {
 
 export default async function Home() {
   // Fetch dynamic data from API
-  let profile, featuredAchievement, testimonials, featuredSkills;
+  let profile: Profile | undefined;
+  let featuredAchievement: Achievement | undefined;
+  let testimonials: Testimonial[] = [];
+  let featuredSkills: Skill[] = [];
+  let certificates: Certificate[] = [];
+  let education: Education[] = [];
+  let workExperience: WorkExperience[] = [];
   
   try {
-    const [profileData, achievementsData, testimonialsData, skillsData] = await Promise.all([
+    const [profileData, achievementsData, testimonialsData, skillsData, certificatesData, educationData, workData] = await Promise.all([
       profileApi.list(),
       achievementsApi.list({ show_on_home: true, ordering: '-date' }),
       testimonialsApi.list({ show_on_home: true, ordering: '-date' }),
       skillsApi.list({ show_on_home: true }),
+      certificatesApi.list({ show_on_home: true, ordering: '-issue_date' }),
+      educationApi.list({ show_on_home: true }),
+      workExperienceApi.list({ show_on_home: true, ordering: '-start_date' }),
     ]);
 
     profile = profileData.results[0];
     featuredAchievement = achievementsData.results[0];
     testimonials = testimonialsData.results;
-    featuredSkills = skillsData.results.slice(0, 6); // Show top 6 skills
+    featuredSkills = skillsData.results.slice(0, 6);
+    certificates = certificatesData.results;
+    education = educationData.results;
+    workExperience = workData.results;
   } catch (error) {
     console.error('Failed to fetch home page data:', error);
   }
@@ -171,7 +187,7 @@ export default async function Home() {
               Specialized in
             </Text>
             <Row wrap gap="8" horizontal="center">
-              {featuredSkills.map((skill) => (
+              {featuredSkills.map((skill: Skill) => (
                 <Tag 
                   key={skill.id}
                   size="l"
@@ -185,9 +201,220 @@ export default async function Home() {
         </RevealFx>
       )}
 
+      {/* Stats Section */}
+      {profile && (
+        <RevealFx translateY="12" delay={0.5} fillWidth>
+          <Row fillWidth gap="m" horizontal="center" wrap>
+            {profile.years_of_experience && (
+              <Column 
+                padding="24" 
+                radius="l" 
+                background="surface"
+                gap="8"
+                horizontal="center"
+                align="center"
+                flex={1}
+                minWidth={120}
+              >
+                <Heading variant="display-strong-m">
+                  {profile.years_of_experience}+
+                </Heading>
+                <Text variant="body-default-s" onBackground="neutral-weak">
+                  Years Experience
+                </Text>
+              </Column>
+            )}
+            {workExperience && workExperience.length > 0 && (
+              <Column 
+                padding="24" 
+                radius="l" 
+                background="surface"
+                gap="8"
+                horizontal="center"
+                align="center"
+                flex={1}
+                minWidth={120}
+              >
+                <Heading variant="display-strong-m">
+                  {workExperience.length}
+                </Heading>
+                <Text variant="body-default-s" onBackground="neutral-weak">
+                  Positions
+                </Text>
+              </Column>
+            )}
+            {certificates && certificates.length > 0 && (
+              <Column 
+                padding="24" 
+                radius="l" 
+                background="surface"
+                gap="8"
+                horizontal="center"
+                align="center"
+                flex={1}
+                minWidth={120}
+              >
+                <Heading variant="display-strong-m">
+                  {certificates.length}
+                </Heading>
+                <Text variant="body-default-s" onBackground="neutral-weak">
+                  Certifications
+                </Text>
+              </Column>
+            )}
+          </Row>
+        </RevealFx>
+      )}
+
       <RevealFx translateY="16" delay={0.6}>
         <Projects range={[1, 1]} />
       </RevealFx>
+
+      {/* Featured Certificates */}
+      {certificates && certificates.length > 0 && (
+        <Column fillWidth gap="24">
+          <Row fillWidth paddingRight="64">
+            <Line maxWidth={48} />
+          </Row>
+          <Column fillWidth gap="32" marginTop="40" horizontal="center">
+            <Heading as="h2" variant="display-strong-s" align="center">
+              Certifications & Credentials
+            </Heading>
+            <Row wrap gap="l" horizontal="center" fillWidth>
+              {certificates.slice(0, 3).map((cert: Certificate) => (
+                <Column 
+                  key={cert.id}
+                  flex={1}
+                  minWidth={280}
+                  padding="24"
+                  radius="l"
+                  background="surface"
+                  gap="m"
+                >
+                  {cert.organization_logo && (
+                    <img 
+                      src={cert.organization_logo}
+                      alt={cert.issuing_organization}
+                      style={{ width: '48px', height: '48px', objectFit: 'contain' }}
+                    />
+                  )}
+                  <Text variant="heading-strong-s">
+                    {cert.title}
+                  </Text>
+                  <Text variant="body-default-s" onBackground="neutral-weak">
+                    {cert.issuing_organization}
+                  </Text>
+                  {cert.credential_url && (
+                    <Button
+                      href={cert.credential_url}
+                      variant="secondary"
+                      size="s"
+                      target="_blank"
+                    >
+                      Verify
+                    </Button>
+                  )}
+                </Column>
+              ))}
+            </Row>
+          </Column>
+          <Row fillWidth paddingLeft="64" horizontal="end">
+            <Line maxWidth={48} />
+          </Row>
+        </Column>
+      )}
+
+      {/* Current Role Highlight */}
+      {workExperience && workExperience.length > 0 && workExperience[0] && (
+        <Column 
+          fillWidth 
+          gap="24"
+          padding="32"
+          radius="l"
+          background="brand-alpha-weak"
+          horizontal="center"
+          align="center"
+        >
+          <Column gap="m" horizontal="center" align="center">
+            {workExperience[0].company_logo && (
+              <img 
+                src={workExperience[0].company_logo}
+                alt={workExperience[0].company_name}
+                style={{ width: '60px', height: '60px', objectFit: 'contain' }}
+              />
+            )}
+            <Heading as="h3" variant="heading-strong-l" align="center">
+              Currently at {workExperience[0].company_name}
+            </Heading>
+            <Text variant="heading-default-m" align="center">
+              {workExperience[0].job_title}
+            </Text>
+            {workExperience[0].description && (
+              <Column maxWidth="s" fillWidth>
+                <Text variant="body-default-m" align="center">
+                  {workExperience[0].description}
+                </Text>
+              </Column>
+            )}
+            {workExperience[0].company_url && (
+              <Button
+                href={workExperience[0].company_url}
+                variant="secondary"
+                size="m"
+                target="_blank"
+              >
+                Visit Company
+              </Button>
+            )}
+          </Column>
+        </Column>
+      )}
+
+      {/* Education Section */}
+      {education && education.length > 0 && (
+        <Column fillWidth gap="24">
+          <Row fillWidth paddingRight="64">
+            <Line maxWidth={48} />
+          </Row>
+          <Column fillWidth gap="32" marginTop="40" horizontal="center">
+            <Heading as="h2" variant="display-strong-s" align="center">
+              Education
+            </Heading>
+            <Column fillWidth gap="l" maxWidth="s">
+              {education.map((edu: Education) => (
+                <Row 
+                  key={edu.id}
+                  fillWidth
+                  padding="24"
+                  radius="l"
+                  background="surface"
+                  gap="m"
+                  vertical="center"
+                >
+                  {edu.logo && (
+                    <img 
+                      src={edu.logo}
+                      alt={edu.institution}
+                      style={{ width: '48px', height: '48px', objectFit: 'contain', flexShrink: 0 }}
+                    />
+                  )}
+                  <Column gap="4" flex={1}>
+                    <Text variant="heading-strong-s">
+                      {edu.institution}
+                    </Text>
+                    <Text variant="body-default-s" onBackground="neutral-weak">
+                      {edu.degree} {edu.field_of_study && `in ${edu.field_of_study}`}
+                    </Text>
+                  </Column>
+                </Row>
+              ))}
+            </Column>
+          </Column>
+          <Row fillWidth paddingLeft="64" horizontal="end">
+            <Line maxWidth={48} />
+          </Row>
+        </Column>
+      )}
 
       {/* Testimonials Section */}
       {testimonials && testimonials.length > 0 && (
@@ -200,7 +427,7 @@ export default async function Home() {
               What people say
             </Heading>
             <Column fillWidth gap="l" maxWidth="s">
-              {testimonials.slice(0, 2).map((testimonial) => (
+              {testimonials.slice(0, 2).map((testimonial: Testimonial) => (
                 <Column 
                   key={testimonial.id}
                   fillWidth 
@@ -323,6 +550,45 @@ export default async function Home() {
           </Row>
         </Column>
       )}
+
+      {/* Call to Action Section */}
+      <Column 
+        fillWidth 
+        gap="m"
+        padding="40"
+        radius="l"
+        background="brand-alpha-weak"
+        horizontal="center"
+        align="center"
+      >
+        <Heading as="h2" variant="display-strong-s" align="center">
+          Ready to work together?
+        </Heading>
+        <Column maxWidth="s" fillWidth>
+          <Text variant="body-default-l" align="center">
+            I'm always interested in hearing about new projects and opportunities.
+          </Text>
+        </Column>
+        <Row gap="m" marginTop="m" horizontal="center">
+          <Button
+            href={about.path}
+            variant="primary"
+            size="m"
+            arrowIcon
+          >
+            Get in touch
+          </Button>
+          {profile?.email && (
+            <Button
+              href={`mailto:${profile.email}`}
+              variant="secondary"
+              size="m"
+            >
+              Email me
+            </Button>
+          )}
+        </Row>
+      </Column>
 
       <Mailchimp />
     </Column>

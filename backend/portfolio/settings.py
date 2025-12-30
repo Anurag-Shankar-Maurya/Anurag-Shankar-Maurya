@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
+    'drf_spectacular',
 
     # Local apps
     'api',
@@ -150,6 +151,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
@@ -188,3 +190,39 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+
+# ============================================
+# SWAGGER/OPENAPI CONFIGURATION
+# ============================================
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Portfolio API',
+    'DESCRIPTION': 'RESTful API for portfolio/CV management system with comprehensive endpoints for profile, projects, blog, certificates, and more.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {
+        'name': 'Portfolio Support',
+        'email': 'support@portfolio.com',
+    },
+    'LICENSE': {
+        'name': 'MIT License',
+    },
+    'TAGS': [
+        {'name': 'Profile', 'description': 'Profile and personal information'},
+        {'name': 'Projects', 'description': 'Portfolio projects'},
+        {'name': 'Blog', 'description': 'Blog posts and articles'},
+        {'name': 'Work Experience', 'description': 'Employment history'},
+        {'name': 'Education', 'description': 'Educational qualifications'},
+        {'name': 'Certificates', 'description': 'Professional certifications'},
+        {'name': 'Achievements', 'description': 'Awards and recognitions'},
+        {'name': 'Testimonials', 'description': 'Client testimonials'},
+        {'name': 'Contact', 'description': 'Contact form submissions'},
+    ],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': r'/api',
+    'SERVERS': [
+        {'url': 'http://127.0.0.1:8000', 'description': 'Development server'},
+        {'url': 'http://localhost:8000', 'description': 'Local server'},
+    ],
+}

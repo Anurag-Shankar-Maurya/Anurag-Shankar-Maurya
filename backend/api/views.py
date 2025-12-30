@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 import base64
 
 from .models import (
@@ -26,6 +28,10 @@ from .serializers import (
 # PROFILE VIEWSET
 # ============================================
 
+@extend_schema_view(
+    list=extend_schema(tags=['Profile'], description='List all profiles'),
+    retrieve=extend_schema(tags=['Profile'], description='Retrieve profile details with related data'),
+)
 class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
     """
     ViewSet for Profile model.
@@ -100,6 +106,11 @@ class WorkExperienceViewSet(viewsets.ReadOnlyModelViewSet):
 # PROJECTS VIEWSET
 # ============================================
 
+@extend_schema_view(
+    list=extend_schema(tags=['Projects'], description='List all visible projects'),
+    retrieve=extend_schema(tags=['Projects'], description='Retrieve project details by slug'),
+    featured=extend_schema(tags=['Projects'], description='Get featured projects'),
+)
 class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Portfolio projects
@@ -158,6 +169,7 @@ class AchievementViewSet(viewsets.ReadOnlyModelViewSet):
 # BLOG VIEWSETS
 # ============================================
 
+@extend_schema(tags=['Blog'])
 class BlogCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """Blog categories"""
     queryset = BlogCategory.objects.all()
@@ -166,6 +178,7 @@ class BlogCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
 
 
+@extend_schema(tags=['Blog'])
 class BlogTagViewSet(viewsets.ReadOnlyModelViewSet):
     """Blog tags"""
     queryset = BlogTag.objects.all()
@@ -174,6 +187,13 @@ class BlogTagViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
 
 
+@extend_schema_view(
+    list=extend_schema(tags=['Blog'], description='List published blog posts (paginated)'),
+    retrieve=extend_schema(tags=['Blog'], description='Retrieve blog post by slug (increments view count)'),
+    featured=extend_schema(tags=['Blog'], description='Get featured blog posts'),
+    by_category=extend_schema(tags=['Blog'], description='Get posts by category slug'),
+    by_tag=extend_schema(tags=['Blog'], description='Get posts by tag slug'),
+)
 class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Blog posts with SEO support
@@ -260,6 +280,9 @@ class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
 # CONTACT MESSAGE VIEWSET
 # ============================================
 
+@extend_schema_view(
+    create=extend_schema(tags=['Contact'], description='Submit contact form'),
+)
 class ContactMessageViewSet(viewsets.ModelViewSet):
     """
     Contact form submissions

@@ -55,7 +55,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skill
-        fields = ['id', 'name', 'skill_type', 'proficiency', 'icon', 'order']
+        fields = ['id', 'name', 'slug', 'skill_type', 'proficiency', 'icon', 'order']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -110,7 +110,7 @@ class EducationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Education
         fields = [
-            'id', 'institution', 'degree', 'field_of_study',
+            'id', 'institution', 'slug', 'degree', 'field_of_study',
             'start_date', 'end_date', 'is_current', 'grade',
             'description', 'location', 'logo', 'images'
         ]
@@ -198,7 +198,7 @@ class CertificateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Certificate
         fields = [
-            'id', 'title', 'issuing_organization', 'organization_logo',
+            'id', 'title', 'slug', 'issuing_organization', 'organization_logo',
             'issue_date', 'expiry_date', 'does_not_expire',
             'credential_id', 'credential_url', 'certificate_image',
             'description', 'skills', 'order', 'images'
@@ -230,7 +230,7 @@ class AchievementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Achievement
         fields = [
-            'id', 'title', 'achievement_type', 'issuer', 'date',
+            'id', 'title', 'slug', 'achievement_type', 'issuer', 'date',
             'description', 'url', 'image', 'order', 'images'
         ]
     
@@ -337,7 +337,7 @@ class TestimonialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testimonial
         fields = [
-            'id', 'author_name', 'author_title', 'author_company',
+            'id', 'author_name', 'slug', 'author_title', 'author_company',
             'author_image', 'content', 'rating', 'relationship',
             'linkedin_url', 'is_featured', 'date', 'order', 'images'
         ]

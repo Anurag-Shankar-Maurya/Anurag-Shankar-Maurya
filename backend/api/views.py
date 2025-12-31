@@ -80,6 +80,7 @@ class SkillViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['profile', 'skill_type', 'proficiency', 'show_on_home']
 
@@ -89,6 +90,7 @@ class EducationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Education.objects.all()
     serializer_class = EducationSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['profile', 'is_current', 'show_on_home']
 
@@ -150,6 +152,7 @@ class CertificateViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Certificate.objects.all()
     serializer_class = CertificateSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['profile', 'does_not_expire', 'show_on_home']
     search_fields = ['title', 'issuing_organization', 'skills']
@@ -161,6 +164,7 @@ class AchievementViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Achievement.objects.all()
     serializer_class = AchievementSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['profile', 'achievement_type', 'show_on_home']
     search_fields = ['title', 'issuer', 'description']
@@ -266,6 +270,7 @@ class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Testimonial.objects.filter(is_visible=True)
     serializer_class = TestimonialSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['profile', 'is_featured', 'rating', 'show_on_home']
     ordering_fields = ['date', 'order', 'rating']

@@ -255,6 +255,7 @@ class Skill(models.Model):
     
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='skills')
     name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
     skill_type = models.CharField(max_length=25, choices=SKILL_TYPE_CHOICES, default='language')
     proficiency = models.CharField(max_length=20, choices=PROFICIENCY_CHOICES, default='intermediate')
     icon = models.CharField(max_length=50, blank=True)
@@ -265,6 +266,11 @@ class Skill(models.Model):
 
     class Meta:
         ordering = ['order', 'name']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -278,6 +284,7 @@ class Education(models.Model):
     """Educational qualifications"""
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='education')
     institution = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=250, unique=True, blank=True)
     degree = models.CharField(max_length=200)
     field_of_study = models.CharField(max_length=200)
     start_date = models.DateField()
@@ -303,6 +310,11 @@ class Education(models.Model):
 
     def __str__(self):
         return f"{self.degree} - {self.institution}"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(f"{self.institution}-{self.degree}")
+        super().save(*args, **kwargs)
 
 
 # ============================================
@@ -432,6 +444,7 @@ class Certificate(models.Model):
     """Professional certifications"""
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='certificates')
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=250, unique=True, blank=True)
     issuing_organization = models.CharField(max_length=200)
     
     # Organization logo stored as BLOB
@@ -461,6 +474,11 @@ class Certificate(models.Model):
     class Meta:
         ordering = ['order', '-issue_date']
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.title} - {self.issuing_organization}"
 
@@ -479,6 +497,7 @@ class Achievement(models.Model):
     
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='achievements')
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=250, unique=True, blank=True)
     achievement_type = models.CharField(max_length=20, choices=ACHIEVEMENT_TYPE_CHOICES, default='award')
     issuer = models.CharField(max_length=200, blank=True)
     date = models.DateField()
@@ -499,6 +518,11 @@ class Achievement(models.Model):
 
     class Meta:
         ordering = ['order', '-date']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -642,6 +666,7 @@ class Testimonial(models.Model):
     """Client/colleague testimonials"""
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='testimonials')
     author_name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
     author_title = models.CharField(max_length=100, help_text="Job title")
     author_company = models.CharField(max_length=100, blank=True)
     
@@ -664,6 +689,11 @@ class Testimonial(models.Model):
 
     class Meta:
         ordering = ['-is_featured', 'order', '-date']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(f"{self.author_name}-{self.date.isoformat()}")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Testimonial by {self.author_name}"

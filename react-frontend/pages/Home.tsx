@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ArrowRight, Download } from 'lucide-react';
+import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
 import { ViewState, ProfileDetail, Project, BlogPost, Skill } from '../types';
 import { getSocialIcon } from '../utils/helpers';
@@ -14,6 +15,14 @@ interface HomeProps {
 }
 
 export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts, skills, onNavigate }) => {
+  const [lbOpen, setLbOpen] = React.useState(false);
+  const [lbImages, setLbImages] = React.useState<{ src: string; alt?: string }[]>([]);
+
+  const openSingle = (src: string, alt?: string) => {
+    setLbImages([{ src, alt }]);
+    setLbOpen(true);
+  };
+
   return (
     <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-32">
       {/* Hero */}
@@ -91,7 +100,9 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
             <div key={project.id} className="group relative rounded-2xl glass-card overflow-hidden transition-all duration-500 hover:-translate-y-1">
               <div className="aspect-video w-full bg-black/50 overflow-hidden relative">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-60 group-hover:opacity-40 transition-opacity"></div>
-                <img src={project.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Project'} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <button onClick={() => openSingle(project.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Project', project.title)} className="w-full h-full block">
+                   <img src={project.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Project'} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 cursor-pointer" />
+                </button>
               </div>
               <div className="p-6 relative z-20">
                 <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{project.title}</h3>
@@ -111,6 +122,8 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
           ))}
         </div>
       </section>
+
+      <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
 
       {/* Skills Marquee */}
       <section className="animate-fade-in-up" style={{ animationDelay: '0.7s' }}>
@@ -150,7 +163,9 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
               <div key={post.id} className="group cursor-pointer glass-card rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1" onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}>
                 <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4 relative">
                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>
-                   <img src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                   <button onClick={(e) => { e.stopPropagation(); openSingle(post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog', post.title); }} className="w-full h-full block">
+                   <img src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer" />
+                </button>
                 </div>
                 <div className="px-2">
                   <div className="text-xs text-blue-400 font-medium mb-2 uppercase tracking-wider">{post.category.name}</div>

@@ -1,12 +1,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, BookOpen, Calendar, Loader2 } from 'lucide-react';
+import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
 import { BlogPost, ViewState } from '../types';
 import { api } from '../services/api';
 
-export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewState) => void }> = ({ posts, onNavigate }) => (
-  <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewState) => void }> = ({ posts, onNavigate }) => {
+  const [lbOpen, setLbOpen] = useState(false);
+  const [lbImages, setLbImages] = useState<{ src: string; alt?: string }[]>([]);
+
+  const openSingle = (src: string, alt?: string) => {
+    setLbImages([{ src, alt }]);
+    setLbOpen(true);
+  };
+
+  return (
+    <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
     <div className="flex items-center gap-4 mb-12">
       <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]"><BookOpen className="w-8 h-8"/></div>
       <div>
@@ -25,7 +35,9 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
         >
           <div className="aspect-video w-full rounded-xl overflow-hidden mb-6 relative">
              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>
-             <img src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+             <button onClick={(e) => { e.stopPropagation(); openSingle(post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog', post.title); }} className="w-full h-full block">
+             <img src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-pointer" />
+             </button>
              <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-black/60 backdrop-blur rounded-full text-xs font-medium text-white border border-white/10 shadow-lg">
                {post.category.name}
              </div>
@@ -43,11 +55,14 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
       ))}
     </div>
   </main>
-);
+  );
+};
 
 export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewState) => void }> = ({ slug, onNavigate }) => {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lbOpen, setLbOpen] = useState(false);
+  const [lbImages, setLbImages] = useState<{ src: string; alt?: string }[]>([]);
 
   useEffect(() => {
     api.getBlogPostDetail(slug).then(setPost).catch(console.error).finally(() => setLoading(false));
@@ -75,8 +90,12 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
       </div>
 
       <div className="w-full aspect-[21/9] rounded-2xl overflow-hidden glass-card p-1 mb-12">
-         <img src={post.featured_image} alt={post.title} className="w-full h-full object-cover rounded-xl"/>
+         <button onClick={() => { setLbImages([{ src: post.featured_image, alt: post.title }]); setLbOpen(true); }} className="w-full block">
+           <img src={post.featured_image} alt={post.title} className="w-full h-full object-cover rounded-xl cursor-pointer"/>
+         </button>
       </div>
+
+      <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
 
       <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed">
          <p className="whitespace-pre-wrap">{post.content}</p>

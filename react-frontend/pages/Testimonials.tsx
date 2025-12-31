@@ -1,46 +1,60 @@
 
 import React, { useState, useEffect } from 'react';
 import { Star, Loader2, ArrowLeft } from 'lucide-react';
+import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
 import { Testimonial, ViewState } from '../types';
 import { api } from '../services/api';
 
-export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigate: (view: ViewState) => void }> = ({ testimonials, onNavigate }) => (
-  <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-    <div className="flex items-center gap-4 mb-12">
-      <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.2)]"><Star className="w-8 h-8"/></div>
-      <div>
-         <h1 className="text-4xl font-bold text-white">Testimonials</h1>
-         <p className="text-gray-400 mt-2">What colleagues and clients say about working with me.</p>
-      </div>
-    </div>
-    
-    <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
-      {testimonials.map((test, index) => (
-        <div 
-          key={test.id} 
-          className="glass-card p-8 rounded-3xl break-inside-avoid hover:border-orange-500/30 transition-all cursor-pointer group hover:-translate-y-2 hover:bg-white/5" 
-          onClick={() => onNavigate({ type: 'TESTIMONIAL_DETAIL', slug: test.slug || String(test.id) })}
-          style={{ animationDelay: `${index * 0.1}s` }}
-        >
-           <div className="text-6xl text-white/5 font-serif mb-4 leading-none group-hover:text-orange-500/10 transition-colors">“</div>
-           <p className="text-gray-300 mb-8 relative z-10 leading-relaxed italic">{test.content.length > 150 ? test.content.substring(0, 150) + "..." : test.content}</p>
-           <div className="flex items-center gap-4 pt-6 border-t border-white/5">
-             <img src={test.author_image} alt={test.author_name} className="w-12 h-12 rounded-full object-cover bg-white/10 ring-2 ring-white/10"/>
-             <div>
-                <div className="font-bold text-white group-hover:text-orange-400 transition-colors">{test.author_name}</div>
-                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{test.author_title}</div>
-             </div>
-           </div>
+export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigate: (view: ViewState) => void }> = ({ testimonials, onNavigate }) => {
+  const [lbOpen, setLbOpen] = useState(false);
+  const [lbImages, setLbImages] = useState<{ src: string; alt?: string }[]>([]);
+
+  const openSingle = (src: string, alt?: string) => {
+    setLbImages([{ src, alt }]);
+    setLbOpen(true);
+  };
+
+  return (
+    <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+      <div className="flex items-center gap-4 mb-12">
+        <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.2)]"><Star className="w-8 h-8"/></div>
+        <div>
+           <h1 className="text-4xl font-bold text-white">Testimonials</h1>
+           <p className="text-gray-400 mt-2">What colleagues and clients say about working with me.</p>
         </div>
-      ))}
-    </div>
-  </main>
-);
+      </div>
+      
+      <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+        {testimonials.map((test, index) => (
+          <div 
+            key={test.id} 
+            className="glass-card p-8 rounded-3xl break-inside-avoid hover:border-orange-500/30 transition-all cursor-pointer group hover:-translate-y-2 hover:bg-white/5" 
+            onClick={() => onNavigate({ type: 'TESTIMONIAL_DETAIL', slug: test.slug || String(test.id) })}
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+             <div className="text-6xl text-white/5 font-serif mb-4 leading-none group-hover:text-orange-500/10 transition-colors">“</div>
+             <p className="text-gray-300 mb-8 relative z-10 leading-relaxed italic">{test.content.length > 150 ? test.content.substring(0, 150) + "..." : test.content}</p>
+             <div className="flex items-center gap-4 pt-6 border-t border-white/5">
+               <img onClick={(e) => { e.stopPropagation(); openSingle(test.author_image, test.author_name); }} src={test.author_image} alt={test.author_name} className="w-12 h-12 rounded-full object-cover bg-white/10 ring-2 ring-white/10 cursor-pointer"/>
+               <div>
+                  <div className="font-bold text-white group-hover:text-orange-400 transition-colors">{test.author_name}</div>
+                  <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{test.author_title}</div>
+               </div>
+             </div>
+          </div>
+        ))}
+      </div>
+
+      <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
+    </main>
+  );
+};
 
 export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: ViewState) => void }> = ({ slug, onNavigate }) => {
   const [test, setTest] = useState<Testimonial | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lbOpen, setLbOpen] = useState(false);
 
   useEffect(() => {
     api.getTestimonialDetail(slug).then(setTest).catch(console.error).finally(() => setLoading(false));
@@ -56,8 +70,12 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
       </Button>
       
       <div className="w-32 h-32 rounded-full p-1.5 bg-gradient-to-br from-orange-400 to-pink-500 mb-10 shadow-2xl shadow-orange-500/20">
-         <img src={test.author_image} alt={test.author_name} className="w-full h-full rounded-full object-cover border-4 border-background"/>
+         <button onClick={() => setLbOpen(true)} className="w-full h-full block">
+           <img src={test.author_image} alt={test.author_name} className="w-full h-full rounded-full object-cover border-4 border-background cursor-pointer"/>
+         </button>
       </div>
+
+      <Lightbox images={[{ src: test.author_image, alt: test.author_name }]} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
       
       <h2 className="text-4xl font-bold text-white mb-2">{test.author_name}</h2>
       <div className="text-xl text-orange-400/80 mb-12 font-medium">{test.author_title} at {test.author_company}</div>

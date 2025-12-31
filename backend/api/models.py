@@ -228,12 +228,22 @@ class SocialLink(models.Model):
 class Skill(models.Model):
     """Technical and soft skills"""
     SKILL_TYPE_CHOICES = [
-        ('technical', 'Technical'),
-        ('soft', 'Soft Skill'),
-        ('tool', 'Tool/Software'),
-        ('language', 'Programming Language'),
-        ('framework', 'Framework'),
-        ('other', 'Other'),
+        ('language', 'Language'),
+        ('frontend-dev', 'Frontend Development'),
+        ('backend-dev', 'Backend Development'),
+        ('mobile-app-dev', 'Mobile App Development'),
+        ('ai-ml', 'AI/ML'),
+        ('database', 'Database'),
+        ('data-visualization', 'Data Visualization'),
+        ('devops', 'DevOps'),
+        ('baas', 'Backend Services (BaaS)'),
+        ('frameworks', 'Frameworks'),
+        ('testing', 'Testing'),
+        ('softwares', 'Softwares'),
+        ('static-site-generator', 'Static Site Generator'),
+        ('game-engine', 'Game Engine'),
+        ('automation', 'Automation'),
+        ('others', 'Others'),
     ]
     
     PROFICIENCY_CHOICES = [
@@ -245,7 +255,7 @@ class Skill(models.Model):
     
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='skills')
     name = models.CharField(max_length=100)
-    skill_type = models.CharField(max_length=20, choices=SKILL_TYPE_CHOICES, default='technical')
+    skill_type = models.CharField(max_length=25, choices=SKILL_TYPE_CHOICES, default='language')
     proficiency = models.CharField(max_length=20, choices=PROFICIENCY_CHOICES, default='intermediate')
     icon = models.CharField(max_length=50, blank=True)
     order = models.PositiveIntegerField(default=0)

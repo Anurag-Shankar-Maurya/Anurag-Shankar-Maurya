@@ -264,12 +264,51 @@ class Skill(models.Model):
     # Display on homepage
     show_on_home = models.BooleanField(default=False, help_text="Display this skill on homepage")
 
+    # Mapping of common skill names to icon keys in frontend
+    ICON_MAPPING = {
+        'Python': 'python',
+        'Django': 'django',
+        'React': 'react',
+        'React.js': 'react',
+        'JavaScript': 'javascript',
+        'TypeScript': 'typescript',
+        'HTML': 'html5',
+        'CSS': 'css3',
+        'Kotlin': 'kotlin',
+        'Java': 'java',
+        'Android': 'android',
+        'Flutter': 'flutter',
+        'Dart': 'dart',
+        'PostgreSQL': 'postgresql',
+        'MongoDB': 'mongodb',
+        'MySQL': 'mysql',
+        'SQLite': 'sqlite',
+        'Docker': 'docker',
+        'Kubernetes': 'kubernetes',
+        'AWS': 'aws',
+        'Firebase': 'firebase',
+        'Git': 'git',
+        'Node.js': 'nodejs',
+        'Express': 'express',
+        'Next.js': 'nextjs',
+        'Tailwind': 'tailwind',
+        'Bootstrap': 'bootstrap',
+        'Figma': 'figma',
+        'Arduino': 'arduino',
+        'Linux': 'linux',
+    }
+
+    SKILL_CHOICES = [(name, name) for name in sorted(ICON_MAPPING.keys())] + [('other', 'Other (Manual Entry)')]
+
     class Meta:
         ordering = ['order', 'name']
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        # Auto-fill icon based on name if not provided
+        if not self.icon and self.name in self.ICON_MAPPING:
+            self.icon = self.ICON_MAPPING[self.name]
         super().save(*args, **kwargs)
 
     def __str__(self):

@@ -432,12 +432,68 @@ class SocialLinkInline(admin.TabularInline):
     list_editable = ['show_on_home']
 
 
+class SkillAdminForm(forms.ModelForm):
+    """Custom form for Skill with selection dropdown and manual entry"""
+    skill_select = forms.ChoiceField(
+        choices=Skill.SKILL_CHOICES,
+        required=False,
+        label="Select Skill",
+        help_text="Choose a pre-defined skill to auto-fill icon, or select 'Other' to enter manually."
+    )
+    manual_name = forms.CharField(
+        required=False,
+        label="Manual Name",
+        help_text="Enter skill name manually if 'Other' is selected above."
+    )
+
+    class Meta:
+        model = Skill
+        fields = ['skill_select', 'manual_name', 'skill_type', 'proficiency', 'order', 'show_on_home', 'profile']
+        exclude = ['name', 'icon']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            if self.instance.name in dict(Skill.SKILL_CHOICES):
+                self.fields['skill_select'].initial = self.instance.name
+            else:
+                self.fields['skill_select'].initial = 'other'
+                self.fields['manual_name'].initial = self.instance.name
+
+    def clean(self):
+        cleaned_data = super().clean()
+        skill_select = cleaned_data.get('skill_select')
+        manual_name = cleaned_data.get('manual_name')
+
+        if skill_select == 'other':
+            if not manual_name:
+                raise forms.ValidationError({'manual_name': 'Please enter a skill name manually.'})
+            cleaned_data['name'] = manual_name
+        else:
+            cleaned_data['name'] = skill_select
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.name = self.cleaned_data.get('name')
+        
+        # Auto-fill icon based on name
+        if instance.name in Skill.ICON_MAPPING:
+            instance.icon = Skill.ICON_MAPPING[instance.name]
+        else:
+            instance.icon = '' # Or keep existing if editing? Usually reset if name changes
+            
+        if commit:
+            instance.save()
+        return instance
+
+
 class SkillInline(admin.TabularInline):
     model = Skill
+    form = SkillAdminForm
     extra = 1
     ordering = ['order', 'name']
-    fields = ['name', 'skill_type', 'proficiency', 'order', 'show_on_home']
-    list_editable = ['show_on_home']
+    fields = ['skill_select', 'manual_name', 'skill_type', 'proficiency', 'order', 'show_on_home']
 
 
 @admin.register(Profile)
@@ -520,11 +576,11 @@ class SocialLinkAdmin(admin.ModelAdmin):
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
+    form = SkillAdminForm
     list_display = ['name', 'profile', 'skill_type', 'proficiency', 'order', 'show_on_home']
     list_filter = ['skill_type', 'proficiency', 'show_on_home']
     search_fields = ['name', 'profile__full_name']
     ordering = ['profile', 'order', 'name']
-    list_editable = ['show_on_home']
 
 
 # ============================================

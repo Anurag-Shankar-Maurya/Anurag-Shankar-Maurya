@@ -438,7 +438,7 @@ class SkillAdminForm(forms.ModelForm):
         choices=Skill.SKILL_CHOICES,
         required=False,
         label="Select Skill",
-        help_text="Choose a pre-defined skill to auto-fill icon, or select 'Other' to enter manually."
+        help_text="Choose a pre-defined skill to auto-fill the icon automatically, or select 'Other' to enter manually."
     )
     manual_name = forms.CharField(
         required=False,
@@ -448,11 +448,11 @@ class SkillAdminForm(forms.ModelForm):
 
     class Meta:
         model = Skill
-        fields = ['skill_select', 'manual_name', 'skill_type', 'proficiency', 'order', 'show_on_home', 'profile']
-        exclude = ['name', 'icon']
+        exclude = ['name', 'icon']  # hide the real name and icon fields; we manage name via select/manual and icon is auto-set
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Initialize select/manual fields based on existing instance
         if self.instance and self.instance.pk:
             if self.instance.name in dict(Skill.SKILL_CHOICES):
                 self.fields['skill_select'].initial = self.instance.name
@@ -465,24 +465,26 @@ class SkillAdminForm(forms.ModelForm):
         skill_select = cleaned_data.get('skill_select')
         manual_name = cleaned_data.get('manual_name')
 
+        # Determine final name field for saving
         if skill_select == 'other':
             if not manual_name:
                 raise forms.ValidationError({'manual_name': 'Please enter a skill name manually.'})
-            cleaned_data['name'] = manual_name
+            cleaned_data['name'] = manual_name.strip()
         else:
             cleaned_data['name'] = skill_select
         return cleaned_data
 
     def save(self, commit=True):
+        # Save form (without name/icon fields) then set name and auto-fill icon
         instance = super().save(commit=False)
         instance.name = self.cleaned_data.get('name')
-        
-        # Auto-fill icon based on name
-        if instance.name in Skill.ICON_MAPPING:
-            instance.icon = Skill.ICON_MAPPING[instance.name]
-        else:
-            instance.icon = '' # Or keep existing if editing? Usually reset if name changes
-            
+
+        # Auto-fill icon based on skill name if mapping exists
+        mapped_icon = Skill.ICON_MAPPING.get(instance.name)
+        if mapped_icon:
+            instance.icon = mapped_icon
+        # Otherwise keep existing icon (if editing) or leave blank
+
         if commit:
             instance.save()
         return instance

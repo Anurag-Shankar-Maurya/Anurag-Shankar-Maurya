@@ -22,6 +22,11 @@ const routes: RoutesConfig = {
   "/work": true,
   "/blog": true,
   "/gallery": true,
+  "/achievements": true,
+  "/certificates": true,
+  "/testimonials": true,
+  "/skills": true,
+  "/education": true,
 };
 
 const display: DisplayConfig = {

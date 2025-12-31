@@ -163,7 +163,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'short_description',
             'featured_image', 'featured_image_alt',
             'live_url', 'github_url', 'demo_url',
-            'technologies', 'status', 'is_featured',
+            'technologies', 'status', 'is_featured', 'show_on_home',
             'order', 'created_at', 'updated_at'
         ]
     

@@ -63,6 +63,7 @@ export interface Project {
   technologies: string;
   status: 'in-progress' | 'completed' | 'on-hold' | 'archived';
   is_featured: boolean;
+  show_on_home?: boolean;
   start_date?: string;
   end_date?: string;
   images?: Image[];

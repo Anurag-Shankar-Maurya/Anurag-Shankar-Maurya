@@ -24,6 +24,9 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
     setLbOpen(true);
   };
 
+  // Show only projects marked to display on home and limit to 4
+  const homeProjects = featuredProjects.filter((p) => p.show_on_home).slice(0, 4);
+
   return (
     <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-32">
       {/* Hero */}
@@ -97,7 +100,7 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {featuredProjects.map((project) => (
+          {homeProjects.map((project) => (
             <div
               key={project.id}
               className="group relative rounded-2xl glass-card overflow-hidden transition-all duration-500 hover:-translate-y-1 cursor-pointer"

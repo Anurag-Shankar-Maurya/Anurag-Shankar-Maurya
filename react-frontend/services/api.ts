@@ -39,8 +39,8 @@ export const api = {
   getProfiles: () => fetchJson<PaginatedResponse<{id: number}>>('/profiles/'),
   getProfileDetail: (id: number) => fetchJson<ProfileDetail>(`/profiles/${id}/`),
   
-  getProjects: (params: { featured?: boolean; page?: number } = {}) => 
-    fetchJson<PaginatedResponse<Project>>('/projects/', { is_featured: params.featured, page: params.page }),
+  getProjects: (params: { featured?: boolean; page?: number; show_on_home?: boolean } = {}) => 
+    fetchJson<PaginatedResponse<Project>>('/projects/', { is_featured: params.featured, show_on_home: params.show_on_home, page: params.page }),
   getProjectDetail: (slug: string) => fetchJson<Project>(`/projects/${slug}/`),
 
   getBlogPosts: (params: { featured?: boolean; page?: number } = {}) => 

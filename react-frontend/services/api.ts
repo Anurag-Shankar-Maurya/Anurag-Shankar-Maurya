@@ -12,7 +12,13 @@ import {
   Skill
 } from '../types';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+// Use Vite environment variables when available (set in `.env.local`).
+// - VITE_API_URL (e.g. http://127.0.0.1:8000)
+// - VITE_API_BASE_PATH (e.g. /api)
+// Fallback to sensible defaults when variables are not provided.
+const API_URL = (import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8000').replace(/\/+$/,'');
+const API_BASE_PATH = (import.meta.env.VITE_API_BASE_PATH ?? '/api').replace(/^\/?/, '/').replace(/\/+$/,'');
+const API_BASE_URL = `${API_URL}${API_BASE_PATH}`;
 
 async function fetchJson<T>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
   const url = new URL(`${API_BASE_URL}${endpoint}`);

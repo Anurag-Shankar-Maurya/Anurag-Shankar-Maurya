@@ -331,14 +331,14 @@ class ImageInline(GenericTabularInline):
     model = Image
     form = ImageAdminForm
     extra = 1
-    fields = ['image_preview', 'image_file', 'image_type', 'alt_text', 'caption', 'order']
+    fields = ['image_preview', 'image_file', 'image_type', 'alt_text', 'caption', 'order', 'show_on_home']
     readonly_fields = ['image_preview']
     ordering = ['order']
 
     def image_preview(self, obj):
         if obj.pk:
             return get_image_preview(obj.image_data, obj.mime_type, 60, 60)
-        return format_html('<span style="color:#999;">Upload to preview</span>')
+        return format_html("<span style=\"color:#999;\">Upload to preview</span>")
     image_preview.short_description = 'Preview'
 
 
@@ -349,12 +349,13 @@ class ImageInline(GenericTabularInline):
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
     form = ImageAdminForm
-    list_display = ['image_preview', 'filename', 'image_type', 'content_type', 'file_size_display', 'created_at']
+    list_display = ['image_preview', 'filename', 'image_type', 'content_type', 'file_size_display', 'show_on_home', 'created_at']
     list_display_links = ['filename']
-    list_filter = ['image_type', 'content_type', 'created_at']
+    list_filter = ['image_type', 'content_type', 'show_on_home', 'created_at']
     search_fields = ['filename', 'alt_text', 'caption']
     readonly_fields = ['image_preview_large', 'file_size', 'width', 'height', 'created_at', 'updated_at']
     ordering = ['-created_at']
+    list_editable = ['show_on_home']
 
     fieldsets = (
         ('Image Preview', {
@@ -371,7 +372,7 @@ class ImageAdmin(admin.ModelAdmin):
             'fields': ('file_size', 'width', 'height')
         }),
         ('Classification', {
-            'fields': ('image_type', 'alt_text', 'caption', 'order')
+            'fields': ('image_type', 'alt_text', 'caption', 'order', 'show_on_home')
         }),
         ('Linked Object', {
             'fields': ('content_type', 'object_id')
@@ -427,12 +428,16 @@ class SocialLinkInline(admin.TabularInline):
     form = SocialLinkAdminForm
     extra = 1
     ordering = ['order']
+    fields = ['platform', 'url', 'order', 'show_on_home']
+    list_editable = ['show_on_home']
 
 
 class SkillInline(admin.TabularInline):
     model = Skill
     extra = 1
     ordering = ['order', 'name']
+    fields = ['name', 'skill_type', 'proficiency', 'order', 'show_on_home']
+    list_editable = ['show_on_home']
 
 
 @admin.register(Profile)
@@ -506,18 +511,20 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(SocialLink)
 class SocialLinkAdmin(admin.ModelAdmin):
     form = SocialLinkAdminForm
-    list_display = ['platform', 'profile', 'url', 'order']
-    list_filter = ['platform']
+    list_display = ['platform', 'profile', 'url', 'order', 'show_on_home']
+    list_filter = ['platform', 'show_on_home']
     search_fields = ['profile__full_name', 'url']
     ordering = ['profile', 'order']
+    list_editable = ['show_on_home']
 
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
-    list_display = ['name', 'profile', 'skill_type', 'proficiency', 'order']
-    list_filter = ['skill_type', 'proficiency']
+    list_display = ['name', 'profile', 'skill_type', 'proficiency', 'order', 'show_on_home']
+    list_filter = ['skill_type', 'proficiency', 'show_on_home']
     search_fields = ['name', 'profile__full_name']
     ordering = ['profile', 'order', 'name']
+    list_editable = ['show_on_home']
 
 
 # ============================================
@@ -527,13 +534,14 @@ class SkillAdmin(admin.ModelAdmin):
 @admin.register(Education)
 class EducationAdmin(admin.ModelAdmin):
     form = EducationAdminForm
-    list_display = ['logo_preview', 'degree', 'institution', 'field_of_study', 'start_date', 'end_date', 'is_current']
+    list_display = ['logo_preview', 'degree', 'institution', 'field_of_study', 'start_date', 'end_date', 'is_current', 'show_on_home']
     list_display_links = ['degree']
-    list_filter = ['is_current', 'start_date']
+    list_filter = ['is_current', 'show_on_home', 'start_date']
     search_fields = ['institution', 'degree', 'field_of_study']
     readonly_fields = ['logo_preview_large']
     inlines = [ImageInline]
     ordering = ['-start_date']
+    list_editable = ['show_on_home']
 
     fieldsets = (
         ('Institution Logo', {
@@ -546,7 +554,7 @@ class EducationAdmin(admin.ModelAdmin):
             'fields': ('start_date', 'end_date', 'is_current')
         }),
         ('Additional Info', {
-            'fields': ('location', 'description'),
+            'fields': ('location', 'description', 'show_on_home'),
             'classes': ('collapse',)
         }),
     )
@@ -567,13 +575,14 @@ class EducationAdmin(admin.ModelAdmin):
 @admin.register(WorkExperience)
 class WorkExperienceAdmin(admin.ModelAdmin):
     form = WorkExperienceAdminForm
-    list_display = ['company_logo_preview', 'job_title', 'company_name', 'employment_type', 'work_mode', 'start_date', 'is_current']
+    list_display = ['company_logo_preview', 'job_title', 'company_name', 'employment_type', 'work_mode', 'start_date', 'is_current', 'show_on_home']
     list_display_links = ['job_title']
-    list_filter = ['is_current', 'employment_type', 'work_mode', 'start_date']
+    list_filter = ['is_current', 'employment_type', 'work_mode', 'show_on_home', 'start_date']
     search_fields = ['company_name', 'job_title', 'description', 'technologies_used']
     readonly_fields = ['company_logo_preview_large']
     inlines = [ImageInline]
     ordering = ['-is_current', '-start_date']
+    list_editable = ['show_on_home']
 
     fieldsets = (
         ('Company Logo', {
@@ -592,8 +601,7 @@ class WorkExperienceAdmin(admin.ModelAdmin):
             'fields': ('description', 'achievements', 'technologies_used')
         }),
         ('Display', {
-            'fields': ('order',),
-            'classes': ('collapse',)
+            'fields': ('order', 'show_on_home'),
         }),
     )
 
@@ -613,15 +621,15 @@ class WorkExperienceAdmin(admin.ModelAdmin):
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     form = ProjectAdminForm
-    list_display = ['featured_preview', 'title', 'status', 'is_featured', 'is_visible', 'order', 'created_at']
+    list_display = ['featured_preview', 'title', 'status', 'is_featured', 'is_visible', 'show_on_home', 'order', 'created_at']
     list_display_links = ['title']
-    list_filter = ['status', 'is_featured', 'is_visible', 'created_at']
+    list_filter = ['status', 'is_featured', 'is_visible', 'show_on_home', 'created_at']
     search_fields = ['title', 'short_description', 'description', 'technologies']
     prepopulated_fields = {'slug': ('title',)}
     readonly_fields = ['featured_preview_large', 'created_at', 'updated_at']
     inlines = [ImageInline]
     ordering = ['-is_featured', 'order', '-created_at']
-    list_editable = ['is_featured', 'is_visible', 'order']
+    list_editable = ['is_featured', 'is_visible', 'show_on_home', 'order']
 
     fieldsets = (
         ('Featured Image', {
@@ -640,7 +648,7 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('start_date', 'end_date', 'status')
         }),
         ('Display Options', {
-            'fields': ('is_featured', 'is_visible', 'order')
+            'fields': ('is_featured', 'is_visible', 'show_on_home', 'order')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
@@ -664,13 +672,14 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):
     form = CertificateAdminForm
-    list_display = ['org_logo_preview', 'title', 'issuing_organization', 'issue_date', 'does_not_expire', 'order']
+    list_display = ['org_logo_preview', 'title', 'issuing_organization', 'issue_date', 'does_not_expire', 'show_on_home', 'order']
     list_display_links = ['title']
-    list_filter = ['does_not_expire', 'issue_date']
+    list_filter = ['does_not_expire', 'show_on_home', 'issue_date']
     search_fields = ['title', 'issuing_organization', 'credential_id', 'skills']
     readonly_fields = ['org_logo_preview_large', 'cert_preview_large']
     inlines = [ImageInline]
     ordering = ['order', '-issue_date']
+    list_editable = ['show_on_home']
 
     fieldsets = (
         ('Images Preview', {
@@ -691,8 +700,7 @@ class CertificateAdmin(admin.ModelAdmin):
             'fields': ('credential_id', 'credential_url')
         }),
         ('Additional', {
-            'fields': ('skills', 'order'),
-            'classes': ('collapse',)
+            'fields': ('skills', 'order', 'show_on_home'),
         }),
     )
 
@@ -712,13 +720,14 @@ class CertificateAdmin(admin.ModelAdmin):
 @admin.register(Achievement)
 class AchievementAdmin(admin.ModelAdmin):
     form = AchievementAdminForm
-    list_display = ['image_preview', 'title', 'achievement_type', 'issuer', 'date', 'order']
+    list_display = ['image_preview', 'title', 'achievement_type', 'issuer', 'date', 'order', 'show_on_home']
     list_display_links = ['title']
-    list_filter = ['achievement_type', 'date']
+    list_filter = ['achievement_type', 'show_on_home', 'date']
     search_fields = ['title', 'issuer', 'description']
     readonly_fields = ['image_preview_large']
     inlines = [ImageInline]
     ordering = ['order', '-date']
+    list_editable = ['show_on_home']
 
     fieldsets = (
         ('Achievement Image', {
@@ -728,7 +737,7 @@ class AchievementAdmin(admin.ModelAdmin):
             'fields': ('profile', 'title', 'achievement_type', 'issuer', 'date')
         }),
         ('Additional Info', {
-            'fields': ('description', 'url', 'order')
+            'fields': ('description', 'url', 'order', 'show_on_home')
         }),
     )
 
@@ -747,8 +756,8 @@ class AchievementAdmin(admin.ModelAdmin):
 
 @admin.register(BlogCategory)
 class BlogCategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug', 'post_count', 'order']
-    list_editable = ['order']
+    list_display = ['name', 'slug', 'post_count', 'order', 'show_on_home']
+    list_editable = ['order', 'show_on_home']
     search_fields = ['name']
     prepopulated_fields = {'slug': ('name',)}
     ordering = ['order', 'name']
@@ -760,7 +769,8 @@ class BlogCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(BlogTag)
 class BlogTagAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug', 'post_count']
+    list_display = ['name', 'slug', 'post_count', 'show_on_home']
+    list_editable = ['show_on_home']
     search_fields = ['name']
     prepopulated_fields = {'slug': ('name',)}
     ordering = ['name']
@@ -773,9 +783,9 @@ class BlogTagAdmin(admin.ModelAdmin):
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
     form = BlogPostAdminForm
-    list_display = ['featured_preview', 'title', 'category', 'status', 'is_featured', 'views_count', 'published_at']
+    list_display = ['featured_preview', 'title', 'category', 'status', 'is_featured', 'show_on_home', 'views_count', 'published_at']
     list_display_links = ['title']
-    list_filter = ['status', 'is_featured', 'category', 'published_at', 'allow_comments']
+    list_filter = ['status', 'is_featured', 'show_on_home', 'category', 'published_at', 'allow_comments']
     search_fields = ['title', 'excerpt', 'content', 'meta_keywords']
     prepopulated_fields = {'slug': ('title',)}
     readonly_fields = ['featured_preview_large', 'og_preview', 'views_count', 'created_at', 'updated_at']
@@ -783,7 +793,7 @@ class BlogPostAdmin(admin.ModelAdmin):
     inlines = [ImageInline]
     ordering = ['-published_at', '-created_at']
     date_hierarchy = 'published_at'
-    list_editable = ['status', 'is_featured']
+    list_editable = ['status', 'is_featured', 'show_on_home']
 
     fieldsets = (
         ('Featured Image', {
@@ -796,7 +806,7 @@ class BlogPostAdmin(admin.ModelAdmin):
             'fields': ('category', 'tags')
         }),
         ('Publishing', {
-            'fields': ('status', 'published_at', 'is_featured', 'allow_comments')
+            'fields': ('status', 'published_at', 'is_featured', 'show_on_home', 'allow_comments')
         }),
         ('Engagement', {
             'fields': ('reading_time', 'views_count'),
@@ -851,14 +861,14 @@ class BlogPostAdmin(admin.ModelAdmin):
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
     form = TestimonialAdminForm
-    list_display = ['author_preview', 'author_name', 'author_title', 'author_company', 'rating_display', 'is_featured', 'is_visible', 'order']
+    list_display = ['author_preview', 'author_name', 'author_title', 'author_company', 'rating_display', 'is_featured', 'is_visible', 'show_on_home', 'order']
     list_display_links = ['author_name']
-    list_filter = ['is_featured', 'is_visible', 'rating', 'date']
+    list_filter = ['is_featured', 'is_visible', 'show_on_home', 'rating', 'date']
     search_fields = ['author_name', 'author_company', 'content']
     readonly_fields = ['author_preview_large']
     inlines = [ImageInline]
     ordering = ['-is_featured', 'order', '-date']
-    list_editable = ['is_featured', 'is_visible', 'order']
+    list_editable = ['is_featured', 'is_visible', 'show_on_home', 'order']
 
     fieldsets = (
         ('Author Image', {
@@ -871,7 +881,7 @@ class TestimonialAdmin(admin.ModelAdmin):
             'fields': ('content', 'rating', 'relationship', 'date')
         }),
         ('Display', {
-            'fields': ('is_featured', 'is_visible', 'order')
+            'fields': ('is_featured', 'is_visible', 'show_on_home', 'order')
         }),
     )
 
@@ -915,7 +925,7 @@ class ContactMessageAdmin(admin.ModelAdmin):
             'fields': ('status', 'replied_at')
         }),
         ('Timestamps', {
-            'fields': ('created_at',),
+            'fields': ('created_at',), 
             'classes': ('collapse',)
         }),
     )

@@ -1,4 +1,3 @@
-
 import {
   ArrowUpRight,
   ArrowRight,
@@ -58,6 +57,8 @@ import {
   FaPlay,
   FaImage,
   FaGlobe,
+  FaJava,
+  FaMicrosoft, // Added FaMicrosoft here
 } from 'react-icons/fa6';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 
@@ -65,9 +66,7 @@ import { FaExternalLinkAlt } from 'react-icons/fa';
 import {
   SiC,
   SiCplusplus,
-  SiCsharp,
   SiGo,
-  SiJava,
   SiJavascript,
   SiTypescript,
   SiPhp,
@@ -76,7 +75,6 @@ import {
   SiScala,
   SiPython,
   SiSwift,
-  SiObjectivec,
   SiClojure,
   SiRust,
   SiHaskell,
@@ -84,7 +82,7 @@ import {
   SiElixir,
   SiErlang,
   SiNim,
-  SiVuejs,
+  SiVuedotjs,
   SiReact,
   SiSvelte,
   SiAngular,
@@ -100,7 +98,7 @@ import {
   SiWebpack,
   SiBabel,
   SiTailwindcss,
-  SiMaterialui,
+  SiMui,
   SiBulma,
   SiQt,
   SiNodedotjs,
@@ -108,16 +106,15 @@ import {
   SiExpress,
   SiGraphql,
   SiApachekafka,
-  SiSolr,
+  SiApachesolr,
   SiRabbitmq,
-  SiHadoop,
+  SiApachehadoop,
   SiNginx,
   SiNestjs,
   SiAndroid,
   SiFlutter,
   SiDart,
   SiKotlin,
-  SiXamarin,
   SiIonic,
   SiApachecordova,
   SiTensorflow,
@@ -130,32 +127,30 @@ import {
   SiPostgresql,
   SiRedis,
   SiOracle,
-  SiCassandra,
-  SiCouchdb,
+  SiApachecassandra,
+  SiApachecouchdb,
   SiApachehive,
   SiRealm,
   SiMariadb,
-  SiCockroachdb,
+  SiCockroachlabs,
   SiElasticsearch,
   SiSqlite,
-  SiMicrosoftsqlserver,
-  SiD3DotJs,
+  SiD3Dotjs, // Fixed capitalization
   SiChartdotjs,
   SiKibana,
   SiGrafana,
-  SiAmazonaws,
+  SiAmazon,
   SiDocker,
   SiJenkins,
   SiGooglecloud,
   SiKubernetes,
-  SiBash,
-  SiMicrosoftazure,
+  SiGnubash,
   SiVagrant,
   SiCircleci,
   SiTravisci,
   SiFirebase,
   SiAppwrite,
-  SiAmplify,
+  SiAwsamplify,
   SiHeroku,
   SiDjango,
   SiDotnet,
@@ -171,17 +166,15 @@ import {
   SiJest,
   SiMocha,
   SiPuppeteer,
-  SiKarma,
   SiJasmine,
   SiAdobeillustrator,
   SiAdobephotoshop,
-  SiXd,
+  SiAdobexd,
   SiFigma,
   SiBlender,
   SiSketch,
   SiInvision,
   SiFramer,
-  SiMathworks,
   SiNextdotjs,
   SiGatsby,
   SiHugo,
@@ -195,6 +188,8 @@ import {
   SiLinux,
   SiGit,
   SiArduino,
+  SiApple,
+  // SiMicrosoft removed, using FaMicrosoft instead
 } from 'react-icons/si';
 
 export const Icons = {
@@ -244,9 +239,9 @@ export const Icons = {
   // Programming languages
   c: SiC,
   cplusplus: SiCplusplus,
-  csharp: SiCsharp,
+  csharp: SiDotnet,
   go: SiGo,
-  java: SiJava,
+  java: FaJava,
   javascript: SiJavascript,
   typescript: SiTypescript,
   php: SiPhp,
@@ -255,7 +250,7 @@ export const Icons = {
   scala: SiScala,
   python: SiPython,
   swift: SiSwift,
-  objectivec: SiObjectivec,
+  objectivec: SiApple,
   clojure: SiClojure,
   rust: SiRust,
   haskell: SiHaskell,
@@ -265,7 +260,7 @@ export const Icons = {
   nim: SiNim,
 
   // Frontend
-  vuejs: SiVuejs,
+  vuejs: SiVuedotjs,
   react: SiReact,
   svelte: SiSvelte,
   angularjs: SiAngular,
@@ -282,11 +277,11 @@ export const Icons = {
   webpack: SiWebpack,
   babel: SiBabel,
   tailwind: SiTailwindcss,
-  materialize: SiMaterialui,
+  materialize: SiMui,
   bulma: SiBulma,
-  gtk: SiQt, // fallback
+  gtk: SiQt,
   qt: SiQt,
-  wx_widgets: SiQt, // fallback
+  wx_widgets: SiQt,
 
   // Backend / APIs
   nodejs: SiNodedotjs,
@@ -294,11 +289,11 @@ export const Icons = {
   express: SiExpress,
   graphql: SiGraphql,
   kafka: SiApachekafka,
-  solr: SiSolr,
+  solr: SiApachesolr,
   rabbitmq: SiRabbitmq,
-  hadoop: SiHadoop,
+  hadoop: SiApachehadoop,
   nginx: SiNginx,
-  openresty: SiNginx, // fallback
+  openresty: SiNginx,
   nestjs: SiNestjs,
 
   // Mobile
@@ -306,8 +301,8 @@ export const Icons = {
   flutter: SiFlutter,
   dart: SiDart,
   kotlin: SiKotlin,
-  nativescript: SiNodedotjs, // fallback
-  xamarin: SiXamarin,
+  nativescript: SiNodedotjs,
+  xamarin: SiDotnet,
   reactnative: SiReact,
   ionic: SiIonic,
   apachecordova: SiApachecordova,
@@ -316,7 +311,7 @@ export const Icons = {
   tensorflow: SiTensorflow,
   pytorch: SiPytorch,
   pandas: SiPandas,
-  seaborn: SiPandas, // fallback
+  seaborn: SiPandas,
   opencv: SiOpencv,
   scikit_learn: SiScikitlearn,
 
@@ -326,31 +321,31 @@ export const Icons = {
   postgresql: SiPostgresql,
   redis: SiRedis,
   oracle: SiOracle,
-  cassandra: SiCassandra,
-  couchdb: SiCouchdb,
+  cassandra: SiApachecassandra,
+  couchdb: SiApachecouchdb,
   hive: SiApachehive,
   realm: SiRealm,
   mariadb: SiMariadb,
-  cockroachdb: SiCockroachdb,
+  cockroachdb: SiCockroachlabs,
   elasticsearch: SiElasticsearch,
   sqlite: SiSqlite,
-  mssql: SiMicrosoftsqlserver,
+  mssql: FaMicrosoft, // Using FaMicrosoft
 
   // Data Viz / Monitoring
-  d3js: SiD3DotJs,
+  d3js: SiD3Dotjs, // Updated
   chartjs: SiChartdotjs,
-  canvasjs: SiChartdotjs, // fallback
+  canvasjs: SiChartdotjs,
   kibana: SiKibana,
   grafana: SiGrafana,
 
   // DevOps / Cloud
-  aws: SiAmazonaws,
+  aws: SiAmazon,
   docker: SiDocker,
   jenkins: SiJenkins,
   gcp: SiGooglecloud,
   kubernetes: SiKubernetes,
-  bash: SiBash,
-  azure: SiMicrosoftazure,
+  bash: SiGnubash,
+  azure: FaMicrosoft, // Using FaMicrosoft
   vagrant: SiVagrant,
   circleci: SiCircleci,
   travisci: SiTravisci,
@@ -358,7 +353,7 @@ export const Icons = {
   // BaaS / Hosting
   firebase: SiFirebase,
   appwrite: SiAppwrite,
-  amplify: SiAmplify,
+  amplify: SiAwsamplify,
   heroku: SiHeroku,
 
   // Frameworks / Backend frameworks
@@ -378,19 +373,19 @@ export const Icons = {
   jest: SiJest,
   mocha: SiMocha,
   puppeteer: SiPuppeteer,
-  karma: SiKarma,
+  karma: SiJasmine,
   jasmine: SiJasmine,
 
   // Tools / Design / Others
   illustrator: SiAdobeillustrator,
   photoshop: SiAdobephotoshop,
-  xd: SiXd,
+  xd: SiAdobexd,
   figma: SiFigma,
   blender: SiBlender,
   sketch: SiSketch,
   invision: SiInvision,
   framer: SiFramer,
-  matlab: SiMathworks,
+  matlab: FaGlobe,
 
   // Static sites / SSGs
   nextjs: SiNextdotjs,

@@ -27,6 +27,9 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
   // Show only projects marked to display on home and limit to 4
   const homeProjects = featuredProjects.filter((p) => p.show_on_home).slice(0, 4);
 
+  // Show only blog posts marked to display on home and limit to 3
+  const homeBlogPosts = blogPosts.slice(0, 3);
+
   return (
     <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-32">
       {/* Hero */}
@@ -190,7 +193,7 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {blogPosts.slice(0, 3).map((post) => (
+            {homeBlogPosts.map((post) => (
               <div key={post.id} className="group cursor-pointer glass-card rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1" onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}>
                 <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4 relative">
                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>

@@ -32,7 +32,7 @@ export const usePortfolioData = () => {
         const [projRes, featProjRes, blogRes, expRes, eduRes, certRes, achRes, testRes, skillRes] = await Promise.all([
           api.getProjects(),
           api.getProjects({ featured: true, show_on_home: true }),
-          api.getBlogPosts(),
+          api.getBlogPosts({ show_on_home: true }),
           api.getExperience(),
           api.getEducation(),
           api.getCertificates(),

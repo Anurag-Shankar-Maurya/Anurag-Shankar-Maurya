@@ -5,6 +5,7 @@ import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
 import { ViewState, ProfileDetail, Project, BlogPost, Skill } from '../types';
 import { getSocialIcon } from '../utils/helpers';
+import { Icons, SocialIcons } from '../components/Icons';
 
 interface HomeProps {
   profile: ProfileDetail | null;
@@ -97,26 +98,53 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {featuredProjects.map((project) => (
-            <div key={project.id} className="group relative rounded-2xl glass-card overflow-hidden transition-all duration-500 hover:-translate-y-1">
+            <div
+              key={project.id}
+              className="group relative rounded-2xl glass-card overflow-hidden transition-all duration-500 hover:-translate-y-1 cursor-pointer"
+              onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter') onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug }); }}
+            >
               <div className="aspect-video w-full bg-black/50 overflow-hidden relative">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-60 group-hover:opacity-40 transition-opacity"></div>
-                <button onClick={() => openSingle(project.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Project', project.title)} className="w-full h-full block">
-                   <img src={project.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Project'} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 cursor-pointer" />
-                </button>
+
+                <img src={project.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Project'} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+
+                {/* Overlay icons */}
+                <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
+                  {project.live_url && (
+                    <button onClick={(e) => { e.stopPropagation(); window.open(project.live_url, '_blank'); }} className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60" aria-label={`Open live site for ${project.title}`}>
+                      {React.createElement(Icons.globe, { className: 'w-4 h-4' })}
+                    </button>
+                  )}
+                  {project.github_url && (
+                    <button onClick={(e) => { e.stopPropagation(); window.open(project.github_url, '_blank'); }} className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60" aria-label={`Open source for ${project.title}`}>
+                      {React.createElement(SocialIcons.github, { className: 'w-4 h-4' })}
+                    </button>
+                  )}
+                  {project.demo_url && (
+                    <button onClick={(e) => { e.stopPropagation(); window.open(project.demo_url, '_blank'); }} className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60" aria-label={`Open demo for ${project.title}`}>
+                      {React.createElement(Icons.play, { className: 'w-4 h-4' })}
+                    </button>
+                  )}
+                  {project.images && project.images.length > 0 && (
+                    <button onClick={(e) => { e.stopPropagation(); const imgs = [{ src: project.featured_image, alt: project.title }, ...(project.images?.map((i) => ({ src: i.data_uri || i.image_url, alt: i.alt_text, caption: i.caption })) || [])]; setLbImages(imgs); setLbOpen(true); }} className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60" aria-label={`Open gallery for ${project.title}`}>
+                      {React.createElement(Icons.gallery, { className: 'w-4 h-4' })}
+                    </button>
+                  )}
+                </div>
+
+                <div className="absolute top-2 left-3 z-20 px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-md text-xs font-medium text-white border border-white/10 capitalize shadow-lg">{project.status}</div>
               </div>
               <div className="p-6 relative z-20">
                 <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{project.title}</h3>
                 <p className="text-gray-400 mb-4 line-clamp-2">{project.short_description}</p>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {project.technologies.split(',').slice(0, 3).map((tech, i) => (
-                    <span key={i} className="px-2.5 py-1 text-xs font-medium rounded-md bg-white/5 text-gray-300 border border-white/5">
-                      {tech.trim()}
-                    </span>
+                    <span key={i} className="px-2.5 py-1 text-xs font-medium rounded-md bg-white/5 text-gray-300 border border-white/5">{tech.trim()}</span>
                   ))}
                 </div>
-                <Button variant="secondary" onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}>
-                  View Case Study
-                </Button>
               </div>
             </div>
           ))}

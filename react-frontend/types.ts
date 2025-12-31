@@ -12,6 +12,7 @@ export interface Image {
   data_uri: string;
   alt_text: string;
   caption?: string;
+  show_on_home?: boolean;
 }
 
 export interface SocialLink {
@@ -19,6 +20,7 @@ export interface SocialLink {
   platform: string;
   url: string;
   icon?: string;
+  show_on_home?: boolean;
 }
 
 export interface Skill {
@@ -28,6 +30,7 @@ export interface Skill {
   skill_type: string;
   proficiency: string;
   icon?: string;
+  show_on_home?: boolean;
 }
 
 export interface ProfileDetail {
@@ -79,9 +82,10 @@ export interface BlogPost {
   images?: Image[];
   published_at: string;
   reading_time: number;
-  category: { name: string; slug: string };
-  tags: { name: string; slug: string }[];
+  category: { name: string; slug: string; show_on_home?: boolean };
+  tags: { name: string; slug: string; show_on_home?: boolean }[];
   author: string;
+  show_on_home?: boolean;
 }
 
 export interface WorkExperience {
@@ -98,6 +102,7 @@ export interface WorkExperience {
   location: string;
   technologies_used: string;
   images?: Image[];
+  show_on_home?: boolean;
 }
 
 export interface Education {
@@ -112,6 +117,7 @@ export interface Education {
   description: string;
   slug: string;
   images?: Image[];
+  show_on_home?: boolean;
 }
 
 export interface Certificate {
@@ -124,6 +130,7 @@ export interface Certificate {
   skills: string;
   slug: string;
   images?: Image[];
+  show_on_home?: boolean;
 }
 
 export interface Achievement {
@@ -137,6 +144,7 @@ export interface Achievement {
   url: string;
   image: string;
   images?: Image[];
+  show_on_home?: boolean;
 }
 
 export interface Testimonial {
@@ -151,6 +159,7 @@ export interface Testimonial {
   relationship: string;
   linkedin_url: string;
   images?: Image[];
+  show_on_home?: boolean;
 }
 
 export type ViewState = 

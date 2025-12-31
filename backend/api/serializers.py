@@ -22,7 +22,7 @@ class ImageSerializer(serializers.ModelSerializer):
         model = Image
         fields = [
             'id', 'filename', 'mime_type', 'file_size', 'width', 'height',
-            'image_type', 'alt_text', 'caption', 'order',
+            'image_type', 'alt_text', 'caption', 'order', 'show_on_home',
             'image_url', 'data_uri', 'created_at'
         ]
     
@@ -46,7 +46,7 @@ class ImageSerializer(serializers.ModelSerializer):
 class SocialLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialLink
-        fields = ['id', 'platform', 'url', 'icon', 'order']
+        fields = ['id', 'platform', 'url', 'icon', 'order', 'show_on_home']
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -55,7 +55,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skill
-        fields = ['id', 'name', 'slug', 'skill_type', 'proficiency', 'icon', 'order']
+        fields = ['id', 'name', 'slug', 'skill_type', 'proficiency', 'icon', 'order', 'show_on_home']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -112,7 +112,7 @@ class EducationSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'institution', 'slug', 'degree', 'field_of_study',
             'start_date', 'end_date', 'is_current', 'grade',
-            'description', 'location', 'logo', 'images'
+            'description', 'location', 'logo', 'images', 'show_on_home'
         ]
     
     def get_logo(self, obj):
@@ -138,7 +138,7 @@ class WorkExperienceSerializer(serializers.ModelSerializer):
             'job_title', 'employment_type', 'work_mode', 'location',
             'start_date', 'end_date', 'is_current',
             'description', 'achievements', 'technologies_used',
-            'order', 'images'
+            'order', 'images', 'show_on_home'
         ]
     
     def get_company_logo(self, obj):
@@ -201,7 +201,7 @@ class CertificateSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'issuing_organization', 'organization_logo',
             'issue_date', 'expiry_date', 'does_not_expire',
             'credential_id', 'credential_url', 'certificate_image',
-            'description', 'skills', 'order', 'images'
+            'description', 'skills', 'order', 'images', 'show_on_home'
         ]
     
     def get_organization_logo(self, obj):
@@ -231,7 +231,7 @@ class AchievementSerializer(serializers.ModelSerializer):
         model = Achievement
         fields = [
             'id', 'title', 'slug', 'achievement_type', 'issuer', 'date',
-            'description', 'url', 'image', 'order', 'images'
+            'description', 'url', 'image', 'order', 'images', 'show_on_home'
         ]
     
     def get_image(self, obj):
@@ -251,7 +251,7 @@ class BlogCategorySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = BlogCategory
-        fields = ['id', 'name', 'slug', 'description', 'order', 'post_count']
+        fields = ['id', 'name', 'slug', 'description', 'order', 'post_count', 'show_on_home']
     
     def get_post_count(self, obj):
         return obj.posts.filter(status='published').count()
@@ -262,7 +262,7 @@ class BlogTagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = BlogTag
-        fields = ['id', 'name', 'slug', 'post_count']
+        fields = ['id', 'name', 'slug', 'post_count', 'show_on_home']
     
     def get_post_count(self, obj):
         return obj.posts.filter(status='published').count()
@@ -281,7 +281,7 @@ class BlogPostListSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'excerpt', 'featured_image',
             'featured_image_alt', 'category', 'tags', 'author',
             'status', 'published_at', 'reading_time', 'views_count',
-            'is_featured', 'created_at', 'updated_at'
+            'is_featured', 'show_on_home', 'created_at', 'updated_at'
         ]
     
     def get_featured_image(self, obj):
@@ -339,7 +339,7 @@ class TestimonialSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'author_name', 'slug', 'author_title', 'author_company',
             'author_image', 'content', 'rating', 'relationship',
-            'linkedin_url', 'is_featured', 'date', 'order', 'images'
+            'linkedin_url', 'is_featured', 'show_on_home', 'date', 'order', 'images'
         ]
     
     def get_author_image(self, obj):

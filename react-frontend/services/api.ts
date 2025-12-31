@@ -43,27 +43,27 @@ export const api = {
     fetchJson<PaginatedResponse<Project>>('/projects/', { is_featured: params.featured, show_on_home: params.show_on_home, page: params.page }),
   getProjectDetail: (slug: string) => fetchJson<Project>(`/projects/${slug}/`),
 
-  getBlogPosts: (params: { featured?: boolean; page?: number } = {}) => 
-    fetchJson<PaginatedResponse<BlogPost>>('/blog/', { is_featured: params.featured, page: params.page }),
+  getBlogPosts: (params: { featured?: boolean; page?: number; show_on_home?: boolean } = {}) => 
+    fetchJson<PaginatedResponse<BlogPost>>('/blog/', { is_featured: params.featured, show_on_home: params.show_on_home, page: params.page }),
   getBlogPostDetail: (slug: string) => fetchJson<BlogPost>(`/blog/${slug}/`),
 
-  getExperience: () => fetchJson<PaginatedResponse<WorkExperience>>('/work-experience/', { ordering: '-start_date' }),
+  getExperience: (params: { show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<WorkExperience>>('/work-experience/', { show_on_home: params.show_on_home, ordering: '-start_date', page: params.page }),
   getExperienceDetail: (id: number) => fetchJson<WorkExperience>(`/work-experience/${id}/`),
 
-  getEducation: () => fetchJson<PaginatedResponse<Education>>('/education/', { ordering: '-start_date' }),
+  getEducation: (params: { show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<Education>>('/education/', { show_on_home: params.show_on_home, ordering: '-start_date', page: params.page }),
   getEducationDetail: (slug: string) => fetchJson<Education>(`/education/${slug}/`),
 
-  getCertificates: () => fetchJson<PaginatedResponse<Certificate>>('/certificates/', { ordering: '-issue_date' }),
+  getCertificates: (params: { show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<Certificate>>('/certificates/', { show_on_home: params.show_on_home, ordering: '-issue_date', page: params.page }),
   getCertificateDetail: (slug: string) => fetchJson<Certificate>(`/certificates/${slug}/`),
 
-  getAchievements: () => fetchJson<PaginatedResponse<Achievement>>('/achievements/', { ordering: '-date' }),
+  getAchievements: (params: { show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<Achievement>>('/achievements/', { show_on_home: params.show_on_home, ordering: '-date', page: params.page }),
   getAchievementDetail: (slug: string) => fetchJson<Achievement>(`/achievements/${slug}/`),
 
-  getTestimonials: () => fetchJson<PaginatedResponse<Testimonial>>('/testimonials/', { is_featured: true }),
+  getTestimonials: (params: { featured?: boolean; show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<Testimonial>>('/testimonials/', { is_featured: params.featured ?? true, show_on_home: params.show_on_home, page: params.page }),
   getTestimonialDetail: (slug: string) => fetchJson<Testimonial>(`/testimonials/${slug}/`),
   
   // Fetch all skills for the mega menu
-  getSkills: () => fetchJson<PaginatedResponse<Skill>>('/skills/'),
+  getSkills: (params: { show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<Skill>>('/skills/', { show_on_home: params.show_on_home, page: params.page }),
   getSkillDetail: (slug: string) => fetchJson<Skill>(`/skills/${slug}/`),
 
   sendContact: async (data: { name: string; email: string; subject: string; message: string; phone?: string }) => {

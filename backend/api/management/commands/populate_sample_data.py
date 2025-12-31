@@ -59,54 +59,58 @@ class Command(BaseCommand):
 
         # Create Skills - Comprehensive skill set
         skills_data = [
-            # Backend Development
-            {'name': 'Django 5.x', 'skill_type': 'framework', 'proficiency': 'expert'},
-            {'name': 'Django REST Framework', 'skill_type': 'framework', 'proficiency': 'expert'},
+            # Languages
             {'name': 'Python', 'skill_type': 'language', 'proficiency': 'expert'},
-            {'name': 'PostgreSQL', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'SQLite', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'MongoDB', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'REST APIs', 'skill_type': 'technical', 'proficiency': 'expert'},
-            {'name': 'WebSocket', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            # Generative AI & LLMs
-            {'name': 'Prompt Engineering', 'skill_type': 'technical', 'proficiency': 'expert'},
-            {'name': 'OpenAI API', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'Google Gemini API', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'LangChain', 'skill_type': 'framework', 'proficiency': 'advanced'},
-            {'name': 'RAG Systems', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'Pinecone', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Vector Databases', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            # Mobile Development
             {'name': 'Kotlin', 'skill_type': 'language', 'proficiency': 'advanced'},
             {'name': 'Java', 'skill_type': 'language', 'proficiency': 'intermediate'},
-            {'name': 'Android SDK', 'skill_type': 'framework', 'proficiency': 'advanced'},
-            {'name': 'Firebase', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Room Database', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            # Full-Stack Development
-            {'name': 'React.js', 'skill_type': 'framework', 'proficiency': 'intermediate'},
             {'name': 'JavaScript', 'skill_type': 'language', 'proficiency': 'intermediate'},
             {'name': 'HTML/CSS', 'skill_type': 'language', 'proficiency': 'advanced'},
-            {'name': 'Bootstrap 5', 'skill_type': 'framework', 'proficiency': 'advanced'},
-            # DevOps & Tools
-            {'name': 'Docker', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Docker Compose', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Nginx', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Git', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'GitHub', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'Linux/Unix', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Vercel', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Render', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            # Robotics & Embedded
-            {'name': 'Arduino Programming', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'TinkerCAD', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Embedded Systems', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            # UI/UX Design
-            {'name': 'Figma', 'skill_type': 'design', 'proficiency': 'intermediate'},
-            {'name': 'Canva', 'skill_type': 'design', 'proficiency': 'intermediate'},
-            {'name': 'Material Design', 'skill_type': 'design', 'proficiency': 'intermediate'},
-            # Speech & Transcription
-            {'name': 'Deepgram', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'Speech-to-Text', 'skill_type': 'technical', 'proficiency': 'advanced'},
+            # Frameworks
+            {'name': 'Django 5.x', 'skill_type': 'frameworks', 'proficiency': 'expert'},
+            {'name': 'Django REST Framework', 'skill_type': 'frameworks', 'proficiency': 'expert'},
+            {'name': 'React.js', 'skill_type': 'frameworks', 'proficiency': 'intermediate'},
+            {'name': 'Bootstrap 5', 'skill_type': 'frameworks', 'proficiency': 'advanced'},
+            {'name': 'Android SDK', 'skill_type': 'frameworks', 'proficiency': 'advanced'},
+            {'name': 'LangChain', 'skill_type': 'frameworks', 'proficiency': 'advanced'},
+            # Backend Development
+            {'name': 'REST APIs', 'skill_type': 'backend-dev', 'proficiency': 'expert'},
+            {'name': 'WebSocket', 'skill_type': 'backend-dev', 'proficiency': 'advanced'},
+            # Database
+            {'name': 'PostgreSQL', 'skill_type': 'database', 'proficiency': 'advanced'},
+            {'name': 'SQLite', 'skill_type': 'database', 'proficiency': 'advanced'},
+            {'name': 'MongoDB', 'skill_type': 'database', 'proficiency': 'intermediate'},
+            {'name': 'Room Database', 'skill_type': 'database', 'proficiency': 'intermediate'},
+            # AI/ML
+            {'name': 'Prompt Engineering', 'skill_type': 'ai-ml', 'proficiency': 'expert'},
+            {'name': 'OpenAI API', 'skill_type': 'ai-ml', 'proficiency': 'advanced'},
+            {'name': 'Google Gemini API', 'skill_type': 'ai-ml', 'proficiency': 'advanced'},
+            {'name': 'RAG Systems', 'skill_type': 'ai-ml', 'proficiency': 'advanced'},
+            {'name': 'Pinecone', 'skill_type': 'ai-ml', 'proficiency': 'intermediate'},
+            {'name': 'Vector Databases', 'skill_type': 'ai-ml', 'proficiency': 'intermediate'},
+            {'name': 'Speech-to-Text', 'skill_type': 'ai-ml', 'proficiency': 'advanced'},
+            # Backend Services (BaaS)
+            {'name': 'Firebase', 'skill_type': 'baas', 'proficiency': 'intermediate'},
+            {'name': 'Deepgram', 'skill_type': 'baas', 'proficiency': 'advanced'},
+            # DevOps
+            {'name': 'Docker', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            {'name': 'Docker Compose', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            {'name': 'Nginx', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            {'name': 'Git', 'skill_type': 'devops', 'proficiency': 'advanced'},
+            {'name': 'GitHub', 'skill_type': 'devops', 'proficiency': 'advanced'},
+            {'name': 'Linux/Unix', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            {'name': 'Vercel', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            {'name': 'Render', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            # Automation
+            {'name': 'Arduino Programming', 'skill_type': 'automation', 'proficiency': 'intermediate'},
+            {'name': 'Embedded Systems', 'skill_type': 'automation', 'proficiency': 'intermediate'},
+            # Softwares
+            {'name': 'Figma', 'skill_type': 'softwares', 'proficiency': 'intermediate'},
+            {'name': 'Canva', 'skill_type': 'softwares', 'proficiency': 'intermediate'},
+            {'name': 'Material Design', 'skill_type': 'softwares', 'proficiency': 'intermediate'},
+            {'name': 'TinkerCAD', 'skill_type': 'softwares', 'proficiency': 'intermediate'},
+            # Others
+            {'name': 'Mobile App Development', 'skill_type': 'mobile-app-dev', 'proficiency': 'advanced'},
+            {'name': 'Frontend Development', 'skill_type': 'frontend-dev', 'proficiency': 'intermediate'},
         ]
 
         for idx, skill_data in enumerate(skills_data):

@@ -1,4 +1,4 @@
-import { Column, Heading, Meta, Schema, Grid, Text, Card } from "@once-ui-system/core";
+import { Column, Heading, Meta, Schema, Grid, Text, Card, SmartLink } from "@once-ui-system/core";
 import { achievementsApi } from "@/lib";
 import { baseURL, person } from "@/resources";
 import type { Achievement } from "@/types";
@@ -49,23 +49,28 @@ export default async function AchievementsPage() {
       <Column fillWidth flex={1} gap="40" paddingX="l">
         {achievements.length > 0 ? (
           <Grid columns="3" m={{ columns: 2 }} s={{ columns: 1 }} fillWidth gap="24">
-            {achievements.map((achievement) => (
-              <Card key={achievement.id} padding="24" gap="16" fillWidth>
-                {achievement.image && (
-                  <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: 'var(--radius-m)', overflow: 'hidden', marginBottom: '8px' }}>
-                    <img src={achievement.image} alt={achievement.title} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
-                  </div>
-                )}
-                <Heading variant="heading-strong-m">{achievement.title}</Heading>
-                <Text variant="body-default-s" onBackground="neutral-weak">
-                  {achievement.issuer}
-                </Text>
-                <Text variant="body-default-s" onBackground="neutral-weak">
-                  {formatDate(achievement.date)}
-                </Text>
-                <Text variant="body-default-m">{achievement.description}</Text>
-              </Card>
-            ))}
+            {achievements.map((achievement) => {
+              const slug = achievement.title.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+              return (
+                <SmartLink key={achievement.id} href={`/achievements/${slug}`}>
+                  <Card padding="24" gap="16" fillWidth>
+                    {achievement.image && (
+                      <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: 'var(--radius-m)', overflow: 'hidden', marginBottom: '8px' }}>
+                        <img src={achievement.image} alt={achievement.title} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
+                      </div>
+                    )}
+                    <Heading variant="heading-strong-m">{achievement.title}</Heading>
+                    <Text variant="body-default-s" onBackground="neutral-weak">
+                      {achievement.issuer}
+                    </Text>
+                    <Text variant="body-default-s" onBackground="neutral-weak">
+                      {formatDate(achievement.date)}
+                    </Text>
+                    <Text variant="body-default-m">{achievement.description}</Text>
+                  </Card>
+                </SmartLink>
+              );
+            })}
           </Grid>
         ) : (
           <Text paddingX="l">No achievements found.</Text>

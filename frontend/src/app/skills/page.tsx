@@ -1,4 +1,4 @@
-import { Column, Heading, Meta, Schema, Text, Row, Tag, Card } from "@once-ui-system/core";
+import { Column, Heading, Meta, Schema, Text, Row, Tag, Card, SmartLink } from "@once-ui-system/core";
 import { skillsApi } from "@/lib";
 import { baseURL, person } from "@/resources";
 import type { Skill } from "@/types";
@@ -62,11 +62,14 @@ export default async function SkillsPage() {
                 <Column gap="16">
                   <Heading variant="heading-strong-l">{type.replace(/[-]/g, ' ')}</Heading>
                   <Row wrap gap="12">
-                    {skillList.map((skill) => (
-                      <Tag key={skill.id} size="l" prefixIcon={skill.icon}>
-                        {skill.name} ({skill.proficiency})
-                      </Tag>
-                    ))}
+                    {skillList.map((skill) => {
+                      const slug = skill.name.toLowerCase().replace(/[\W_]+/g, '-').replace(/^-|-$/g, '');
+                      return (
+                        <SmartLink key={skill.id} href={`/skills/${slug}`}>
+                          <Tag size="l" prefixIcon={skill.icon}>{skill.name} ({skill.proficiency})</Tag>
+                        </SmartLink>
+                      );
+                    })}
                   </Row>
                 </Column>
               </Card>

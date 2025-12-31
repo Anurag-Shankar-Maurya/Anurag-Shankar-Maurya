@@ -5,16 +5,22 @@ import { projectsApi } from "@/lib";
 interface ProjectsProps {
   range?: [number, number?];
   exclude?: string[];
+  displayMode?: 'unified' | 'detailed';
 }
 
-export async function Projects({ range, exclude }: ProjectsProps) {
+export async function Projects({ range, exclude, displayMode = 'detailed' }: ProjectsProps) {
   let allProjects;
   
   try {
-    const response = await projectsApi.list({
-      show_on_home: true,
+    const apiParams: { ordering: string; show_on_home?: boolean } = {
       ordering: "-is_featured,-order,-created_at",
-    });
+    };
+
+    if (displayMode === 'unified') {
+      apiParams.show_on_home = true;
+    }
+
+    const response = await projectsApi.list(apiParams);
     allProjects = response.results;
   } catch (error) {
     console.error('Failed to fetch projects:', error);
@@ -43,7 +49,35 @@ export async function Projects({ range, exclude }: ProjectsProps) {
     );
   }
 
-  // Separate featured and regular projects
+  // Unified view for home page
+  if (displayMode === 'unified') {
+    return (
+      <Column fillWidth gap="24" marginBottom="40">
+        <Heading as="h2" variant="heading-strong-l" paddingX="l">
+          Projects
+        </Heading>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 400px), 1fr))",
+            gap: "24px",
+            paddingLeft: "var(--static-space-l)",
+            paddingRight: "var(--static-space-l)",
+          }}
+        >
+          {projects.map((project) => (
+            <ProjectCard
+              key={project.slug}
+              project={project}
+              featured={project.is_featured}
+            />
+          ))}
+        </div>
+      </Column>
+    );
+  }
+
+  // Detailed view for work page (default)
   const featuredProjects = projects.filter(p => p.is_featured);
   const regularProjects = projects.filter(p => !p.is_featured);
 

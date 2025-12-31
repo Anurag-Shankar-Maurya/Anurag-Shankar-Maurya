@@ -75,6 +75,7 @@ export interface BlogPost {
   excerpt: string;
   content: string;
   featured_image: string;
+  images?: Image[];
   published_at: string;
   reading_time: number;
   category: { name: string; slug: string };

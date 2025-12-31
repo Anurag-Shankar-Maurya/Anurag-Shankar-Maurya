@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, ArrowLeft, Globe, Github, Loader2 } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
+import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { Project, ViewState } from '../types';
 import { api } from '../services/api';
@@ -96,8 +97,15 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
         </button>
       </div>
 
+      {project.images && project.images.length > 0 && (
+        <div className="mb-8">
+          <h3 className="text-lg font-bold text-white mb-4">Project Gallery</h3>
+          <Gallery images={project.images} columns={3} />
+        </div>
+      )}
+
       <Lightbox images={lbImages} initialIndex={lbIndex} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
-      
+
       <div className="flex flex-col md:flex-row gap-12">
         <div className="flex-1">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{project.title}</h1>

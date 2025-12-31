@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, BookOpen, Calendar, Loader2 } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
+import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { BlogPost, ViewState } from '../types';
 import { api } from '../services/api';
@@ -96,6 +97,13 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
       </div>
 
       <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
+
+      {post.images && post.images.length > 0 && (
+        <div className="mb-8">
+          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+          <Gallery images={post.images} columns={3} />
+        </div>
+      )}
 
       <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed">
          <p className="whitespace-pre-wrap">{post.content}</p>

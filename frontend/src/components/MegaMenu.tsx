@@ -41,19 +41,19 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
           <Column gap="24">
             <Heading variant="heading-strong-l">Portfolio</Heading>
             <Line />
-            <MenuLink href="/work" icon="folder" title="Projects" description="Featured case studies." onClose={onClose} />
+            <MenuLink href="/work" icon="grid" title="Projects" description="Featured case studies." onClose={onClose} />
             <MenuLink href="/blog" icon="book" title="Blog" description="My thoughts and articles." onClose={onClose} />
-            <MenuLink href="/skills" icon="code" title="Skills" description="My technical capabilities." onClose={onClose} />
+            <MenuLink href="/skills" icon="rocket" title="Skills" description="My technical capabilities." onClose={onClose} />
           </Column>
 
           {/* Column 3: Credentials */}
           <Column gap="24">
             <Heading variant="heading-strong-l">Credentials</Heading>
             <Line />
-            <MenuLink href="/education" icon="education" title="Education" description="My academic background." onClose={onClose} />
-            <MenuLink href="/certificates" icon="certificate" title="Certificates" description="My professional certifications." onClose={onClose} />
-            <MenuLink href="/achievements" icon="award" title="Achievements" description="Awards and recognitions." onClose={onClose} />
-            <MenuLink href="/testimonials" icon="quote" title="Testimonials" description="What others say about me." onClose={onClose} />
+            <MenuLink href="/education" icon="book" title="Education" description="My academic background." onClose={onClose} />
+            <MenuLink href="/certificates" icon="document" title="Certificates" description="My professional certifications." onClose={onClose} />
+            <MenuLink href="/achievements" icon="calendar" title="Achievements" description="Awards and recognitions." onClose={onClose} />
+            <MenuLink href="/testimonials" icon="person" title="Testimonials" description="What others say about me." onClose={onClose} />
           </Column>
         </Grid>
       </div>

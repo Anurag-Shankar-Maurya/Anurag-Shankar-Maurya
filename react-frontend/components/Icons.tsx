@@ -1,0 +1,132 @@
+
+import {
+  ArrowUpRight,
+  ArrowRight,
+  ArrowLeft,
+  Mail,
+  Globe,
+  User,
+  Grid,
+  BookOpen,
+  Link,
+  Calendar,
+  Home,
+  Image,
+  Eye,
+  EyeOff,
+  FileText,
+  Rocket,
+  MoreHorizontal,
+  Briefcase,
+  GraduationCap,
+  Award,
+  Star,
+  Zap,
+  ChevronDown,
+  Loader2,
+  MapPin,
+  ExternalLink,
+  Download,
+  Code,
+  Terminal,
+  Cpu,
+  Menu,
+  X,
+  Check,
+  AlertCircle
+} from 'lucide-react';
+
+// Brand icons from react-icons
+import {
+  FaGithub,
+  FaLinkedin,
+  FaXTwitter,
+  FaInstagram,
+  FaFacebook,
+  FaYoutube,
+  FaDribbble,
+  FaBehance,
+  FaMedium,
+  FaDev,
+  FaStackOverflow,
+  FaDiscord,
+  FaThreads,
+  FaPinterest,
+  FaReddit,
+  FaTelegram,
+  FaWhatsapp
+} from 'react-icons/fa6';
+
+export const Icons = {
+  // Navigation
+  arrowUpRight: ArrowUpRight,
+  arrowRight: ArrowRight,
+  arrowLeft: ArrowLeft,
+  chevronDown: ChevronDown,
+  menu: Menu,
+  close: X,
+  openLink: Link,
+  externalLink: ExternalLink,
+  download: Download,
+  loader: Loader2,
+  more: MoreHorizontal,
+  
+  // Core Sections
+  home: Home,
+  user: User,
+  grid: Grid,
+  blog: BookOpen,
+  projects: Briefcase,
+  experience: Briefcase,
+  education: GraduationCap,
+  awards: Award,
+  certificates: Award,
+  skills: Zap,
+  testimonials: Star,
+  contact: Mail,
+  
+  // Features
+  gallery: Image,
+  calendar: Calendar,
+  document: FileText,
+  rocket: Rocket,
+  eye: Eye,
+  eyeOff: EyeOff,
+  mapPin: MapPin,
+  code: Code,
+  terminal: Terminal,
+  cpu: Cpu,
+  check: Check,
+  alert: AlertCircle,
+
+  // Fallbacks
+  globe: Globe,
+  email: Mail,
+  link: Link
+};
+
+export const SocialIcons: Record<string, any> = {
+  linkedin: FaLinkedin,
+  github: FaGithub,
+  twitter: FaXTwitter,
+  x: FaXTwitter,
+  instagram: FaInstagram,
+  facebook: FaFacebook,
+  youtube: FaYoutube,
+  dribbble: FaDribbble,
+  behance: FaBehance,
+  medium: FaMedium,
+  dev: FaDev,
+  stackoverflow: FaStackOverflow,
+  discord: FaDiscord,
+  threads: FaThreads,
+  pinterest: FaPinterest,
+  reddit: FaReddit,
+  telegram: FaTelegram,
+  whatsapp: FaWhatsapp,
+  email: Mail,
+  website: Globe,
+  other: Link
+};
+
+export type IconName = keyof typeof Icons;

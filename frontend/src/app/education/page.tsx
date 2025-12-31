@@ -43,41 +43,42 @@ export default async function EducationPage() {
           image: `${baseURL}${person.avatar}`,
         }}
       />
-      <Heading variant="heading-strong-xl" marginLeft="24">
+      <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
         {title}
       </Heading>
-      
-      {educationHistory.length > 0 ? (
-        <Column fillWidth gap="24" paddingX="l">
-          {educationHistory.map((edu) => (
-            <Card key={edu.id} padding="24">
-              <Row gap="24" vertical="center">
-                {edu.logo && (
-                  <img 
-                    src={edu.logo}
-                    alt={edu.institution}
-                    style={{ width: '64px', height: '64px', objectFit: 'contain' }}
-                  />
-                )}
-                <Column gap="8" flex={1}>
-                  <Heading variant="heading-strong-m">{edu.institution}</Heading>
-                  <Text variant="body-strong-m" onBackground="neutral-weak">
-                    {edu.degree}, {edu.field_of_study}
-                  </Text>
-                  <Text variant="body-default-s" onBackground="neutral-weak">
-                    {formatDate(edu.start_date)} - {edu.end_date ? formatDate(edu.end_date) : 'Present'}
-                  </Text>
-                   {edu.description && (
-                    <Text variant="body-default-m" marginTop="8">{edu.description}</Text>
+      <Column fillWidth flex={1} gap="40" paddingX="l">
+        {educationHistory.length > 0 ? (
+          <Column fillWidth gap="24">
+            {educationHistory.map((edu) => (
+              <Card key={edu.id} padding="24" fillWidth>
+                <Row gap="24" vertical="start">
+                  {edu.logo && (
+                    <img 
+                      src={edu.logo}
+                      alt={edu.institution}
+                      style={{ width: '64px', height: '64px', objectFit: 'contain', flexShrink: 0 }}
+                    />
                   )}
-                </Column>
-              </Row>
-            </Card>
-          ))}
-        </Column>
-      ) : (
-        <Text paddingX="l">No education history found.</Text>
-      )}
+                  <Column gap="12" flex={1}>
+                    <Heading variant="heading-strong-m">{edu.institution}</Heading>
+                    <Text variant="body-strong-m" onBackground="neutral-weak">
+                      {edu.degree} in {edu.field_of_study}
+                    </Text>
+                    <Text variant="body-default-s" onBackground="neutral-weak">
+                      {formatDate(edu.start_date)} - {edu.end_date ? formatDate(edu.end_date) : 'Present'}
+                    </Text>
+                    {edu.description && (
+                      <Text variant="body-default-m" marginTop="8">{edu.description}</Text>
+                    )}
+                  </Column>
+                </Row>
+              </Card>
+            ))}
+          </Column>
+        ) : (
+          <Text paddingX="l">No education history found.</Text>
+        )}
+      </Column>
     </Column>
   );
 }

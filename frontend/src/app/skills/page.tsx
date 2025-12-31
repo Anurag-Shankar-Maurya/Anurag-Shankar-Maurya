@@ -51,30 +51,31 @@ export default async function SkillsPage() {
           image: `${baseURL}${person.avatar}`,
         }}
       />
-      <Heading variant="heading-strong-xl" marginLeft="24">
+      <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
         {title}
       </Heading>
-      
-      {Object.entries(groupedSkills).length > 0 ? (
-        <Column gap="40" paddingX="l">
-          {Object.entries(groupedSkills).map(([type, skillList]) => (
-            <Card key={type} padding="24">
-              <Column gap="16">
-                <Heading variant="heading-strong-l">{type.replace(/[-]/g, ' ')}</Heading>
-                <Row wrap gap="12">
-                  {skillList.map((skill) => (
-                    <Tag key={skill.id} size="l" prefixIcon={skill.icon}>
-                      {skill.name} ({skill.proficiency})
-                    </Tag>
-                  ))}
-                </Row>
-              </Column>
-            </Card>
-          ))}
-        </Column>
-      ) : (
-        <Text paddingX="l">No skills found.</Text>
-      )}
+      <Column fillWidth flex={1} gap="40" paddingX="l">
+        {Object.entries(groupedSkills).length > 0 ? (
+          <Column gap="24" fillWidth>
+            {Object.entries(groupedSkills).map(([type, skillList]) => (
+              <Card key={type} padding="24" fillWidth>
+                <Column gap="16">
+                  <Heading variant="heading-strong-l">{type.replace(/[-]/g, ' ')}</Heading>
+                  <Row wrap gap="12">
+                    {skillList.map((skill) => (
+                      <Tag key={skill.id} size="l" prefixIcon={skill.icon}>
+                        {skill.name} ({skill.proficiency})
+                      </Tag>
+                    ))}
+                  </Row>
+                </Column>
+              </Card>
+            ))}
+          </Column>
+        ) : (
+          <Text paddingX="l">No skills found.</Text>
+        )}
+      </Column>
     </Column>
   );
 }

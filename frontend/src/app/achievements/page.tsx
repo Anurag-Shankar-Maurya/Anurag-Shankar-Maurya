@@ -43,30 +43,34 @@ export default async function AchievementsPage() {
           image: `${baseURL}${person.avatar}`,
         }}
       />
-      <Heading variant="heading-strong-xl" marginLeft="24">
+      <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
         {title}
       </Heading>
-      
-      {achievements.length > 0 ? (
-        <Grid columns="2" s={{ columns: 1 }} fillWidth gap="24" paddingX="l">
-          {achievements.map((achievement) => (
-            <Card key={achievement.id} padding="24" gap="16">
-              {achievement.image && (
-                <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: 'var(--radius-m)', overflow: 'hidden' }}>
-                  <img src={achievement.image} alt={achievement.title} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
-                </div>
-              )}
-              <Heading variant="heading-strong-m">{achievement.title}</Heading>
-              <Text variant="body-default-s" onBackground="neutral-weak">
-                Issued by {achievement.issuer} on {formatDate(achievement.date)}
-              </Text>
-              <Text variant="body-default-m">{achievement.description}</Text>
-            </Card>
-          ))}
-        </Grid>
-      ) : (
-        <Text paddingX="l">No achievements found.</Text>
-      )}
+      <Column fillWidth flex={1} gap="40" paddingX="l">
+        {achievements.length > 0 ? (
+          <Grid columns="3" m={{ columns: 2 }} s={{ columns: 1 }} fillWidth gap="24">
+            {achievements.map((achievement) => (
+              <Card key={achievement.id} padding="24" gap="16" fillWidth>
+                {achievement.image && (
+                  <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: 'var(--radius-m)', overflow: 'hidden', marginBottom: '8px' }}>
+                    <img src={achievement.image} alt={achievement.title} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
+                  </div>
+                )}
+                <Heading variant="heading-strong-m">{achievement.title}</Heading>
+                <Text variant="body-default-s" onBackground="neutral-weak">
+                  {achievement.issuer}
+                </Text>
+                <Text variant="body-default-s" onBackground="neutral-weak">
+                  {formatDate(achievement.date)}
+                </Text>
+                <Text variant="body-default-m">{achievement.description}</Text>
+              </Card>
+            ))}
+          </Grid>
+        ) : (
+          <Text paddingX="l">No achievements found.</Text>
+        )}
+      </Column>
     </Column>
   );
 }

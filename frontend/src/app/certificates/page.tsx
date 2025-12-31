@@ -43,48 +43,52 @@ export default async function CertificatesPage() {
           image: `${baseURL}${person.avatar}`,
         }}
       />
-      <Heading variant="heading-strong-xl" marginLeft="24">
+      <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
         {title}
       </Heading>
-      
-      {certificates.length > 0 ? (
-        <Grid columns="3" m={{ columns: 2 }} s={{ columns: 1 }} fillWidth gap="24" paddingX="l">
-          {certificates.map((cert) => (
-            <Card key={cert.id} padding="24" style={{ display: 'flex', flexDirection: 'column' }}>
-              <Column gap="16" style={{ flexGrow: 1 }}>
-                {cert.organization_logo && (
-                  <img 
-                    src={cert.organization_logo}
-                    alt={cert.issuing_organization}
-                    style={{ width: '48px', height: '48px', objectFit: 'contain' }}
-                  />
+      <Column fillWidth flex={1} gap="40" paddingX="l">
+        {certificates.length > 0 ? (
+          <Grid columns="3" m={{ columns: 2 }} s={{ columns: 1 }} fillWidth gap="24">
+            {certificates.map((cert) => (
+              <Card key={cert.id} padding="24" gap="16" fillWidth>
+                <Column gap="16" style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  {cert.organization_logo && (
+                    <img 
+                      src={cert.organization_logo}
+                      alt={cert.issuing_organization}
+                      style={{ width: '48px', height: '48px', objectFit: 'contain' }}
+                    />
+                  )}
+                  <Heading variant="heading-strong-m">{cert.title}</Heading>
+                  <Text variant="body-default-s" onBackground="neutral-weak">
+                    {cert.issuing_organization}
+                  </Text>
+                  <Text variant="body-default-s" onBackground="neutral-weak">
+                    Issued {formatDate(cert.issue_date)}
+                  </Text>
+                  {cert.description && (
+                    <Text variant="body-default-m">{cert.description}</Text>
+                  )}
+                </Column>
+                {cert.credential_url && (
+                  <Row paddingTop="16">
+                    <Button
+                      href={cert.credential_url}
+                      variant="secondary"
+                      size="s"
+                      target="_blank"
+                    >
+                      Verify Credential
+                    </Button>
+                  </Row>
                 )}
-                <Heading variant="heading-strong-m">{cert.title}</Heading>
-                <Text variant="body-default-s" onBackground="neutral-weak">
-                  {cert.issuing_organization} • Issued {formatDate(cert.issue_date)}
-                </Text>
-                {cert.description && (
-                  <Text variant="body-default-m">{cert.description}</Text>
-                )}
-              </Column>
-              {cert.credential_url && (
-                <Row paddingTop="16">
-                  <Button
-                    href={cert.credential_url}
-                    variant="secondary"
-                    size="s"
-                    target="_blank"
-                  >
-                    Verify Credential
-                  </Button>
-                </Row>
-              )}
-            </Card>
-          ))}
-        </Grid>
-      ) : (
-        <Text paddingX="l">No certificates found.</Text>
-      )}
+              </Card>
+            ))}
+          </Grid>
+        ) : (
+          <Text paddingX="l">No certificates found.</Text>
+        )}
+      </Column>
     </Column>
   );
 }

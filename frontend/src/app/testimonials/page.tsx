@@ -42,46 +42,47 @@ export default async function TestimonialsPage() {
           image: `${baseURL}${person.avatar}`,
         }}
       />
-      <Heading variant="heading-strong-xl" marginLeft="24">
+      <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
         {title}
       </Heading>
-      
-      {testimonials.length > 0 ? (
-        <Grid columns="2" s={{ columns: 1 }} fillWidth gap="24" paddingX="l">
-          {testimonials.map((testimonial) => (
-            <Card key={testimonial.id} padding="24" style={{ display: 'flex', flexDirection: 'column' }}>
-              <Column gap="16" style={{ flexGrow: 1 }}>
-                <Row gap="m" vertical="center">
-                  {testimonial.author_image && (
-                    <Avatar src={testimonial.author_image} size="l" />
-                  )}
-                  <Column gap="4">
-                    <Text variant="heading-strong-s">
-                      {testimonial.author_name}
-                    </Text>
-                    <Text variant="body-default-xs" onBackground="neutral-weak">
-                      {testimonial.author_title}
-                      {testimonial.author_company && ` at ${testimonial.author_company}`}
-                    </Text>
-                  </Column>
-                </Row>
-                <Text variant="body-default-l" style={{ fontStyle: 'italic' }}>
-                  &ldquo;{testimonial.content}&rdquo;
-                </Text>
-              </Column>
-              {testimonial.rating && (
-                <Row gap="4" paddingTop="16">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Icon key={i} name="star" size="s" onBackground="accent-strong" />
-                  ))}
-                </Row>
-              )}
-            </Card>
-          ))}
-        </Grid>
-      ) : (
-        <Text paddingX="l">No testimonials found.</Text>
-      )}
+      <Column fillWidth flex={1} gap="40" paddingX="l">
+        {testimonials.length > 0 ? (
+          <Grid columns="2" s={{ columns: 1 }} fillWidth gap="24">
+            {testimonials.map((testimonial) => (
+              <Card key={testimonial.id} padding="24" gap="16" fillWidth>
+                <Column gap="16" style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <Row gap="m" vertical="center">
+                    {testimonial.author_image && (
+                      <Avatar src={testimonial.author_image} size="l" />
+                    )}
+                    <Column gap="4" flex={1}>
+                      <Text variant="heading-strong-s">
+                        {testimonial.author_name}
+                      </Text>
+                      <Text variant="body-default-xs" onBackground="neutral-weak">
+                        {testimonial.author_title}
+                        {testimonial.author_company && ` at ${testimonial.author_company}`}
+                      </Text>
+                    </Column>
+                  </Row>
+                  <Text variant="body-default-l" style={{ fontStyle: 'italic' }}>
+                    &ldquo;{testimonial.content}&rdquo;
+                  </Text>
+                </Column>
+                {testimonial.rating && (
+                  <Row gap="4" paddingTop="8">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Icon key={i} name="star" size="s" onBackground="accent-strong" />
+                    ))}
+                  </Row>
+                )}
+              </Card>
+            ))}
+          </Grid>
+        ) : (
+          <Text paddingX="l">No testimonials found.</Text>
+        )}
+      </Column>
     </Column>
   );
 }

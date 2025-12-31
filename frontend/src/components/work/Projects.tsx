@@ -12,7 +12,8 @@ export async function Projects({ range, exclude }: ProjectsProps) {
   
   try {
     const response = await projectsApi.list({
-      ordering: '-is_featured,-order,-created_at',
+      show_on_home: true,
+      ordering: "-is_featured,-order,-created_at",
     });
     allProjects = response.results;
   } catch (error) {

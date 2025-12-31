@@ -304,7 +304,7 @@ export interface CertificateFilters extends PaginationParams, SearchParams, Orde
   show_on_home?: boolean;
 }
 
-export interface EducationFilters extends PaginationParams {
+export interface EducationFilters extends PaginationParams, OrderingParams {
   is_current?: boolean;
   profile?: number;
   show_on_home?: boolean;

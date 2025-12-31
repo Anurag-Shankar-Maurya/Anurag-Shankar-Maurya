@@ -66,17 +66,17 @@ export default async function Home() {
       testimonialsApi.list({ show_on_home: true, ordering: '-date' }),
       skillsApi.list({ show_on_home: true }),
       certificatesApi.list({ show_on_home: true, ordering: '-issue_date' }),
-      educationApi.list({ show_on_home: true }),
-      workExperienceApi.list({ show_on_home: true, ordering: '-start_date' }),
-    ]);
+            educationApi.list({ show_on_home: true, ordering: "-start_date" }),
+            workExperienceApi.list({ show_on_home: true, ordering: "-start_date" }),
+        ]);
 
-    profile = profileData.results[0];
-    featuredAchievement = achievementsData.results[0];
-    testimonials = testimonialsData.results;
-    featuredSkills = skillsData.results.slice(0, 6);
-    certificates = certificatesData.results;
-    education = educationData.results;
-    workExperience = workData.results;
+        profile = profileData.results[0];
+        featuredAchievement = achievementsData.results[0];
+        testimonials = testimonialsData.results;
+        featuredSkills = skillsData.results; // Removed .slice(0, 6)
+        certificates = certificatesData.results;
+        education = educationData.results;
+        workExperience = workData.results;
   } catch (error) {
     console.error('Failed to fetch home page data:', error);
   }

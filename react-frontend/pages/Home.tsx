@@ -5,7 +5,7 @@ import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
 import { ViewState, ProfileDetail, Project, BlogPost, Skill } from '../types';
 import { getSocialIcon } from '../utils/helpers';
-import { Icons, SocialIcons } from '../components/Icons';
+import { Icons, SocialIcons, IconName } from '../components/Icons';
 
 interface HomeProps {
   profile: ProfileDetail | null;
@@ -170,10 +170,14 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
         <div className="flex flex-wrap justify-center gap-3">
           {skills.slice(0, 15).map((skill, index) => (
             <div key={skill.id} 
-              className="glass-card flex items-center gap-2 px-4 py-2 rounded-full text-gray-300 hover:text-white hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
+              className="glass-card flex items-center gap-2 px-4 py-2 rounded-full text-gray-300 hover:text-white hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 cursor-pointer"
+              onClick={() => onNavigate({ type: 'SKILL_DETAIL', slug: skill.slug })}
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              {skill.icon && <img src={skill.icon} className="w-4 h-4 object-contain" alt="" />}
+              {(() => {
+                const IconComponent = Icons[skill.name.toLowerCase().replace(/[\s\.\-\+]/g, '') as IconName] || Icons.skills;
+                return <IconComponent className="w-4 h-4" />;
+              })()}
               <span className="text-sm font-medium">{skill.name}</span>
             </div>
           ))}

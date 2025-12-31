@@ -4,6 +4,7 @@ import { Zap, Loader2, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Skill, ViewState } from '../types';
 import { api } from '../services/api';
+import { Icons, IconName } from '../components/Icons';
 
 export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewState) => void }> = ({ skills, onNavigate }) => (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
@@ -24,7 +25,10 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
           style={{ animationDelay: `${index * 0.05}s` }}
         >
            <div className="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 group-hover:bg-green-500/10 group-hover:scale-110 transition-all duration-300">
-             {skill.icon ? <img src={skill.icon} alt={skill.name} className="w-8 h-8 object-contain"/> : <Zap className="w-8 h-8 text-gray-500 group-hover:text-green-400"/>}
+             {(() => {
+               const IconComponent = Icons[skill.name.toLowerCase().replace(/[\s\.\-\+]/g, '') as IconName] || Zap;
+               return <IconComponent className="w-8 h-8 text-gray-400 group-hover:text-green-400" />;
+             })()}
            </div>
            <div>
              <div className="font-bold text-white mb-1 group-hover:text-green-400 transition-colors">{skill.name}</div>
@@ -58,7 +62,10 @@ export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSt
          <div className="absolute inset-0 bg-green-500/5 blur-3xl rounded-full opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none"></div>
          
          <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-white/5 mb-8 border border-white/10 shadow-lg shadow-green-500/10 group-hover:scale-105 transition-transform duration-500">
-            {skill.icon ? <img src={skill.icon} alt={skill.name} className="w-14 h-14 object-contain"/> : <Zap className="w-14 h-14 text-green-400"/>}
+            {(() => {
+               const IconComponent = Icons[skill.name.toLowerCase().replace(/[\s\.\-\+]/g, '') as IconName] || Zap;
+               return <IconComponent className="w-14 h-14 text-green-400" />;
+            })()}
          </div>
          <h1 className="text-5xl font-bold text-white mb-6 tracking-tight">{skill.name}</h1>
          <div className="inline-block px-5 py-2 rounded-full bg-white/5 border border-white/10 text-gray-300 text-sm font-medium capitalize mb-10">

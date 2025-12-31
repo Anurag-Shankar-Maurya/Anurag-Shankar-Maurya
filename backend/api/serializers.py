@@ -50,6 +50,9 @@ class SocialLinkSerializer(serializers.ModelSerializer):
 
 
 class SkillSerializer(serializers.ModelSerializer):
+    skill_type = serializers.CharField(source='get_skill_type_display')
+    proficiency = serializers.CharField(source='get_proficiency_display')
+
     class Meta:
         model = Skill
         fields = ['id', 'name', 'skill_type', 'proficiency', 'icon', 'order']

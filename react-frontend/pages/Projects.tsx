@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, ArrowLeft, Globe, Github, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { Project, ViewState } from '../types';
 import { api } from '../services/api';
+import { Icons, SocialIcons } from '../components/Icons';
 
 export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: ViewState) => void }> = ({ projects, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
@@ -31,25 +32,73 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
         {projects.map((project, index) => (
           <div 
             key={project.id} 
-            className="group flex flex-col glass-card rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2"
+            className="group flex flex-col glass-card rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 cursor-pointer"
             style={{ animationDelay: `${index * 0.1}s` }}
+            onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug }); }}
           >
             <div className="aspect-video bg-black/50 overflow-hidden relative">
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <button onClick={() => handleOpenGallery(project)} className="absolute inset-0 z-10" aria-label={`Open gallery for ${project.title}`}>
-                <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 cursor-pointer" />
-              </button>
-              <div className="absolute top-2 right-2 z-20 px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-md text-xs font-medium text-white border border-white/10 capitalize shadow-lg">
+
+              <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+
+              {/* Overlay icons: Live, Source, Demo, Gallery */}
+              <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
+                {project.live_url && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); window.open(project.live_url, '_blank'); }}
+                    className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60"
+                    aria-label={`Open live site for ${project.title}`}
+                  >
+                    {React.createElement(Icons.globe, { className: 'w-4 h-4' })}
+                  </button>
+                )}
+
+                {project.github_url && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); window.open(project.github_url, '_blank'); }}
+                    className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60"
+                    aria-label={`Open source for ${project.title}`}
+                  >
+                    {React.createElement(SocialIcons.github, { className: 'w-4 h-4' })}
+                  </button>
+                )}
+
+                {project.demo_url && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); window.open(project.demo_url, '_blank'); }}
+                    className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60"
+                    aria-label={`Open demo for ${project.title}`}
+                  >
+                    {React.createElement(Icons.play, { className: 'w-4 h-4' })}
+                  </button>
+                )}
+
+                {project.images && project.images.length > 0 && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleOpenGallery(project); }}
+                    className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60"
+                    aria-label={`Open gallery for ${project.title}`}
+                  >
+                    {React.createElement(Icons.gallery, { className: 'w-4 h-4' })}
+                  </button>
+                )}
+              </div>
+
+              <div className="absolute top-2 left-3 z-20 px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-md text-xs font-medium text-white border border-white/10 capitalize shadow-lg">
                 {project.status}
               </div>
             </div>
             <div className="p-6 flex flex-col flex-grow">
               <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{project.title}</h3>
               <p className="text-gray-400 text-sm mb-4 line-clamp-3 flex-grow">{project.short_description}</p>
-              <div className="pt-4 border-t border-white/5 mt-auto">
-                <Button variant="ghost" className="w-full justify-between group-hover:text-blue-400 px-0" onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}>
-                  View Details <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"/>
-                </Button>
+              {/* tech badges */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {project.technologies.split(',').slice(0, 3).map(t => (
+                  <span key={t} className="px-2 py-1 text-xs bg-white/5 rounded-md text-gray-300 border border-white/5">{t.trim()}</span>
+                ))}
               </div>
             </div>
           </div>
@@ -118,14 +167,20 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Project Links</h3>
             <div className="space-y-4">
               {project.live_url && (
-                <a href={project.live_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-blue-400 hover:text-blue-300 transition-colors group">
-                  <span className="flex items-center"><Globe className="w-4 h-4 mr-2"/> Live Site</span>
+                <a href={project.live_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-blue-400 hover:text-blue-300 transition-colors group" onClick={(e) => e.stopPropagation()}>
+                  <span className="flex items-center">{React.createElement(Icons.globe, { className: 'w-4 h-4 mr-2' })} Live Site</span>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"/>
                 </a>
               )}
               {project.github_url && (
-                <a href={project.github_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-gray-300 hover:text-white transition-colors group">
-                  <span className="flex items-center"><Github className="w-4 h-4 mr-2"/> Source Code</span>
+                <a href={project.github_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-gray-300 hover:text-white transition-colors group" onClick={(e) => e.stopPropagation()}>
+                  <span className="flex items-center">{React.createElement(SocialIcons.github, { className: 'w-4 h-4 mr-2' })} Source Code</span>
+                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"/>
+                </a>
+              )}
+              {project.demo_url && (
+                <a href={project.demo_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-gray-300 hover:text-white transition-colors group" onClick={(e) => e.stopPropagation()}>
+                  <span className="flex items-center">{React.createElement(Icons.play, { className: 'w-4 h-4 mr-2' })} Demo</span>
                    <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"/>
                 </a>
               )}

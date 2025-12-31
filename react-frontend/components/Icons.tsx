@@ -54,8 +54,12 @@ import {
   FaPinterest,
   FaReddit,
   FaTelegram,
-  FaWhatsapp
+  FaWhatsapp,
+  FaPlay,
+  FaImage,
+  FaGlobe,
 } from 'react-icons/fa6';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 export const Icons = {
   // Navigation
@@ -86,7 +90,7 @@ export const Icons = {
   contact: Mail,
   
   // Features
-  gallery: Image,
+  gallery: FaImage,
   calendar: Calendar,
   document: FileText,
   rocket: Rocket,
@@ -98,9 +102,11 @@ export const Icons = {
   cpu: Cpu,
   check: Check,
   alert: AlertCircle,
+  play: FaPlay,
 
   // Fallbacks
-  globe: Globe,
+  globe: FaGlobe,
+  external: FaExternalLinkAlt,
   email: Mail,
   link: Link
 };

@@ -96,6 +96,7 @@ export interface WorkExperience {
   work_mode: string;
   location: string;
   technologies_used: string;
+  images?: Image[];
 }
 
 export interface Education {
@@ -109,6 +110,7 @@ export interface Education {
   logo: string;
   description: string;
   slug: string;
+  images?: Image[];
 }
 
 export interface Certificate {
@@ -120,6 +122,7 @@ export interface Certificate {
   certificate_image: string;
   skills: string;
   slug: string;
+  images?: Image[];
 }
 
 export interface Achievement {
@@ -132,6 +135,7 @@ export interface Achievement {
   description: string;
   url: string;
   image: string;
+  images?: Image[];
 }
 
 export interface Testimonial {
@@ -145,6 +149,7 @@ export interface Testimonial {
   rating: number;
   relationship: string;
   linkedin_url: string;
+  images?: Image[];
 }
 
 export type ViewState = 

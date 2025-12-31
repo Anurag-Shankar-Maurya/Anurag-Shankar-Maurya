@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Award, ArrowRight, ArrowLeft, ExternalLink, Loader2 } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
+import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { Certificate, Achievement, ViewState } from '../types';
 import { api } from '../services/api';
@@ -138,6 +139,13 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
          </div>
       </div>
 
+      {cert.images && cert.images.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+          <Gallery images={cert.images} columns={3} />
+        </div>
+      )}
+
       <Lightbox images={[{ src: cert.certificate_image, alt: cert.title }]} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
     </main>
   );
@@ -192,6 +200,13 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
             )}
          </div>
       </div>
+
+      {ach.images && ach.images.length > 0 && (
+        <div className="mt-8 px-8 md:px-12">
+          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+          <Gallery images={ach.images} columns={3} />
+        </div>
+      )}
 
       <Lightbox images={[{ src: ach.image, alt: ach.title }]} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
     </main>

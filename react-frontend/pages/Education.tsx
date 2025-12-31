@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { GraduationCap, ArrowRight, ArrowLeft, Calendar, Loader2 } from 'lucide-react';
 import { Button } from '../components/Button';
+import Gallery from '../components/Gallery';
 import { Education, ViewState } from '../types';
 import { api } from '../services/api';
 
@@ -87,6 +88,13 @@ export const EducationDetailView: React.FC<{ slug: string, onNavigate: (view: Vi
               <h3 className="text-white font-bold text-lg mb-4">Program Overview</h3>
               <p className="whitespace-pre-wrap leading-relaxed">{education.description}</p>
             </div>
+
+            {education.images && education.images.length > 0 && (
+              <div className="mt-8 px-8 md:px-12">
+                <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+                <Gallery images={education.images} columns={3} />
+              </div>
+            )}
          </div>
       </div>
     </main>

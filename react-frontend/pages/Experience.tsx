@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Briefcase, Loader2, ArrowLeft, MapPin } from 'lucide-react';
 import { Button } from '../components/Button';
+import Gallery from '../components/Gallery';
 import { WorkExperience, ViewState } from '../types';
 import { api } from '../services/api';
 
@@ -105,6 +106,13 @@ export const ExperienceDetailView: React.FC<{ id: number, onNavigate: (view: Vie
             ))}
           </div>
         </div>
+
+        {experience.images && experience.images.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+            <Gallery images={experience.images} columns={3} />
+          </div>
+        )}
       </div>
     </main>
   );

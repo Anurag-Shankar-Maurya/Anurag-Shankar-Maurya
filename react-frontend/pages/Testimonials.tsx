@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Loader2, ArrowLeft } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
+import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { Testimonial, ViewState } from '../types';
 import { api } from '../services/api';
@@ -74,6 +75,13 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
            <img src={test.author_image} alt={test.author_name} className="w-full h-full rounded-full object-cover border-4 border-background cursor-pointer"/>
          </button>
       </div>
+
+      {test.images && test.images.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+          <Gallery images={test.images} columns={3} />
+        </div>
+      )}
 
       <Lightbox images={[{ src: test.author_image, alt: test.author_name }]} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
       

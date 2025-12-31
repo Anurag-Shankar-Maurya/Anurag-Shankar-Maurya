@@ -2,6 +2,7 @@
 import React from 'react';
 import { MapPin, Calendar, Briefcase, ArrowRight } from 'lucide-react';
 import { Button } from '../components/Button';
+import Gallery from '../components/Gallery';
 import { ProfileDetail, WorkExperience, ViewState } from '../types';
 
 interface AboutProps {
@@ -38,6 +39,13 @@ export const About: React.FC<AboutProps> = ({ profile, experience, onNavigate })
           </div>
         </div>
       </section>
+
+      {profile?.images && profile.images.length > 0 && (
+        <section className="animate-fade-in-up">
+          <h3 className="text-lg font-bold text-white mb-4">Photos & Gallery</h3>
+          <Gallery images={profile.images} columns={4} />
+        </section>
+      )}
 
       {/* Experience Preview */}
       <section className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>

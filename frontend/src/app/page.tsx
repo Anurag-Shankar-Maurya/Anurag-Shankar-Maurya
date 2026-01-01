@@ -383,11 +383,12 @@ export default async function Home() {
                 <Column 
                   key={cert.id}
                   flex={1}
-                  minWidth={280}
+                  minWidth={220}
                   padding="24"
                   radius="l"
                   background="surface"
                   gap="m"
+                  style={{ minWidth: 0, maxWidth: 360 }}
                 >
                   {cert.organization_logo && (
                     <img 

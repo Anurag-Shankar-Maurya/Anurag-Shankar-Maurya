@@ -5,7 +5,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(16px);
   z-index: 99;
   display: flex;
   justify-content: center;
@@ -42,6 +42,12 @@
   &:hover {
     background-color: var(--color-background-surface);
   }
+}
+
+/* Subtitle color uses a theme-aware CSS variable set globally */
+.subtitle {
+  color: var(--subtitle-color, var(--color-text-neutral-weak, rgb(38, 38, 38)));
+  font-weight: 600; /* use a strong weight; overridden by variant if needed */
 }
 
 .viewAllLink {

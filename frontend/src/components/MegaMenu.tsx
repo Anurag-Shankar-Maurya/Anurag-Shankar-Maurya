@@ -14,7 +14,7 @@ const MenuLink = ({ href, icon, title, description, onClose }: { href: string, i
       <Icon name={icon} size="m" />
       <Column gap="4">
         <Text variant="body-strong-m">{title}</Text>
-        <Text variant="body-default-s" onBackground="neutral-weak">{description}</Text>
+        <Text variant="body-strong-s" onBackground="neutral-weak" className={styles.subtitle}>{description}</Text>
       </Column>
     </Row>
   </SmartLink>

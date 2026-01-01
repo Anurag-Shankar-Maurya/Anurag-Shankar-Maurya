@@ -160,18 +160,38 @@ export const About: React.FC<AboutProps> = ({ profile, experience, onNavigate })
         </div>
         <div className="relative border-l border-white/10 ml-6 space-y-8">
           {experience.slice(0, 3).map((exp, index) => (
-            <div key={exp.id} className="relative pl-12 group" style={{ animationDelay: `${0.3 + index * 0.1}s` }}>
+            <div 
+              key={exp.id} 
+              className="relative pl-12 group cursor-pointer" 
+              onClick={() => onNavigate({ type: 'EXPERIENCE_DETAIL', id: exp.id })}
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
               <div className="absolute -left-[5px] top-8 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-background group-hover:ring-blue-500/20 transition-all shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
               
-              <div className="glass-card p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 group-hover:-translate-y-1">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                  <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{exp.job_title}</h3>
-                  <span className="text-xs font-medium text-gray-400 bg-black/30 px-3 py-1 rounded-full border border-white/5 w-fit mt-2 sm:mt-0">
+              <div className="glass-card p-8 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/20 group-hover:shadow-2xl group-hover:shadow-blue-900/10">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+                  <div className="flex items-center gap-5">
+                    {exp.company_logo ? (
+                        <img src={exp.company_logo} alt={exp.company_name} className="w-14 h-14 rounded-xl bg-white/5 object-cover border border-white/10" />
+                    ) : (
+                        <div className="w-14 h-14 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-white/10"><Briefcase className="w-6 h-6"/></div>
+                    )}
+                    <div>
+                      <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{exp.job_title}</h3>
+                      <div className="text-gray-400 font-medium">{exp.company_name}</div>
+                    </div>
+                  </div>
+                  <span className="text-sm font-medium text-gray-400 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 whitespace-nowrap">
                     {new Date(exp.start_date).getFullYear()} - {exp.end_date ? new Date(exp.end_date).getFullYear() : 'Present'}
                   </span>
                 </div>
-                <div className="text-lg text-blue-400 mb-3">{exp.company_name}</div>
-                <p className="text-gray-400 leading-relaxed line-clamp-2 text-sm">{exp.description}</p>
+                <p className="text-gray-400 leading-relaxed mb-6 line-clamp-3 pl-1">{exp.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {exp.technologies_used?.split(',').slice(0, 5).map((t, i) => (
+                      <span key={i} className="px-2.5 py-1 rounded-md text-xs font-medium bg-blue-500/5 text-blue-300/80 border border-blue-500/10">{t.trim()}</span>
+                  ))}
+                  {exp.technologies_used?.split(',').length > 5 && <span className="px-2.5 py-1 text-xs text-gray-500">+{exp.technologies_used.split(',').length - 5} more</span>}
+                </div>
               </div>
             </div>
           ))}

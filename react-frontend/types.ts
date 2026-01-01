@@ -158,6 +158,7 @@ export interface Testimonial {
   rating: number;
   relationship: string;
   linkedin_url: string;
+  date: string;
   images?: Image[];
   show_on_home?: boolean;
 }

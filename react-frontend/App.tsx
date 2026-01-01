@@ -120,7 +120,7 @@ const App: React.FC = () => {
       
       <div className="relative z-10 animate-fade-in">
         <Routes>
-          <Route path="/" element={<Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} onNavigate={navigateTo} />} />
+          <Route path="/" element={<Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} experience={experience} education={education} certificates={certificates} achievements={achievements} testimonials={testimonials} onNavigate={navigateTo} />} />
           <Route path="/projects" element={<ProjectsView projects={projects} onNavigate={navigateTo} />} />
           <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
           <Route path="/blog" element={<BlogView posts={blogPosts} onNavigate={navigateTo} />} />

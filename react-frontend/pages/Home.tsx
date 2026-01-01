@@ -1,9 +1,8 @@
-
 import React from 'react';
-import { ArrowRight, Download } from 'lucide-react';
+import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
-import { ViewState, ProfileDetail, Project, BlogPost, Skill } from '../types';
+import { ViewState, ProfileDetail, Project, BlogPost, Skill, WorkExperience, Education, Certificate, Achievement, Testimonial } from '../types';
 import { getSocialIcon } from '../utils/helpers';
 import { Icons, SocialIcons, IconName } from '../components/Icons';
 
@@ -12,10 +11,19 @@ interface HomeProps {
   featuredProjects: Project[];
   blogPosts: BlogPost[];
   skills: Skill[];
+  experience: WorkExperience[];
+  education: Education[];
+  certificates: Certificate[];
+  achievements: Achievement[];
+  testimonials: Testimonial[];
   onNavigate: (view: ViewState) => void;
 }
 
-export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts, skills, onNavigate }) => {
+export const Home: React.FC<HomeProps> = ({ 
+  profile, featuredProjects, blogPosts, skills, 
+  experience, education, certificates, achievements, testimonials,
+  onNavigate 
+}) => {
   const [lbOpen, setLbOpen] = React.useState(false);
   const [lbImages, setLbImages] = React.useState<{ src: string; alt?: string }[]>([]);
 
@@ -24,11 +32,21 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
     setLbOpen(true);
   };
 
-  // Show only projects marked to display on home and limit to 4
+  // Filtering and slicing for home page display
   const homeProjects = featuredProjects.filter((p) => p.show_on_home).slice(0, 4);
-
-  // Show only blog posts marked to display on home and limit to 3
   const homeBlogPosts = blogPosts.slice(0, 3);
+  const homeExperience = experience.filter(e => e.show_on_home).slice(0, 3);
+  const homeEducation = education.filter(e => e.show_on_home).slice(0, 2);
+  const homeTestimonials = testimonials.filter(t => t.show_on_home).slice(0, 3);
+  
+  // Combine awards and certs for a unified section
+  const homeAwards = [
+    ...certificates.filter(c => c.show_on_home).map(c => ({ ...c, type: 'certificate' as const })),
+    ...achievements.filter(a => a.show_on_home).map(a => ({ ...a, type: 'achievement' as const }))
+  ].sort((a, b) => new Date(b.date || (a as any).issue_date).getTime() - new Date(a.date || (b as any).issue_date).getTime())
+   .slice(0, 4);
+
+  const homeGallery = profile?.images?.filter(img => img.show_on_home).slice(0, 6) || [];
 
   return (
     <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-32">
@@ -91,7 +109,7 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
       </section>
 
       {/* Featured Projects */}
-      <section className="animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+      <section className="animate-fade-in-up">
         <div className="flex items-end justify-between mb-10">
           <div>
              <h2 className="text-3xl font-bold text-white mb-2">Featured Work</h2>
@@ -157,10 +175,8 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
         </div>
       </section>
 
-      <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
-
       {/* Skills Marquee */}
-      <section className="animate-fade-in-up" style={{ animationDelay: '0.7s' }}>
+      <section className="animate-fade-in-up">
         <div className="flex items-end justify-between mb-10">
            <h2 className="text-3xl font-bold text-white mb-2 text-center w-full md:w-auto">Technical Arsenal</h2>
            <Button variant="ghost" className="hidden md:flex" onClick={() => onNavigate({ type: 'SKILLS' })} rightIcon={<ArrowRight className="w-4 h-4"/>}>
@@ -184,9 +200,147 @@ export const Home: React.FC<HomeProps> = ({ profile, featuredProjects, blogPosts
         </div>
       </section>
 
+      {/* Experience & Education */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        {/* Experience */}
+        {homeExperience.length > 0 && (
+          <section className="animate-fade-in-up">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400"><Briefcase className="w-5 h-5"/></div>
+                <h2 className="text-2xl font-bold text-white">Experience</h2>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'EXPERIENCE' })}>View All</Button>
+            </div>
+            <div className="space-y-4">
+              {homeExperience.map((exp) => (
+                <div key={exp.id} className="glass-card p-4 rounded-xl flex gap-4 hover:border-blue-500/30 transition-colors cursor-pointer" onClick={() => onNavigate({ type: 'EXPERIENCE_DETAIL', id: exp.id })}>
+                   <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                      {exp.company_logo ? <img src={exp.company_logo} alt={exp.company_name} className="w-8 h-8 object-contain" /> : <Briefcase className="w-6 h-6 text-gray-500"/>}
+                   </div>
+                   <div className="min-w-0">
+                      <h3 className="text-white font-bold truncate">{exp.job_title}</h3>
+                      <p className="text-gray-400 text-sm truncate">{exp.company_name}</p>
+                      <div className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                        <Calendar className="w-3 h-3"/> {new Date(exp.start_date).getFullYear()} - {exp.is_current ? 'Present' : exp.end_date ? new Date(exp.end_date).getFullYear() : ''}
+                      </div>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Education */}
+        {homeEducation.length > 0 && (
+          <section className="animate-fade-in-up">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400"><GraduationCap className="w-5 h-5"/></div>
+                <h2 className="text-2xl font-bold text-white">Education</h2>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'EDUCATION' })}>View All</Button>
+            </div>
+            <div className="space-y-4">
+              {homeEducation.map((edu) => (
+                <div key={edu.id} className="glass-card p-4 rounded-xl flex gap-4 hover:border-purple-500/30 transition-colors cursor-pointer" onClick={() => onNavigate({ type: 'EDUCATION_DETAIL', slug: edu.slug })}>
+                   <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                      {edu.logo ? <img src={edu.logo} alt={edu.institution} className="w-8 h-8 object-contain" /> : <GraduationCap className="w-6 h-6 text-gray-500"/>}
+                   </div>
+                   <div className="min-w-0">
+                      <h3 className="text-white font-bold truncate">{edu.degree}</h3>
+                      <p className="text-gray-400 text-sm truncate">{edu.institution}</p>
+                      <div className="text-xs text-gray-500 mt-1">Class of {new Date(edu.end_date || edu.start_date).getFullYear()}</div>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* Awards & Gallery */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        {/* Awards */}
+        <div className="lg:col-span-5 space-y-12 animate-fade-in-up">
+           <section>
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500"><Award className="w-5 h-5"/></div>
+                  <h2 className="text-2xl font-bold text-white">Awards & Certs</h2>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'AWARDS_CERTS' })}>View All</Button>
+              </div>
+              <div className="space-y-4">
+                 {homeAwards.map((award: any) => (
+                   <div key={award.id} className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer" onClick={() => onNavigate({ type: award.type === 'certificate' ? 'CERTIFICATE_DETAIL' : 'ACHIEVEMENT_DETAIL', slug: award.slug })}>
+                      <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500 shrink-0 group-hover:scale-110 transition-transform">
+                         <Award className="w-5 h-5"/>
+                      </div>
+                      <div className="min-w-0">
+                         <div className="text-white font-medium truncate text-sm">{award.title}</div>
+                         <div className="text-gray-500 text-xs truncate">{award.issuing_organization || award.issuer}</div>
+                      </div>
+                   </div>
+                 ))}
+              </div>
+           </section>
+
+           {/* Testimonials Snippet */}
+           {homeTestimonials.length > 0 && (
+             <section>
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-500/10 rounded-lg text-orange-400"><Star className="w-5 h-5"/></div>
+                    <h2 className="text-2xl font-bold text-white">Testimonials</h2>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'TESTIMONIALS' })}>View All</Button>
+                </div>
+                <div className="relative">
+                   <div className="glass-card p-6 rounded-2xl border-orange-500/20">
+                      <div className="text-orange-400 mb-4 flex gap-1">
+                         {[...Array(5)].map((_, i) => <Star key={i} className={`w-3 h-3 ${i < homeTestimonials[0].rating ? 'fill-orange-400' : ''}`}/>)}
+                      </div>
+                      <p className="text-gray-300 italic text-sm line-clamp-3 mb-4">"{homeTestimonials[0].content}"</p>
+                      <div className="flex items-center gap-3">
+                         <img src={homeTestimonials[0].author_image} alt={homeTestimonials[0].author_name} className="w-8 h-8 rounded-full object-cover" />
+                         <div>
+                            <div className="text-white text-xs font-bold">{homeTestimonials[0].author_name}</div>
+                            <div className="text-gray-500 text-[10px]">{homeTestimonials[0].author_title}</div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </section>
+           )}
+        </div>
+
+        {/* Gallery */}
+        <div className="lg:col-span-7 animate-fade-in-up">
+           <section>
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400"><ImageIcon className="w-5 h-5"/></div>
+                  <h2 className="text-2xl font-bold text-white">Gallery</h2>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'ABOUT' })}>View More</Button>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                 {homeGallery.map((img) => (
+                   <div key={img.id} className="aspect-square rounded-xl overflow-hidden glass-card group cursor-pointer" onClick={() => openSingle(img.image_url, img.alt_text)}>
+                      <img src={img.image_url} alt={img.alt_text} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                   </div>
+                 ))}
+              </div>
+           </section>
+        </div>
+      </div>
+
+      <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
+
       {/* Latest Insights */}
       {blogPosts.length > 0 && (
-        <section className="animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
+        <section className="animate-fade-in-up">
           <div className="flex items-end justify-between mb-10">
             <div>
               <h2 className="text-3xl font-bold text-white mb-2">Latest Insights</h2>

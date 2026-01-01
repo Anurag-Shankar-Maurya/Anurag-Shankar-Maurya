@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2, Search, X } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
@@ -12,6 +12,10 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
   const [lbOpen, setLbOpen] = useState(false);
   const [lbImages, setLbImages] = useState<{ src: string; alt?: string; caption?: string }[]>([]);
   const [lbIndex, setLbIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   const handleOpenGallery = (project: Project, index = 0) => {
     const imgs = [
@@ -23,13 +27,76 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
     setLbOpen(true);
   };
 
+  // Filter projects based on search and status
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         project.short_description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = !selectedStatus || project.status === selectedStatus;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Get unique statuses
+  const statuses = Array.from(new Set(projects.map(p => p.status)));
+
+  // Paginate filtered results
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const paginatedProjects = filteredProjects.slice(startIdx, startIdx + itemsPerPage);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedStatus]);
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
       <h1 className="text-4xl font-bold text-white mb-4">All Projects</h1>
       <p className="text-gray-400 max-w-2xl mb-12">A complete archive of my open source contributions, client work, and side projects.</p>
       
+      {/* Search and Filter Bar */}
+      <div className="mb-8 space-y-4">
+        <div className="flex gap-3 flex-col sm:flex-row">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search projects..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition-colors"
+            />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {statuses.map(status => (
+              <button
+                key={status}
+                onClick={() => setSelectedStatus(selectedStatus === status ? null : status)}
+                className={`px-3 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
+                  selectedStatus === status
+                    ? 'bg-blue-500/30 border border-blue-500/50 text-blue-300'
+                    : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+            {(searchQuery || selectedStatus) && (
+              <button
+                onClick={() => { setSearchQuery(''); setSelectedStatus(null); }}
+                className="px-3 py-2 rounded-lg text-sm font-medium bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 flex items-center gap-1"
+              >
+                <X className="w-4 h-4" /> Clear
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="text-sm text-gray-500">
+          {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'} found
+        </div>
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project, index) => (
+        {paginatedProjects.map((project, index) => (
           <div 
             key={project.id} 
             className="group flex flex-col glass-card rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 cursor-pointer"
@@ -104,6 +171,39 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-12 flex items-center justify-center gap-2">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 disabled:opacity-50 hover:bg-white/10 transition-colors"
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-2 rounded-lg transition-colors ${
+                currentPage === page
+                  ? 'bg-blue-500/30 border border-blue-500/50 text-white'
+                  : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 disabled:opacity-50 hover:bg-white/10 transition-colors"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       <Lightbox images={lbImages} initialIndex={lbIndex} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
     </main>

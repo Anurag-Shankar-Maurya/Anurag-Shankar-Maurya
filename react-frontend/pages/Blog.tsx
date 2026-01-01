@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, BookOpen, Calendar, Loader2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Calendar, Loader2, Search, Filter, X } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
@@ -10,11 +10,38 @@ import { api } from '../services/api';
 export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewState) => void }> = ({ posts, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
   const [lbImages, setLbImages] = useState<{ src: string; alt?: string }[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   const openSingle = (src: string, alt?: string) => {
     setLbImages([{ src, alt }]);
     setLbOpen(true);
   };
+
+  // Filter posts based on search and category
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = !selectedCategory || post.category.slug === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Get unique categories
+  const categories = Array.from(new Set(posts.map(p => p.category.slug)))
+    .map(slug => posts.find(p => p.category.slug === slug)?.category)
+    .filter(Boolean) as any[];
+
+  // Paginate filtered results
+  const totalPages = Math.ceil(filteredPosts.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const paginatedPosts = filteredPosts.slice(startIdx, startIdx + itemsPerPage);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
@@ -26,8 +53,50 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
       </div>
     </div>
 
+    {/* Search and Filter Bar */}
+    <div className="mb-8 space-y-4">
+      <div className="flex gap-3 flex-col sm:flex-row">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <input
+            type="text"
+            placeholder="Search blog posts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
+          />
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {categories.map(cat => (
+            <button
+              key={cat.slug}
+              onClick={() => setSelectedCategory(selectedCategory === cat.slug ? null : cat.slug)}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                selectedCategory === cat.slug
+                  ? 'bg-purple-500/30 border border-purple-500/50 text-purple-300'
+                  : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+          {(searchQuery || selectedCategory) && (
+            <button
+              onClick={() => { setSearchQuery(''); setSelectedCategory(null); }}
+              className="px-3 py-2 rounded-lg text-sm font-medium bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 flex items-center gap-1"
+            >
+              <X className="w-4 h-4" /> Clear
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="text-sm text-gray-500">
+        {filteredPosts.length} {filteredPosts.length === 1 ? 'post' : 'posts'} found
+      </div>
+    </div>
+
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {posts.map((post, index) => (
+      {paginatedPosts.map((post, index) => (
         <div 
           key={post.id} 
           className="group flex flex-col cursor-pointer glass-card rounded-2xl p-4 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10" 
@@ -55,6 +124,41 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
         </div>
       ))}
     </div>
+
+    {/* Pagination */}
+    {totalPages > 1 && (
+      <div className="mt-12 flex items-center justify-center gap-2">
+        <button
+          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+          disabled={currentPage === 1}
+          className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 disabled:opacity-50 hover:bg-white/10 transition-colors"
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-3 py-2 rounded-lg transition-colors ${
+              currentPage === page
+                ? 'bg-purple-500/30 border border-purple-500/50 text-white'
+                : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 disabled:opacity-50 hover:bg-white/10 transition-colors"
+        >
+          Next
+        </button>
+      </div>
+    )}
+
+    <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
   </main>
   );
 };

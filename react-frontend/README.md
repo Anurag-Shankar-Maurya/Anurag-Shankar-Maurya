@@ -31,3 +31,21 @@ Example `.env.local`:
 VITE_API_URL=http://127.0.0.1:8000
 VITE_API_BASE_PATH=/api
 ```
+
+## Routing (new)
+
+This project now uses `react-router-dom` for page-based routing. The main routes are:
+
+- `/` → Home
+- `/about` → About
+- `/projects` → Projects list
+- `/projects/:slug` → Project detail
+- `/blog` → Blog list
+- `/blog/:slug` → Blog post
+- `/experience` and `/experience/:id` → Experience list and detail
+- `/education` and `/education/:slug`
+- `/skills` and `/skills/:slug`
+- `/awards` and detailed award routes under `/awards/certificate/:slug` and `/awards/achievement/:slug`
+- `/testimonials` and `/testimonials/:slug`
+
+To test locally, run `npm run dev` and open e.g. `http://localhost:3000/blog` or visit a detail route like `http://localhost:3000/projects/<slug>`.

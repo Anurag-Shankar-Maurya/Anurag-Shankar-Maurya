@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, BookOpen, Calendar, Loader2 } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
@@ -65,9 +65,31 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
   const [lbOpen, setLbOpen] = useState(false);
   const [lbImages, setLbImages] = useState<{ src: string; alt?: string }[]>([]);
 
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [needsTruncate, setNeedsTruncate] = useState(false);
+  const [maxHeight, setMaxHeight] = useState<number | null>(null);
+
   useEffect(() => {
     api.getBlogPostDetail(slug).then(setPost).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
+
+  useEffect(() => {
+    if (!post) return;
+    const el = contentRef.current;
+    if (!el) return;
+    const style = window.getComputedStyle(el);
+    const lineHeight = parseFloat(style.lineHeight || '20');
+    const height = el.scrollHeight;
+    const lines = Math.round(height / lineHeight);
+    if (lines > 15) {
+      setNeedsTruncate(true);
+      setMaxHeight(lineHeight * 15);
+    } else {
+      setNeedsTruncate(false);
+      setMaxHeight(null);
+    }
+  }, [post]);
 
   if (loading) return <div className="pt-32 text-center text-white"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
   if (!post) return <div>Post not found</div>;
@@ -98,16 +120,22 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
 
       <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
 
+      <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
+         <p className="whitespace-pre-wrap">{post.content}</p>
+      </div>
+
+      {needsTruncate && (
+        <div className="mt-6">
+          <Button variant="ghost" onClick={() => setExpanded(prev => !prev)}>{expanded ? 'Read less' : 'Read more'}</Button>
+        </div>
+      )}
+
       {post.images && post.images.length > 0 && (
-        <div className="mb-8">
+        <div className="mb-8 mt-8">
           <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
           <Gallery images={post.images} columns={3} />
         </div>
       )}
-
-      <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed">
-         <p className="whitespace-pre-wrap">{post.content}</p>
-      </div>
 
       <div className="mt-16 pt-8 border-t border-white/10 flex flex-wrap gap-2">
          {post.tags.map(tag => (

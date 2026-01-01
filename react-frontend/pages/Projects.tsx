@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
@@ -117,9 +117,31 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
   const [lbIndex, setLbIndex] = useState(0);
   const [lbImages, setLbImages] = useState<{ src: string; alt?: string; caption?: string }[]>([]);
 
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [needsTruncate, setNeedsTruncate] = useState(false);
+  const [maxHeight, setMaxHeight] = useState<number | null>(null);
+
   useEffect(() => {
     api.getProjectDetail(slug).then(setProject).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
+
+  useEffect(() => {
+    if (!project) return;
+    const el = contentRef.current;
+    if (!el) return;
+    const style = window.getComputedStyle(el);
+    const lineHeight = parseFloat(style.lineHeight || '20');
+    const height = el.scrollHeight;
+    const lines = Math.round(height / lineHeight);
+    if (lines > 15) {
+      setNeedsTruncate(true);
+      setMaxHeight(lineHeight * 15);
+    } else {
+      setNeedsTruncate(false);
+      setMaxHeight(null);
+    }
+  }, [project]);
 
   if (loading) return <div className="pt-32 text-center text-white"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
   if (!project) return <div>Project not found</div>;
@@ -146,21 +168,19 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
         </button>
       </div>
 
-      {project.images && project.images.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-lg font-bold text-white mb-4">Project Gallery</h3>
-          <Gallery images={project.images} columns={3} />
-        </div>
-      )}
-
       <Lightbox images={lbImages} initialIndex={lbIndex} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
 
       <div className="flex flex-col md:flex-row gap-12">
         <div className="flex-1">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{project.title}</h1>
-          <div className="prose prose-invert prose-lg max-w-none text-gray-300">
+          <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-gray-300" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
              <p>{project.description}</p>
           </div>
+          {needsTruncate && (
+            <div className="mt-6">
+              <Button variant="ghost" onClick={() => setExpanded(prev => !prev)}>{expanded ? 'Read less' : 'Read more'}</Button>
+            </div>
+          )}
         </div>
         <div className="w-full md:w-80 space-y-6">
           <div className="p-6 glass-card rounded-2xl">
@@ -196,6 +216,14 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
           </div>
         </div>
       </div>
+
+      {project.images && project.images.length > 0 && (
+        <div className="mt-8 mb-8">
+          <h3 className="text-lg font-bold text-white mb-4">Project Gallery</h3>
+          <Gallery images={project.images} columns={3} />
+        </div>
+      )}
+
     </main>
   );
 };

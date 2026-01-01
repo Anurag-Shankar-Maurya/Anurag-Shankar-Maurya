@@ -105,6 +105,13 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
            {post.category.name}
          </div>
          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">{post.title}</h1>
+         {post.tags && post.tags.length > 0 && (
+           <div className="flex items-center justify-center gap-2 flex-wrap mb-4">
+             {post.tags.map(tag => (
+               <span key={tag.slug} className="px-3 py-1 rounded-full bg-white/5 text-gray-400 text-xs hover:text-white hover:bg-white/10 transition-colors cursor-default">{tag.name}</span>
+             ))}
+           </div>
+         )}
          <div className="flex items-center justify-center gap-6 text-gray-400 text-sm">
             <span className="flex items-center gap-2"><Calendar className="w-4 h-4"/> {new Date(post.published_at).toLocaleDateString()}</span>
             <span className="w-1 h-1 rounded-full bg-gray-600"></span>
@@ -136,12 +143,6 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
           <Gallery images={post.images} columns={3} />
         </div>
       )}
-
-      <div className="mt-16 pt-8 border-t border-white/10 flex flex-wrap gap-2">
-         {post.tags.map(tag => (
-            <span key={tag.slug} className="px-4 py-1.5 rounded-full bg-white/5 text-gray-400 text-sm hover:text-white hover:bg-white/10 transition-colors cursor-default">#{tag.name}</span>
-         ))}
-      </div>
     </main>
   );
 };

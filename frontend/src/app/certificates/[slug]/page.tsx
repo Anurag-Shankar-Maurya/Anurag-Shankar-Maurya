@@ -6,11 +6,11 @@ import { formatDate } from "@/utils/formatDate";
 import { notFound } from "next/navigation";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const slug = params.slug;
+  const { slug } = await params;
   const query = slug.replace(/[-]/g, " ");
   try {
     const resp = await certificatesApi.list({ search: query });
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function CertificateDetail({ params }: Props) {
-  const { slug } = params;
+  const { slug } = await params;
   const searchQuery = slug.replace(/-/g, " ");
 
   let cert: Certificate | null = null;

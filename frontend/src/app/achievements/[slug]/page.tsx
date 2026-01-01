@@ -6,11 +6,11 @@ import { formatDate } from "@/utils/formatDate";
 import { notFound } from "next/navigation";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const slug = params.slug;
+  const { slug } = await params;
   // best effort: search by slug-like title
   const query = slug.replace(/[-]/g, " ");
   try {
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function AchievementDetail({ params }: Props) {
-  const { slug } = params;
+  const { slug } = await params;
   const searchQuery = slug.replace(/-/g, " ");
 
   let achievement: Achievement | null = null;

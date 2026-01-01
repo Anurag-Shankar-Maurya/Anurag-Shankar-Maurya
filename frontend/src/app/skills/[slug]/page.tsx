@@ -5,11 +5,11 @@ import type { Skill } from "@/types";
 import { notFound } from "next/navigation";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const slug = params.slug;
+  const { slug } = await params;
   const query = slug.replace(/[-]/g, " ");
   try {
     const resp = await skillsApi.list({});
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function SkillDetail({ params }: Props) {
-  const { slug } = params;
+  const { slug } = await params;
   const searchQuery = slug.replace(/-/g, " ");
 
   let skill: Skill | null = null;

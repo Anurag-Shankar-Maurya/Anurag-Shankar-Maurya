@@ -23,10 +23,11 @@ import { BlogGallery } from "./BlogGallery";
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const { slug } = await params;
   try {
-    const post = await blogApi.get(params.slug);
+    const post = await blogApi.get(slug);
     
     return Meta.generate({
       title: post.title,
@@ -43,12 +44,13 @@ export async function generateMetadata({
 export default async function PostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
   let post: BlogPostDetail;
 
   try {
-    post = await blogApi.get(params.slug);
+    post = await blogApi.get(slug);
   } catch (error) {
     console.error("Failed to fetch blog post:", error);
     notFound();

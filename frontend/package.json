@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "@once-ui-system/magic-portfolio",
   "version": "2.3.0",
   "scripts": {

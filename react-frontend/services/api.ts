@@ -39,12 +39,27 @@ export const api = {
   getProfiles: () => fetchJson<PaginatedResponse<{id: number}>>('/profiles/'),
   getProfileDetail: (id: number) => fetchJson<ProfileDetail>(`/profiles/${id}/`),
   
-  getProjects: (params: { featured?: boolean; page?: number; show_on_home?: boolean } = {}) => 
-    fetchJson<PaginatedResponse<Project>>('/projects/', { is_featured: params.featured ? 'true' : undefined, show_on_home: params.show_on_home ? 'true' : undefined, page: params.page }),
+  getProjects: (params: { featured?: boolean; page?: number; show_on_home?: boolean; search?: string; status?: string; limit?: number } = {}) => 
+    fetchJson<PaginatedResponse<Project>>('/projects/', { 
+      is_featured: params.featured ? 'true' : undefined, 
+      show_on_home: params.show_on_home ? 'true' : undefined, 
+      search: params.search,
+      status: params.status,
+      limit: params.limit || undefined,
+      offset: params.page ? (params.page - 1) * (params.limit || 15) : undefined
+    }),
   getProjectDetail: (slug: string) => fetchJson<Project>(`/projects/${slug}/`),
 
-  getBlogPosts: (params: { featured?: boolean; page?: number; show_on_home?: boolean } = {}) => 
-    fetchJson<PaginatedResponse<BlogPost>>('/blog/', { is_featured: params.featured ? 'true' : undefined, show_on_home: params.show_on_home ? 'true' : undefined, page: params.page }),
+  getBlogPosts: (params: { featured?: boolean; page?: number; show_on_home?: boolean; search?: string; category?: string; tags?: string; limit?: number } = {}) => 
+    fetchJson<PaginatedResponse<BlogPost>>('/blog/', { 
+      is_featured: params.featured ? 'true' : undefined, 
+      show_on_home: params.show_on_home ? 'true' : undefined,
+      search: params.search,
+      category: params.category,
+      tags: params.tags,
+      limit: params.limit || undefined,
+      offset: params.page ? (params.page - 1) * (params.limit || 15) : undefined
+    }),
   getBlogPostDetail: (slug: string) => fetchJson<BlogPost>(`/blog/${slug}/`),
 
   getExperience: (params: { show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<WorkExperience>>('/work-experience/', { show_on_home: params.show_on_home ? 'true' : undefined, ordering: '-start_date', page: params.page }),

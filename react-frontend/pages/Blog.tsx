@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, BookOpen, Calendar, Loader2, Search, Filter, X } from 'lucide-react';
+import { ArrowLeft, BookOpen, Calendar, Loader2, Search, X } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
-import { BlogPost, ViewState } from '../types';
+import { BlogPost, ViewState, PaginatedResponse } from '../types';
 import { api } from '../services/api';
 
 export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewState) => void }> = ({ posts, onNavigate }) => {
@@ -12,154 +12,200 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
   const [lbImages, setLbImages] = useState<{ src: string; alt?: string }[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const [paginatedData, setPaginatedData] = useState<PaginatedResponse<BlogPost> | null>(null);
+  const [loading, setLoading] = useState(false);
+  const ITEMS_PER_PAGE = 15;
+
+  // Fetch paginated data when filters change
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const params: any = { page: currentPage };
+        if (searchQuery) params.search = searchQuery;
+        if (selectedCategory) params.category = selectedCategory;
+        if (selectedTag) params.tags = selectedTag;
+        params.limit = ITEMS_PER_PAGE;
+        
+        const data = await api.getBlogPosts(params);
+        setPaginatedData(data);
+      } catch (error) {
+        console.error('Failed to fetch blog posts', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [searchQuery, selectedCategory, selectedTag, currentPage]);
+
+  // Extract unique categories and tags from initial posts
+  const categories = Array.from(new Set(posts.map(p => p.category.slug))).map(slug => {
+    const post = posts.find(p => p.category.slug === slug);
+    return post?.category;
+  }).filter(Boolean);
+
+  const allTags = Array.from(new Set(posts.flatMap(p => p.tags.map(t => t.slug)))).map(slug => {
+    const tag = posts.flatMap(p => p.tags).find(t => t.slug === slug);
+    return tag;
+  }).filter(Boolean);
 
   const openSingle = (src: string, alt?: string) => {
     setLbImages([{ src, alt }]);
     setLbOpen(true);
   };
 
-  // Filter posts based on search and category
-  const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || post.category.slug === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  // Get unique categories
-  const categories = Array.from(new Set(posts.map(p => p.category.slug)))
-    .map(slug => posts.find(p => p.category.slug === slug)?.category)
-    .filter(Boolean) as any[];
-
-  // Paginate filtered results
-  const totalPages = Math.ceil(filteredPosts.length / itemsPerPage);
-  const startIdx = (currentPage - 1) * itemsPerPage;
-  const paginatedPosts = filteredPosts.slice(startIdx, startIdx + itemsPerPage);
-
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedCategory]);
-
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-    <div className="flex items-center gap-4 mb-12">
-      <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]"><BookOpen className="w-8 h-8"/></div>
-      <div>
-         <h1 className="text-4xl font-bold text-white">Blog & Insights</h1>
-         <p className="text-gray-400 mt-2">Thoughts on software engineering, product design, and the tech industry.</p>
-      </div>
-    </div>
-
-    {/* Search and Filter Bar */}
-    <div className="mb-8 space-y-4">
-      <div className="flex gap-3 flex-col sm:flex-row">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-          <input
-            type="text"
-            placeholder="Search blog posts..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
-          />
+      <div className="flex items-center gap-4 mb-12">
+        <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]"><BookOpen className="w-8 h-8"/></div>
+        <div>
+          <h1 className="text-4xl font-bold text-white">Blog & Insights</h1>
+          <p className="text-gray-400 mt-2">Thoughts on software engineering, product design, and the tech industry.</p>
         </div>
-        <div className="flex gap-2 flex-wrap">
-          {categories.map(cat => (
-            <button
-              key={cat.slug}
-              onClick={() => setSelectedCategory(selectedCategory === cat.slug ? null : cat.slug)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                selectedCategory === cat.slug
-                  ? 'bg-purple-500/30 border border-purple-500/50 text-purple-300'
-                  : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-          {(searchQuery || selectedCategory) && (
-            <button
-              onClick={() => { setSearchQuery(''); setSelectedCategory(null); }}
-              className="px-3 py-2 rounded-lg text-sm font-medium bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 flex items-center gap-1"
-            >
-              <X className="w-4 h-4" /> Clear
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-8 relative">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <input 
+            type="text" 
+            placeholder="Search posts..." 
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
       </div>
-      <div className="text-sm text-gray-500">
-        {filteredPosts.length} {filteredPosts.length === 1 ? 'post' : 'posts'} found
-      </div>
-    </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {paginatedPosts.map((post, index) => (
-        <div 
-          key={post.id} 
-          className="group flex flex-col cursor-pointer glass-card rounded-2xl p-4 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10" 
-          onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
-          style={{ animationDelay: `${index * 0.1}s` }}
-        >
-          <div className="aspect-video w-full rounded-xl overflow-hidden mb-6 relative">
-             <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>
-             <button onClick={(e) => { e.stopPropagation(); openSingle(post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog', post.title); }} className="w-full h-full block">
-             <img src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-pointer" />
-             </button>
-             <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-black/60 backdrop-blur rounded-full text-xs font-medium text-white border border-white/10 shadow-lg">
-               {post.category.name}
-             </div>
-          </div>
-          <div className="px-2 pb-2">
-            <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
-               <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-purple-400"/> {new Date(post.published_at).toLocaleDateString()}</span>
-               <span>•</span>
-               <span>{post.reading_time} min read</span>
+      {/* Filters */}
+      <div className="mb-8 space-y-4">
+        {categories.length > 0 && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-400 mb-3">Category</h3>
+            <div className="flex flex-wrap gap-2">
+              <button 
+                onClick={() => { setSelectedCategory(null); setCurrentPage(1); }}
+                className={`px-4 py-2 rounded-lg transition-colors ${!selectedCategory ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+              >
+                All
+              </button>
+              {categories.map(cat => (
+                <button 
+                  key={cat?.slug}
+                  onClick={() => { setSelectedCategory(cat?.slug || null); setCurrentPage(1); }}
+                  className={`px-4 py-2 rounded-lg transition-colors ${selectedCategory === cat?.slug ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                >
+                  {cat?.name}
+                </button>
+              ))}
             </div>
-            <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors leading-tight">{post.title}</h3>
-            <p className="text-gray-400 line-clamp-2 text-sm leading-relaxed">{post.excerpt}</p>
           </div>
-        </div>
-      ))}
-    </div>
+        )}
 
-    {/* Pagination */}
-    {totalPages > 1 && (
-      <div className="mt-12 flex items-center justify-center gap-2">
-        <button
-          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 disabled:opacity-50 hover:bg-white/10 transition-colors"
-        >
-          Previous
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-          <button
-            key={page}
-            onClick={() => setCurrentPage(page)}
-            className={`px-3 py-2 rounded-lg transition-colors ${
-              currentPage === page
-                ? 'bg-purple-500/30 border border-purple-500/50 text-white'
-                : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-        <button
-          onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 disabled:opacity-50 hover:bg-white/10 transition-colors"
-        >
-          Next
-        </button>
+        {allTags.length > 0 && (
+          <div>
+            <h3 className="text-sm font-semibold text-gray-400 mb-3">Tags</h3>
+            <div className="flex flex-wrap gap-2">
+              <button 
+                onClick={() => { setSelectedTag(null); setCurrentPage(1); }}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${!selectedTag ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+              >
+                All
+              </button>
+              {allTags.slice(0, 10).map(tag => (
+                <button 
+                  key={tag?.slug}
+                  onClick={() => { setSelectedTag(tag?.slug || null); setCurrentPage(1); }}
+                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${selectedTag === tag?.slug ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                >
+                  {tag?.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-    )}
 
-    <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
-  </main>
+      {/* Posts Grid */}
+      {loading ? (
+        <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-purple-400" /></div>
+      ) : paginatedData && paginatedData.results.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+            {paginatedData.results.map((post, index) => (
+              <div 
+                key={post.id} 
+                className="group flex flex-col cursor-pointer glass-card rounded-2xl p-4 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10" 
+                onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="aspect-video w-full rounded-xl overflow-hidden mb-6 relative">
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>
+                  <button onClick={(e) => { e.stopPropagation(); openSingle(post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog', post.title); }} className="w-full h-full block">
+                    <img src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-pointer" />
+                  </button>
+                  <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-black/60 backdrop-blur rounded-full text-xs font-medium text-white border border-white/10 shadow-lg">
+                    {post.category.name}
+                  </div>
+                </div>
+                <div className="px-2 pb-2">
+                  <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
+                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-purple-400"/> {new Date(post.published_at).toLocaleDateString()}</span>
+                    <span>•</span>
+                    <span>{post.reading_time} min read</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors leading-tight">{post.title}</h3>
+                  <p className="text-gray-400 line-clamp-2 text-sm leading-relaxed">{post.excerpt}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {paginatedData.count > ITEMS_PER_PAGE && (
+            <div className="flex items-center justify-center gap-2 mt-12">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={!paginatedData.previous}
+                className="px-4 py-2 rounded-lg bg-white/5 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+              >
+                Previous
+              </button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.ceil(paginatedData.count / ITEMS_PER_PAGE) }, (_, i) => i + 1).map(page => (
+                  <button 
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-2 rounded-lg transition-colors ${currentPage === page ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+              <button 
+                onClick={() => setCurrentPage(p => p + 1)}
+                disabled={!paginatedData.next}
+                className="px-4 py-2 rounded-lg bg-white/5 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-gray-400">No posts found matching your filters.</p>
+        </div>
+      )}
+    </main>
   );
 };
 

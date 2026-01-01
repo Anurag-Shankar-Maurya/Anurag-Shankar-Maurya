@@ -40,6 +40,12 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
       >
         Blog
       </button>
+      <button 
+        onClick={() => onNavigate({ type: 'GALLERY' })}
+        className={navItemClass(currentView.type === 'GALLERY')}
+      >
+        Gallery
+      </button>
       
       {/* Split Profile / Mega Menu Trigger */}
       <div 

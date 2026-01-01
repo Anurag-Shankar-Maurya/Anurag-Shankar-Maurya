@@ -23,6 +23,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
     { icon: GraduationCap, label: 'Education', view: 'EDUCATION' as const, color: 'text-purple-400', bg: 'bg-purple-500/10' },
     { icon: Zap, label: 'Skills', view: 'SKILLS' as const, color: 'text-green-400', bg: 'bg-green-500/10' },
     { icon: Award, label: 'Awards', view: 'AWARDS_CERTS' as const, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+    { icon: Grid, label: 'Gallery', view: 'GALLERY' as const, color: 'text-pink-400', bg: 'bg-pink-500/10' },
     { icon: Star, label: 'Testimonials', view: 'TESTIMONIALS' as const, color: 'text-orange-400', bg: 'bg-orange-500/10' },
     { icon: Mail, label: 'Contact', view: 'CONTACT' as const, color: 'text-gray-400', bg: 'bg-white/5' },
   ];

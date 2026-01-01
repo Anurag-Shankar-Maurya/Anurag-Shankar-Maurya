@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { 
   ProfileDetail, Project, BlogPost, WorkExperience, Education, 
-  Certificate, Achievement, Testimonial, Skill 
+  Certificate, Achievement, Testimonial, Skill, Image 
 } from '../types';
 
 export const usePortfolioData = () => {
@@ -18,6 +18,7 @@ export const usePortfolioData = () => {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [images, setImages] = useState<Image[]>([]);
 
   useEffect(() => {
     const initData = async () => {
@@ -29,7 +30,7 @@ export const usePortfolioData = () => {
           setProfile(profileData);
         }
 
-        const [projRes, featProjRes, blogRes, expRes, eduRes, certRes, achRes, testRes, skillRes] = await Promise.all([
+        const [projRes, featProjRes, blogRes, expRes, eduRes, certRes, achRes, testRes, skillRes, imgRes] = await Promise.all([
           api.getProjects(),
           api.getProjects({ featured: true, show_on_home: true }),
           api.getBlogPosts({ show_on_home: true }),
@@ -38,7 +39,8 @@ export const usePortfolioData = () => {
           api.getCertificates(),
           api.getAchievements(),
           api.getTestimonials(),
-          api.getSkills()
+          api.getSkills(),
+          api.getImages({ show_on_home: true })
         ]);
 
         setProjects(projRes.results);
@@ -50,6 +52,7 @@ export const usePortfolioData = () => {
         setAchievements(achRes.results);
         setTestimonials(testRes.results);
         setSkills(skillRes.results);
+        setImages(imgRes.results);
 
       } catch (error) {
         console.error("Failed to fetch initial data", error);
@@ -73,6 +76,7 @@ export const usePortfolioData = () => {
     achievements,
     testimonials,
     skills,
+    images,
     setLoading // Exporting setLoading for detail fetchers if needed elsewhere, though usually handled locally or in specific hooks
   };
 };

@@ -9,7 +9,8 @@ import {
   Certificate, 
   Achievement, 
   Testimonial, 
-  Skill
+  Skill,
+  Image
 } from '../types';
 
 // Use Vite environment variables when available (set in `.env.local`).
@@ -76,6 +77,13 @@ export const api = {
 
   getTestimonials: (params: { featured?: boolean; show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<Testimonial>>('/testimonials/', { is_featured: (params.featured ?? true) ? 'true' : undefined, show_on_home: params.show_on_home ? 'true' : undefined, page: params.page }),
   getTestimonialDetail: (slug: string) => fetchJson<Testimonial>(`/testimonials/${slug}/`),
+
+  getImages: (params: { show_on_home?: boolean; image_type?: string; limit?: number } = {}) => 
+    fetchJson<PaginatedResponse<Image>>('/images/', { 
+      show_on_home: params.show_on_home ? 'true' : undefined,
+      image_type: params.image_type,
+      limit: params.limit || 100
+    }),
   
   // Fetch all skills - get all pages in single call
   getSkills: async (params: { show_on_home?: boolean; page?: number } = {}) => {

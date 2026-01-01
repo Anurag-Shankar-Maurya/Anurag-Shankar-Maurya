@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
-import { ViewState, ProfileDetail, Project, BlogPost, Skill, WorkExperience, Education, Certificate, Achievement, Testimonial } from '../types';
+import { ViewState, ProfileDetail, Project, BlogPost, Skill, WorkExperience, Education, Certificate, Achievement, Testimonial, Image } from '../types';
 import { getSocialIcon } from '../utils/helpers';
 import { Icons, SocialIcons, IconName } from '../components/Icons';
 
@@ -16,12 +16,14 @@ interface HomeProps {
   certificates: Certificate[];
   achievements: Achievement[];
   testimonials: Testimonial[];
+  galleryImages: Image[];
   onNavigate: (view: ViewState) => void;
 }
 
 export const Home: React.FC<HomeProps> = ({ 
   profile, featuredProjects, blogPosts, skills, 
   experience, education, certificates, achievements, testimonials,
+  galleryImages,
   onNavigate 
 }) => {
   const [lbOpen, setLbOpen] = React.useState(false);
@@ -46,7 +48,7 @@ export const Home: React.FC<HomeProps> = ({
   ].sort((a, b) => new Date(b.date || (a as any).issue_date).getTime() - new Date(a.date || (b as any).issue_date).getTime())
    .slice(0, 4);
 
-  const homeGallery = profile?.images?.filter(img => img.show_on_home).slice(0, 6) || [];
+  const homeGallery = galleryImages.filter(img => img.show_on_home).slice(0, 6);
 
   return (
     <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-32">
@@ -325,8 +327,8 @@ export const Home: React.FC<HomeProps> = ({
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'ABOUT' })}>View More</Button>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                 {homeGallery.map((img) => (
+              <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                 {homeGallery.slice(0, 6).map((img) => (
                    <div key={img.id} className="aspect-square rounded-xl overflow-hidden glass-card group cursor-pointer" onClick={() => openSingle(img.image_url, img.alt_text)}>
                       <img src={img.image_url} alt={img.alt_text} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                    </div>

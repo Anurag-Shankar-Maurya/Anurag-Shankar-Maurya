@@ -26,7 +26,7 @@ const App: React.FC = () => {
   const [view, setView] = useState<ViewState>({ type: 'HOME' });
   const { 
     loading, profile, projects, featuredProjects, blogPosts, 
-    experience, education, certificates, achievements, testimonials, skills 
+    experience, education, certificates, achievements, testimonials, skills, images
   } = usePortfolioData();
 
   const navigateHook = useNavigate();
@@ -120,7 +120,7 @@ const App: React.FC = () => {
       
       <div className="relative z-10 animate-fade-in">
         <Routes>
-          <Route path="/" element={<Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} experience={experience} education={education} certificates={certificates} achievements={achievements} testimonials={testimonials} onNavigate={navigateTo} />} />
+          <Route path="/" element={<Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} experience={experience} education={education} certificates={certificates} achievements={achievements} testimonials={testimonials} galleryImages={images} onNavigate={navigateTo} />} />
           <Route path="/projects" element={<ProjectsView projects={projects} onNavigate={navigateTo} />} />
           <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
           <Route path="/blog" element={<BlogView posts={blogPosts} onNavigate={navigateTo} />} />

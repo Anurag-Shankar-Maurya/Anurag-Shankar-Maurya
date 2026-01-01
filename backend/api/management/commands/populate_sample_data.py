@@ -5,6 +5,7 @@ Run: python manage.py populate_sample_data
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.utils.text import slugify
 from api.models import (
     Profile, Project, BlogPost, BlogCategory, BlogTag,
     WorkExperience, Education, Skill, SocialLink,
@@ -125,17 +126,51 @@ class Command(BaseCommand):
         ]
 
         for idx, skill_data in enumerate(skills_data):
+            name = skill_data['name']
+            slug = slugify(name)
+
+            # Resolve icon: prefer explicit entry, else try exact match or partial match against Skill.ICON_MAPPING
+            icon = skill_data.get('icon', '') or ''
+            if not icon:
+                mapping = Skill.ICON_MAPPING
+                if name in mapping:
+                    icon = mapping[name]
+                else:
+                    name_lower = name.lower()
+                    for key, val in mapping.items():
+                        if key.lower() in name_lower or name_lower in key.lower():
+                            icon = val
+                            break
+
+            # Set show_on_home for top skills (expert/advanced) unless explicitly provided
+            show_on_home = skill_data.get('show_on_home', skill_data.get('proficiency') in ('expert', 'advanced'))
+
             skill, created = Skill.objects.get_or_create(
                 profile=profile,
-                name=skill_data['name'],
+                name=name,
                 defaults={
+                    'slug': slug,
                     'skill_type': skill_data['skill_type'],
                     'proficiency': skill_data['proficiency'],
+                    'icon': icon,
                     'order': idx,
-                    'show_on_home': True
+                    'show_on_home': show_on_home
                 }
             )
-            self.stdout.write(f'  {"Created" if created else "Exists"} skill: {skill.name}')
+
+            # If the skill existed but lacked an icon or slug, update it
+            if not created:
+                changed = False
+                if not skill.icon and icon:
+                    skill.icon = icon
+                    changed = True
+                if not skill.slug:
+                    skill.slug = slug
+                    changed = True
+                if changed:
+                    skill.save()
+
+            self.stdout.write(f'  {"Created" if created else "Exists"} skill: {skill.name} (icon: {skill.icon})')
 
         # Create Work Experience
         work_data = [

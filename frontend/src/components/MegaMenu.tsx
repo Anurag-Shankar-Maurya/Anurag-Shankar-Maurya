@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useEffect, useRef } from "react";
 import { Column, Grid, Heading, Row, Text, SmartLink, Line, Icon } from "@once-ui-system/core";
 import styles from "./MegaMenu.module.scss";
 
@@ -21,13 +22,77 @@ const MenuLink = ({ href, icon, title, description, onClose }: { href: string, i
 );
 
 export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Prevent background from scrolling while menu is open
+    document.documentElement.classList.add("no-scroll");
+
+    const el = containerRef.current;
+
+    // Move focus into the menu
+    if (el) {
+      const focusable = el.querySelectorAll<HTMLElement>(
+        "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+      );
+      (focusable[0] as HTMLElement | undefined)?.focus();
+    }
+
+    // Trap keyboard focus and allow Escape to close
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+
+      if (e.key === "Tab" && el) {
+        const focusableEls = Array.from(
+          el.querySelectorAll<HTMLElement>(
+            "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+          )
+        ).filter((el) => !el.hasAttribute("disabled"));
+
+        if (focusableEls.length === 0) {
+          e.preventDefault();
+          return;
+        }
+
+        const first = focusableEls[0];
+        const last = focusableEls[focusableEls.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            last.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === last) {
+            first.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.documentElement.classList.remove("no-scroll");
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.container} onClick={(e) => e.stopPropagation()}>
+    <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true">
+      <div className={styles.container} ref={containerRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.closeButton} aria-label="Close menu" onClick={onClose}>
+          <Icon name="close" />
+        </button>
         <Grid columns="3" m={{ columns: 1 }} gap="40" padding="40">
           {/* Column 1: Main Navigation */}
           <Column gap="24">

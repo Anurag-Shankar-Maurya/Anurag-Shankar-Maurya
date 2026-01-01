@@ -65,3 +65,10 @@ html[data-theme="light"] {
 html[data-theme="dark"] {
   --subtitle-color: var(--color-text-neutral-weak, rgba(107,114,128,1));
 }
+
+/* Prevent background scrolling while overlays/modals are open */
+html.no-scroll,
+body.no-scroll {
+  overflow: hidden !important;
+  height: 100%;
+}

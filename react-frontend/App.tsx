@@ -21,6 +21,7 @@ import { EducationView, EducationDetailView } from './pages/Education';
 import { SkillsView, SkillDetailView } from './pages/Skills';
 import { AwardsView, CertificateDetailView, AchievementDetailView } from './pages/Awards';
 import { TestimonialsView, TestimonialDetailView } from './pages/Testimonials';
+import { GalleryView } from './pages/Gallery';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>({ type: 'HOME' });
@@ -52,6 +53,7 @@ const App: React.FC = () => {
       case 'TESTIMONIALS': return '/testimonials';
       case 'TESTIMONIAL_DETAIL': return `/testimonials/${v.slug}`;
       case 'CONTACT': return '/contact';
+      case 'GALLERY': return '/gallery';
       default: return '/';
     }
   };
@@ -75,6 +77,7 @@ const App: React.FC = () => {
     if (pathname.startsWith('/awards/achievement/')) return { type: 'ACHIEVEMENT_DETAIL', slug: pathname.split('/')[3] };
     if (pathname === '/testimonials') return { type: 'TESTIMONIALS' };
     if (pathname.startsWith('/testimonials/')) return { type: 'TESTIMONIAL_DETAIL', slug: pathname.split('/')[2] };
+    if (pathname === '/gallery') return { type: 'GALLERY' };
     return { type: 'HOME' };
   };
 
@@ -138,6 +141,7 @@ const App: React.FC = () => {
           <Route path="/awards/achievement/:slug" element={<AchievementDetailRoute />} />
           <Route path="/testimonials" element={<TestimonialsView testimonials={testimonials} onNavigate={navigateTo} />} />
           <Route path="/testimonials/:slug" element={<TestimonialDetailRoute />} />
+          <Route path="/gallery" element={<GalleryView />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

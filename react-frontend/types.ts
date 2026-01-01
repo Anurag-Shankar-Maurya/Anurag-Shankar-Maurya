@@ -181,4 +181,5 @@ export type ViewState =
   | { type: 'CERTIFICATE_DETAIL'; slug: string }
   | { type: 'ACHIEVEMENT_DETAIL'; slug: string }
   | { type: 'TESTIMONIALS' }
-  | { type: 'TESTIMONIAL_DETAIL'; slug: string };
+  | { type: 'TESTIMONIAL_DETAIL'; slug: string }
+  | { type: 'GALLERY' };

@@ -41,7 +41,7 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
         </div>
       </div>
       
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+      <div className="columns-1 md:columns-2 lg:columns-2 gap-6 space-y-6">
         {testimonials.map((test, index) => (
           <div 
             key={test.id} 
@@ -52,7 +52,7 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
              {/* Top Row: Stars & Date */}
              <div className="flex justify-between items-center mb-4">
                 <RatingStars rating={test.rating} />
-                <div className="text-xs text-gray-500 font-medium bg-white/5 px-2 py-1 rounded-md">
+                <div className="text-xs text-gray-300 font-medium bg-white/5 px-2 py-1 rounded-md">
                    {new Date(test.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
                 </div>
              </div>
@@ -74,18 +74,17 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
                <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                      <div className="font-bold text-white text-sm truncate group-hover:text-orange-400 transition-colors">{test.author_name}</div>
-                     {test.linkedin_url && <Linkedin className="w-3 h-3 text-blue-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                     {test.linkedin_url && <Linkedin className="w-6 h-6 text-blue-400/50 group-hover:text-blue-400 shrink-0 transition-opacity" />}
                   </div>
+                  {test.relationship && (
+                    <div className="absolute bottom-0 right-0 p-4 transition-opacity">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-white/50 group-hover:text-orange-400">{test.relationship}</span>
+                    </div>
+                  )}
                   <div className="text-xs text-gray-500 truncate">{test.author_title}</div>
                   {test.author_company && <div className="text-xs text-orange-400/80 font-medium truncate">{test.author_company}</div>}
                </div>
              </div>
-
-             {test.relationship && (
-                <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <span className="text-[10px] uppercase font-bold tracking-wider text-white/20">{test.relationship}</span>
-                </div>
-             )}
           </div>
         ))}
       </div>

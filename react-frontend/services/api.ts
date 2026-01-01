@@ -62,8 +62,15 @@ export const api = {
   getTestimonials: (params: { featured?: boolean; show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<Testimonial>>('/testimonials/', { is_featured: (params.featured ?? true) ? 'true' : undefined, show_on_home: params.show_on_home ? 'true' : undefined, page: params.page }),
   getTestimonialDetail: (slug: string) => fetchJson<Testimonial>(`/testimonials/${slug}/`),
   
-  // Fetch all skills for the mega menu
-  getSkills: (params: { show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<Skill>>('/skills/', { show_on_home: params.show_on_home ? 'true' : undefined, page: params.page }),
+  // Fetch all skills - get all pages in single call
+  getSkills: async (params: { show_on_home?: boolean; page?: number } = {}) => {
+    // If specific page requested or show_on_home filter, use pagination
+    if (params.page || params.show_on_home) {
+      return fetchJson<PaginatedResponse<Skill>>('/skills/', { show_on_home: params.show_on_home ? 'true' : undefined, page: params.page });
+    }
+    // Otherwise fetch all skills without pagination limit
+    return fetchJson<PaginatedResponse<Skill>>('/skills/', { limit: 1000 });
+  },
   getSkillDetail: (slug: string) => fetchJson<Skill>(`/skills/${slug}/`),
 
   sendContact: async (data: { name: string; email: string; subject: string; message: string; phone?: string }) => {

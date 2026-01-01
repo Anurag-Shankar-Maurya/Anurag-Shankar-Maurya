@@ -13,6 +13,8 @@ export interface Image {
   alt_text: string;
   caption?: string;
   show_on_home?: boolean;
+  image_type: string;
+  linked_object_type: string | null;
 }
 
 export interface SocialLink {

@@ -17,13 +17,14 @@ class ImageSerializer(serializers.ModelSerializer):
     """Serializer for Image model with base64 encoding"""
     image_url = serializers.SerializerMethodField()
     data_uri = serializers.SerializerMethodField()
+    linked_object_type = serializers.SerializerMethodField()
     
     class Meta:
         model = Image
         fields = [
             'id', 'filename', 'mime_type', 'file_size', 'width', 'height',
             'image_type', 'alt_text', 'caption', 'order', 'show_on_home',
-            'image_url', 'data_uri', 'created_at'
+            'image_url', 'data_uri', 'linked_object_type', 'created_at'
         ]
     
     def get_image_url(self, obj):
@@ -37,6 +38,12 @@ class ImageSerializer(serializers.ModelSerializer):
     def get_data_uri(self, obj):
         """Return image as data URI"""
         return obj.get_data_uri()
+    
+    def get_linked_object_type(self, obj):
+        """Return the name of the model this image is linked to"""
+        if obj.content_type:
+            return obj.content_type.model
+        return None
 
 
 # ============================================

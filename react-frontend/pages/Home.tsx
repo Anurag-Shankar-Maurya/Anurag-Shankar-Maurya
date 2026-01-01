@@ -325,7 +325,7 @@ export const Home: React.FC<HomeProps> = ({
                   <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400"><ImageIcon className="w-5 h-5"/></div>
                   <h2 className="text-2xl font-bold text-white">Gallery</h2>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'ABOUT' })}>View More</Button>
+                <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'GALLERY' })}>View More</Button>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
                  {homeGallery.slice(0, 6).map((img) => (

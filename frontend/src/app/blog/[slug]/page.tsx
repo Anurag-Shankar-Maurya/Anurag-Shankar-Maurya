@@ -1,168 +1,166 @@
 import { notFound } from "next/navigation";
-import { CustomMDX, ScrollToHash } from "@/components";
+import Image from "next/image";
+import { Metadata } from "next";
 import {
   Meta,
   Schema,
   Column,
   Heading,
-  HeadingNav,
-  Icon,
-  Row,
   Text,
-  SmartLink,
+  Row,
   Avatar,
-  Media,
   Line,
+  Tag,
 } from "@once-ui-system/core";
-import { baseURL, about, blog, person } from "@/resources";
+import { baseURL, about, person, blog } from "@/resources";
 import { formatDate } from "@/utils/formatDate";
-import { getPosts } from "@/utils/utils";
-import { Metadata } from "next";
-import React from "react";
-import { Posts } from "@/components/blog/Posts";
 import { ShareSection } from "@/components/blog/ShareSection";
-
-export async function generateStaticParams(): Promise<{ slug: string }[]> {
-  const posts = getPosts(["src", "app", "blog", "posts"]);
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
+import { Posts } from "@/components/blog/Posts";
+import { blogApi } from "@/lib";
+import type { BlogPostDetail } from "@/types";
+import { BlogGallery } from "./BlogGallery";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string | string[] }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const routeParams = await params;
-  const slugPath = Array.isArray(routeParams.slug)
-    ? routeParams.slug.join("/")
-    : routeParams.slug || "";
-
-  const posts = getPosts(["src", "app", "blog", "posts"]);
-  let post = posts.find((post) => post.slug === slugPath);
-
-  if (!post) return {};
-
-  return Meta.generate({
-    title: post.metadata.title,
-    description: post.metadata.summary,
-    baseURL: baseURL,
-    image: post.metadata.image || `/api/og/generate?title=${post.metadata.title}`,
-    path: `${blog.path}/${post.slug}`,
-  });
+  const { slug } = await params;
+  try {
+    const post = await blogApi.get(slug);
+    
+    return Meta.generate({
+      title: post.title,
+      description: post.excerpt,
+      baseURL: baseURL,
+      image: post.featured_image || `/api/og/generate?title=${encodeURIComponent(post.title)}`,
+      path: `${blog.path}/${post.slug}`,
+    });
+  } catch (error) {
+    return {};
+  }
 }
 
-export default async function Blog({ params }: { params: Promise<{ slug: string | string[] }> }) {
-  const routeParams = await params;
-  const slugPath = Array.isArray(routeParams.slug)
-    ? routeParams.slug.join("/")
-    : routeParams.slug || "";
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  let post: BlogPostDetail;
 
-  let post = getPosts(["src", "app", "blog", "posts"]).find((post) => post.slug === slugPath);
-
-  if (!post) {
+  try {
+    post = await blogApi.get(slug);
+  } catch (error) {
+    console.error("Failed to fetch blog post:", error);
     notFound();
   }
 
-  const avatars =
-    post.metadata.team?.map((person) => ({
-      src: person.avatar,
-    })) || [];
-
   return (
-    <Row fillWidth>
-      <Row maxWidth={12} m={{ hide: true }} />
-      <Row fillWidth horizontal="center">
-        <Column as="section" maxWidth="m" horizontal="center" gap="l" paddingTop="24">
-          <Schema
-            as="blogPosting"
-            baseURL={baseURL}
-            path={`${blog.path}/${post.slug}`}
-            title={post.metadata.title}
-            description={post.metadata.summary}
-            datePublished={post.metadata.publishedAt}
-            dateModified={post.metadata.publishedAt}
-            image={
-              post.metadata.image ||
-              `/api/og/generate?title=${encodeURIComponent(post.metadata.title)}`
-            }
-            author={{
-              name: person.name,
-              url: `${baseURL}${about.path}`,
-              image: `${baseURL}${person.avatar}`,
-            }}
-          />
-          <Column maxWidth="s" gap="16" horizontal="center" align="center">
-            <SmartLink href="/blog">
-              <Text variant="label-strong-m">Blog</Text>
-            </SmartLink>
-            <Text variant="body-default-xs" onBackground="neutral-weak" marginBottom="12">
-              {post.metadata.publishedAt && formatDate(post.metadata.publishedAt)}
-            </Text>
-            <Heading variant="display-strong-m">{post.metadata.title}</Heading>
-          </Column>
-          <Row marginBottom="32" horizontal="center">
-            <Row gap="16" vertical="center">
-              <Avatar size="s" src={person.avatar} />
-              <Text variant="label-default-m" onBackground="brand-weak">
-                {person.name}
-              </Text>
-            </Row>
-          </Row>
-          {post.metadata.image && (
-            <Media
-              src={post.metadata.image}
-              alt={post.metadata.title}
-              aspectRatio="16/9"
-              priority
-              sizes="(min-width: 768px) 100vw, 768px"
-              border="neutral-alpha-weak"
-              radius="l"
-              marginTop="12"
-              marginBottom="8"
-            />
-          )}
-          <Column as="article" maxWidth="s">
-            <CustomMDX source={post.content} />
-          </Column>
-          
-          <ShareSection 
-            title={post.metadata.title} 
-            url={`${baseURL}${blog.path}/${post.slug}`} 
-          />
+    <Column as="section" maxWidth="m" horizontal="center" gap="l" paddingY="40">
+      <Schema
+        as="blogPosting"
+        baseURL={baseURL}
+        path={`${blog.path}/${post.slug}`}
+        title={post.title}
+        description={post.excerpt}
+        datePublished={post.published_at || post.created_at}
+        dateModified={post.updated_at}
+        image={
+          post.featured_image || `/api/og/generate?title=${encodeURIComponent(post.title)}`
+        }
+        author={{
+          name: person.name,
+          url: `${baseURL}${about.path}`,
+          image: `${baseURL}${person.avatar}`,
+        }}
+      />
 
-          <Column fillWidth gap="40" horizontal="center" marginTop="40">
-            <Line maxWidth="40" />
-            <Heading as="h2" variant="heading-strong-xl" marginBottom="24">
-              Recent posts
-            </Heading>
-            <Posts exclude={[post.slug]} range={[1, 2]} columns="2" thumbnail direction="column" />
-          </Column>
-          <ScrollToHash />
-        </Column>
-      </Row>
-      <Column
-        maxWidth={12}
-        paddingLeft="40"
-        fitHeight
-        position="sticky"
-        top="80"
-        gap="16"
-        m={{ hide: true }}
-      >
-        <Row
-          gap="12"
-          paddingLeft="2"
-          vertical="center"
-          onBackground="neutral-medium"
-          textVariant="label-default-s"
-        >
-          <Icon name="document" size="xs" />
-          On this page
+      {/* Header */}
+      <Column maxWidth="s" gap="16" horizontal="center" align="center" paddingX="l">
+        <Text variant="label-strong-m" onBackground="neutral-weak">
+          {post.category?.name || 'Uncategorized'}
+        </Text>
+        <Heading variant="display-strong-m" align="center">{post.title}</Heading>
+        <Row vertical="center" gap="16" marginTop="12">
+          <Avatar src={person.avatar} size="s" />
+          <Text variant="label-default-s">{person.name}</Text>
+          <Text variant="body-default-xs" onBackground="neutral-weak">
+            {formatDate(post.published_at || post.created_at, false)}
+          </Text>
         </Row>
-        <HeadingNav fitHeight />
+        <Row vertical="center" gap="16" marginTop="12">
+          {post.reading_time && (
+            <Text variant="body-default-xs" onBackground="neutral-weak">
+              {post.reading_time} min read
+            </Text>
+          )}
+          {post.views_count && (
+            <>
+              <Text variant="body-default-xs" onBackground="neutral-weak">•</Text>
+              <Text variant="body-default-xs" onBackground="neutral-weak">
+                {post.views_count} views
+              </Text>
+            </>
+          )}
+        </Row>
       </Column>
-    </Row>
+
+      {/* Featured Image */}
+      {post.featured_image && (
+        <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", borderRadius: "var(--radius-l)", overflow: "hidden", marginTop: "24" }}>
+          <Image
+            priority
+            src={post.featured_image}
+            alt={post.title}
+            fill
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+      )}
+
+      {/* Post Content */}
+      <Column 
+        as="article" 
+        maxWidth="s" 
+        gap="24"
+        paddingX="l"
+        style={{ margin: "auto", marginTop: "40" }}
+      >
+        <div 
+          className="prose"
+          dangerouslySetInnerHTML={{ __html: post.content }} 
+        />
+      </Column>
+
+      {/* Tags */}
+      {post.tags && post.tags.length > 0 && (
+        <Row horizontal="center" gap="8" wrap>
+          {post.tags.map((tag) => (
+            <Tag key={tag.id} size="m">{tag.name}</Tag>
+          ))}
+        </Row>
+      )}
+
+      {/* Image Gallery */}
+      {post.images && post.images.length > 0 && (
+        <Column fillWidth gap="16" marginTop="40">
+          <Heading as="h2" variant="heading-strong-l" align="center">Gallery</Heading>
+          <BlogGallery images={post.images} postTitle={post.title} />
+        </Column>
+      )}
+
+      {/* Share Section */}
+      <ShareSection title={post.title} url={`${baseURL}${blog.path}/${post.slug}`} />
+
+      {/* Related Posts */}
+      <Column fillWidth gap="40" horizontal="center" marginTop="40">
+        <Line maxWidth="40" />
+        <Heading as="h2" variant="heading-strong-xl" marginBottom="24">
+          Recent posts
+        </Heading>
+        <Posts exclude={[post.slug]} range={[1, 3]} thumbnail={true} columns="3" />
+      </Column>
+    </Column>
   );
 }

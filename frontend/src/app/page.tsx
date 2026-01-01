@@ -66,14 +66,14 @@ export default async function Home() {
       testimonialsApi.list({ show_on_home: true, ordering: '-date' }),
       skillsApi.list({ show_on_home: true }),
       certificatesApi.list({ show_on_home: true, ordering: '-issue_date' }),
-      educationApi.list({ show_on_home: true }),
-      workExperienceApi.list({ show_on_home: true, ordering: '-start_date' }),
+      educationApi.list({ show_on_home: true, ordering: "-start_date" }),
+      workExperienceApi.list({ show_on_home: true, ordering: "-start_date" }),
     ]);
 
     profile = profileData.results[0];
     featuredAchievement = achievementsData.results[0];
     testimonials = testimonialsData.results;
-    featuredSkills = skillsData.results.slice(0, 6);
+    featuredSkills = skillsData.results;
     certificates = certificatesData.results;
     education = educationData.results;
     workExperience = workData.results;
@@ -101,6 +101,8 @@ export default async function Home() {
           image: avatar,
         }}
       />
+      
+      {/* Hero Section */}
       <Column fillWidth horizontal="center" gap="m">
         <Column maxWidth="s" horizontal="center" align="center">
           {showFeaturedBadge && (
@@ -201,128 +203,6 @@ export default async function Home() {
         </RevealFx>
       )}
 
-      {/* Stats Section */}
-      {profile && (
-        <RevealFx translateY="12" delay={0.5} fillWidth>
-          <Row fillWidth gap="m" horizontal="center" wrap>
-            {profile.years_of_experience && (
-              <Column 
-                padding="24" 
-                radius="l" 
-                background="surface"
-                gap="8"
-                horizontal="center"
-                align="center"
-                flex={1}
-                minWidth={120}
-              >
-                <Heading variant="display-strong-m">
-                  {profile.years_of_experience}+
-                </Heading>
-                <Text variant="body-default-s" onBackground="neutral-weak">
-                  Years Experience
-                </Text>
-              </Column>
-            )}
-            {workExperience && workExperience.length > 0 && (
-              <Column 
-                padding="24" 
-                radius="l" 
-                background="surface"
-                gap="8"
-                horizontal="center"
-                align="center"
-                flex={1}
-                minWidth={120}
-              >
-                <Heading variant="display-strong-m">
-                  {workExperience.length}
-                </Heading>
-                <Text variant="body-default-s" onBackground="neutral-weak">
-                  Positions
-                </Text>
-              </Column>
-            )}
-            {certificates && certificates.length > 0 && (
-              <Column 
-                padding="24" 
-                radius="l" 
-                background="surface"
-                gap="8"
-                horizontal="center"
-                align="center"
-                flex={1}
-                minWidth={120}
-              >
-                <Heading variant="display-strong-m">
-                  {certificates.length}
-                </Heading>
-                <Text variant="body-default-s" onBackground="neutral-weak">
-                  Certifications
-                </Text>
-              </Column>
-            )}
-          </Row>
-        </RevealFx>
-      )}
-
-      <RevealFx translateY="16" delay={0.6}>
-        <Projects range={[1, 1]} />
-      </RevealFx>
-
-      {/* Featured Certificates */}
-      {certificates && certificates.length > 0 && (
-        <Column fillWidth gap="24">
-          <Row fillWidth paddingRight="64">
-            <Line maxWidth={48} />
-          </Row>
-          <Column fillWidth gap="32" marginTop="40" horizontal="center">
-            <Heading as="h2" variant="display-strong-s" align="center">
-              Certifications & Credentials
-            </Heading>
-            <Row wrap gap="l" horizontal="center" fillWidth>
-              {certificates.slice(0, 3).map((cert: Certificate) => (
-                <Column 
-                  key={cert.id}
-                  flex={1}
-                  minWidth={280}
-                  padding="24"
-                  radius="l"
-                  background="surface"
-                  gap="m"
-                >
-                  {cert.organization_logo && (
-                    <img 
-                      src={cert.organization_logo}
-                      alt={cert.issuing_organization}
-                      style={{ width: '48px', height: '48px', objectFit: 'contain' }}
-                    />
-                  )}
-                  <Text variant="heading-strong-s">
-                    {cert.title}
-                  </Text>
-                  <Text variant="body-default-s" onBackground="neutral-weak">
-                    {cert.issuing_organization}
-                  </Text>
-                  {cert.credential_url && (
-                    <Button
-                      href={cert.credential_url}
-                      variant="secondary"
-                      size="s"
-                      target="_blank"
-                    >
-                      Verify
-                    </Button>
-                  )}
-                </Column>
-              ))}
-            </Row>
-          </Column>
-          <Row fillWidth paddingLeft="64" horizontal="end">
-            <Line maxWidth={48} />
-          </Row>
-        </Column>
-      )}
 
       {/* Current Role Highlight */}
       {workExperience && workExperience.length > 0 && workExperience[0] && (
@@ -370,51 +250,10 @@ export default async function Home() {
         </Column>
       )}
 
-      {/* Education Section */}
-      {education && education.length > 0 && (
-        <Column fillWidth gap="24">
-          <Row fillWidth paddingRight="64">
-            <Line maxWidth={48} />
-          </Row>
-          <Column fillWidth gap="32" marginTop="40" horizontal="center">
-            <Heading as="h2" variant="display-strong-s" align="center">
-              Education
-            </Heading>
-            <Column fillWidth gap="l" maxWidth="s">
-              {education.map((edu: Education) => (
-                <Row 
-                  key={edu.id}
-                  fillWidth
-                  padding="24"
-                  radius="l"
-                  background="surface"
-                  gap="m"
-                  vertical="center"
-                >
-                  {edu.logo && (
-                    <img 
-                      src={edu.logo}
-                      alt={edu.institution}
-                      style={{ width: '48px', height: '48px', objectFit: 'contain', flexShrink: 0 }}
-                    />
-                  )}
-                  <Column gap="4" flex={1}>
-                    <Text variant="heading-strong-s">
-                      {edu.institution}
-                    </Text>
-                    <Text variant="body-default-s" onBackground="neutral-weak">
-                      {edu.degree} {edu.field_of_study && `in ${edu.field_of_study}`}
-                    </Text>
-                  </Column>
-                </Row>
-              ))}
-            </Column>
-          </Column>
-          <Row fillWidth paddingLeft="64" horizontal="end">
-            <Line maxWidth={48} />
-          </Row>
-        </Column>
-      )}
+      {/* Projects */}
+      <RevealFx translateY="16" delay={0.6} fillWidth>
+        <Projects displayMode="unified" />
+      </RevealFx>
 
       {/* Testimonials Section */}
       {testimonials && testimonials.length > 0 && (
@@ -470,31 +309,9 @@ export default async function Home() {
         </Column>
       )}
 
-      {routes["/blog"] && (
-        <Column fillWidth gap="24" marginBottom="l">
-          <Row fillWidth paddingRight="64">
-            <Line maxWidth={48} />
-          </Row>
-          <Row fillWidth gap="24" marginTop="40" s={{ direction: "column" }}>
-            <Row flex={1} paddingLeft="l" paddingTop="24">
-              <Heading as="h2" variant="display-strong-xs" wrap="balance">
-                Latest from the blog
-              </Heading>
-            </Row>
-            <Row flex={3} paddingX="20">
-              <Posts range={[1, 2]} columns="2" />
-            </Row>
-          </Row>
-          <Row fillWidth paddingLeft="64" horizontal="end">
-            <Line maxWidth={48} />
-          </Row>
-        </Column>
-      )}
-      <Projects range={[2]} />
-
       {/* Featured Achievement */}
       {featuredAchievement && (
-        <Column fillWidth gap="24" marginTop="l">
+        <Column fillWidth gap="24">
           <Row fillWidth paddingRight="64">
             <Line maxWidth={48} />
           </Row>
@@ -545,6 +362,129 @@ export default async function Home() {
               </Button>
             )}
           </Column>
+          <Row fillWidth paddingLeft="64" horizontal="end">
+            <Line maxWidth={48} />
+          </Row>
+        </Column>
+      )}
+
+      {/* Featured Certificates */}
+      {certificates && certificates.length > 0 && (
+        <Column fillWidth gap="24">
+          <Row fillWidth paddingRight="64">
+            <Line maxWidth={48} />
+          </Row>
+          <Column fillWidth gap="32" marginTop="40" horizontal="center">
+            <Heading as="h2" variant="display-strong-s" align="center">
+              Certifications & Credentials
+            </Heading>
+            <Row wrap gap="l" horizontal="center" fillWidth>
+              {certificates.slice(0, 3).map((cert: Certificate) => (
+                <Column 
+                  key={cert.id}
+                  flex={1}
+                  minWidth={220}
+                  padding="24"
+                  radius="l"
+                  background="surface"
+                  gap="m"
+                  style={{ minWidth: 0, maxWidth: 360 }}
+                >
+                  {cert.organization_logo && (
+                    <img 
+                      src={cert.organization_logo}
+                      alt={cert.issuing_organization}
+                      style={{ width: '48px', height: '48px', objectFit: 'contain' }}
+                    />
+                  )}
+                  <Text variant="heading-strong-s">
+                    {cert.title}
+                  </Text>
+                  <Text variant="body-default-s" onBackground="neutral-weak">
+                    {cert.issuing_organization}
+                  </Text>
+                  {cert.credential_url && (
+                    <Button
+                      href={cert.credential_url}
+                      variant="secondary"
+                      size="s"
+                      target="_blank"
+                    >
+                      Verify
+                    </Button>
+                  )}
+                </Column>
+              ))}
+            </Row>
+          </Column>
+          <Row fillWidth paddingLeft="64" horizontal="end">
+            <Line maxWidth={48} />
+          </Row>
+        </Column>
+      )}
+
+      {/* Education Section */}
+      {education && education.length > 0 && (
+        <Column fillWidth gap="24">
+          <Row fillWidth paddingRight="64">
+            <Line maxWidth={48} />
+          </Row>
+          <Column fillWidth gap="32" marginTop="40" horizontal="center">
+            <Heading as="h2" variant="display-strong-s" align="center">
+              Education
+            </Heading>
+            <Column fillWidth gap="l" maxWidth="s">
+              {education.map((edu: Education) => (
+                <Row 
+                  key={edu.id}
+                  fillWidth
+                  padding="24"
+                  radius="l"
+                  background="surface"
+                  gap="m"
+                  vertical="center"
+                >
+                  {edu.logo && (
+                    <img 
+                      src={edu.logo}
+                      alt={edu.institution}
+                      style={{ width: '48px', height: '48px', objectFit: 'contain', flexShrink: 0 }}
+                    />
+                  )}
+                  <Column gap="4" flex={1}>
+                    <Text variant="heading-strong-s">
+                      {edu.institution}
+                    </Text>
+                    <Text variant="body-default-s" onBackground="neutral-weak">
+                      {edu.degree} {edu.field_of_study && `in ${edu.field_of_study}`}
+                    </Text>
+                  </Column>
+                </Row>
+              ))}
+            </Column>
+          </Column>
+          <Row fillWidth paddingLeft="64" horizontal="end">
+            <Line maxWidth={48} />
+          </Row>
+        </Column>
+      )}
+
+      {/* Blog Section */}
+      {routes["/blog"] && (
+        <Column fillWidth gap="24" marginBottom="l">
+          <Row fillWidth paddingRight="64">
+            <Line maxWidth={48} />
+          </Row>
+          <Row fillWidth gap="24" marginTop="40" s={{ direction: "column" }}>
+            <Row flex={1} paddingLeft="l" paddingTop="24">
+              <Heading as="h2" variant="display-strong-xs" wrap="balance">
+                Latest from the blog
+              </Heading>
+            </Row>
+            <Row flex={3} paddingX="20">
+              <Posts range={[1, 2]} columns="2" />
+            </Row>
+          </Row>
           <Row fillWidth paddingLeft="64" horizontal="end">
             <Line maxWidth={48} />
           </Row>

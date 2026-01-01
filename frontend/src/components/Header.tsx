@@ -7,6 +7,7 @@ import { Fade, Flex, Line, Row, ToggleButton } from "@once-ui-system/core";
 
 import { routes, display, person, about, blog, work, gallery } from "@/resources";
 import { ThemeToggle } from "./ThemeToggle";
+import { MegaMenu } from "./MegaMenu"; // Import MegaMenu
 import styles from "./Header.module.scss";
 
 type TimeDisplayProps = {
@@ -44,9 +45,11 @@ export default TimeDisplay;
 
 export const Header = () => {
   const pathname = usePathname() ?? "";
+  const [isMegaMenuOpen, setMegaMenuOpen] = useState(false);
 
   return (
     <>
+      <MegaMenu isOpen={isMegaMenuOpen} onClose={() => setMegaMenuOpen(false)} />
       <Fade s={{ hide: true }} fillWidth position="fixed" height="80" zIndex={9} />
       <Fade
         hide
@@ -86,10 +89,11 @@ export const Header = () => {
             zIndex={1}
           >
             <Row gap="4" vertical="center" textVariant="body-default-s" suppressHydrationWarning>
+              <ToggleButton prefixIcon="apps" onClick={() => setMegaMenuOpen(true)} />
+              <Line background="neutral-alpha-medium" vert maxHeight="24" />
               {routes["/"] && (
                 <ToggleButton prefixIcon="home" href="/" selected={pathname === "/"} />
               )}
-              <Line background="neutral-alpha-medium" vert maxHeight="24" />
               {routes["/about"] && (
                 <>
                   <Row s={{ hide: true }}>

@@ -52,3 +52,23 @@
   --scheme-neutral-600-50: rgba(137,152,159,0.5);
   /*
 }*/
+
+/* Theme-aware subtitle color token used by component CSS modules */
+:root {
+  --subtitle-color: var(--color-text-neutral-weak, rgba(107,114,128,1));
+}
+
+html[data-theme="light"] {
+  --subtitle-color: var(--color-text-neutral-strong, rgba(17,24,39,0.9));
+}
+
+html[data-theme="dark"] {
+  --subtitle-color: var(--color-text-neutral-weak, rgba(107,114,128,1));
+}
+
+/* Prevent background scrolling while overlays/modals are open */
+html.no-scroll,
+body.no-scroll {
+  overflow: hidden !important;
+  height: 100%;
+}

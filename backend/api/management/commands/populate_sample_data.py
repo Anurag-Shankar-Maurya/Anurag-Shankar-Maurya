@@ -5,6 +5,7 @@ Run: python manage.py populate_sample_data
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.utils.text import slugify
 from api.models import (
     Profile, Project, BlogPost, BlogCategory, BlogTag,
     WorkExperience, Education, Skill, SocialLink,
@@ -59,68 +60,117 @@ class Command(BaseCommand):
 
         # Create Skills - Comprehensive skill set
         skills_data = [
-            # Backend Development
-            {'name': 'Django 5.x', 'skill_type': 'framework', 'proficiency': 'expert'},
-            {'name': 'Django REST Framework', 'skill_type': 'framework', 'proficiency': 'expert'},
+            # Programming Languages
             {'name': 'Python', 'skill_type': 'language', 'proficiency': 'expert'},
-            {'name': 'PostgreSQL', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'SQLite', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'MongoDB', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'REST APIs', 'skill_type': 'technical', 'proficiency': 'expert'},
-            {'name': 'WebSocket', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            # Generative AI & LLMs
-            {'name': 'Prompt Engineering', 'skill_type': 'technical', 'proficiency': 'expert'},
-            {'name': 'OpenAI API', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'Google Gemini API', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'LangChain', 'skill_type': 'framework', 'proficiency': 'advanced'},
-            {'name': 'RAG Systems', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'Pinecone', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Vector Databases', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            # Mobile Development
             {'name': 'Kotlin', 'skill_type': 'language', 'proficiency': 'advanced'},
             {'name': 'Java', 'skill_type': 'language', 'proficiency': 'intermediate'},
-            {'name': 'Android SDK', 'skill_type': 'framework', 'proficiency': 'advanced'},
-            {'name': 'Firebase', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Room Database', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            # Full-Stack Development
-            {'name': 'React.js', 'skill_type': 'framework', 'proficiency': 'intermediate'},
             {'name': 'JavaScript', 'skill_type': 'language', 'proficiency': 'intermediate'},
-            {'name': 'HTML/CSS', 'skill_type': 'language', 'proficiency': 'advanced'},
-            {'name': 'Bootstrap 5', 'skill_type': 'framework', 'proficiency': 'advanced'},
-            # DevOps & Tools
-            {'name': 'Docker', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Docker Compose', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Nginx', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Git', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'GitHub', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'Linux/Unix', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Vercel', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Render', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            # Robotics & Embedded
-            {'name': 'Arduino Programming', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'TinkerCAD', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            {'name': 'Embedded Systems', 'skill_type': 'technical', 'proficiency': 'intermediate'},
-            # UI/UX Design
-            {'name': 'Figma', 'skill_type': 'design', 'proficiency': 'intermediate'},
-            {'name': 'Canva', 'skill_type': 'design', 'proficiency': 'intermediate'},
-            {'name': 'Material Design', 'skill_type': 'design', 'proficiency': 'intermediate'},
-            # Speech & Transcription
-            {'name': 'Deepgram', 'skill_type': 'technical', 'proficiency': 'advanced'},
-            {'name': 'Speech-to-Text', 'skill_type': 'technical', 'proficiency': 'advanced'},
+            
+            # Frontend Development
+            {'name': 'HTML/CSS', 'skill_type': 'frontend-dev', 'proficiency': 'advanced'},
+            {'name': 'React.js', 'skill_type': 'frontend-dev', 'proficiency': 'intermediate'},
+            {'name': 'Bootstrap 5', 'skill_type': 'frontend-dev', 'proficiency': 'advanced'},
+            {'name': 'Frontend Development', 'skill_type': 'frontend-dev', 'proficiency': 'intermediate'},
+            
+            # Backend Development
+            {'name': 'REST APIs', 'skill_type': 'backend-dev', 'proficiency': 'expert'},
+            {'name': 'WebSocket', 'skill_type': 'backend-dev', 'proficiency': 'advanced'},
+            {'name': 'Nginx', 'skill_type': 'backend-dev', 'proficiency': 'intermediate'},
+            
+            # Mobile App Development
+            {'name': 'Android SDK', 'skill_type': 'mobile-app-dev', 'proficiency': 'advanced'},
+            {'name': 'Mobile App Development', 'skill_type': 'mobile-app-dev', 'proficiency': 'advanced'},
+            
+            # AI/ML
+            {'name': 'Prompt Engineering', 'skill_type': 'ai-ml', 'proficiency': 'expert'},
+            {'name': 'OpenAI API', 'skill_type': 'ai-ml', 'proficiency': 'advanced'},
+            {'name': 'Google Gemini API', 'skill_type': 'ai-ml', 'proficiency': 'advanced'},
+            {'name': 'RAG Systems', 'skill_type': 'ai-ml', 'proficiency': 'advanced'},
+            {'name': 'Pinecone', 'skill_type': 'ai-ml', 'proficiency': 'intermediate'},
+            {'name': 'Vector Databases', 'skill_type': 'ai-ml', 'proficiency': 'intermediate'},
+            {'name': 'Speech-to-Text', 'skill_type': 'ai-ml', 'proficiency': 'advanced'},
+            
+            # Database
+            {'name': 'PostgreSQL', 'skill_type': 'database', 'proficiency': 'advanced'},
+            {'name': 'SQLite', 'skill_type': 'database', 'proficiency': 'advanced'},
+            {'name': 'MongoDB', 'skill_type': 'database', 'proficiency': 'intermediate'},
+            {'name': 'Room Database', 'skill_type': 'database', 'proficiency': 'intermediate'},
+            
+            # DevOps
+            {'name': 'Docker', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            {'name': 'Docker Compose', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            {'name': 'Vercel', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            {'name': 'Render', 'skill_type': 'devops', 'proficiency': 'intermediate'},
+            
+            # Backend as a Service (BaaS)
+            {'name': 'Firebase', 'skill_type': 'baas', 'proficiency': 'intermediate'},
+            {'name': 'Deepgram', 'skill_type': 'baas', 'proficiency': 'advanced'},
+            
+            # Framework
+            {'name': 'Django 5.x', 'skill_type': 'frameworks', 'proficiency': 'expert'},
+            {'name': 'Django REST Framework', 'skill_type': 'frameworks', 'proficiency': 'expert'},
+            {'name': 'LangChain', 'skill_type': 'frameworks', 'proficiency': 'advanced'},
+            
+            # Software
+            {'name': 'Figma', 'skill_type': 'softwares', 'proficiency': 'intermediate'},
+            {'name': 'Canva', 'skill_type': 'softwares', 'proficiency': 'intermediate'},
+            {'name': 'Material Design', 'skill_type': 'softwares', 'proficiency': 'intermediate'},
+            {'name': 'TinkerCAD', 'skill_type': 'softwares', 'proficiency': 'intermediate'},
+            
+            # Other
+            {'name': 'Git', 'skill_type': 'others', 'proficiency': 'advanced'},
+            {'name': 'GitHub', 'skill_type': 'others', 'proficiency': 'advanced'},
+            {'name': 'Linux/Unix', 'skill_type': 'others', 'proficiency': 'intermediate'},
+            {'name': 'Arduino Programming', 'skill_type': 'others', 'proficiency': 'intermediate'},
+            {'name': 'Embedded Systems', 'skill_type': 'others', 'proficiency': 'intermediate'},
         ]
 
         for idx, skill_data in enumerate(skills_data):
+            name = skill_data['name']
+            slug = slugify(name)
+
+            # Resolve icon: prefer explicit entry, else try exact match or partial match against Skill.ICON_MAPPING
+            icon = skill_data.get('icon', '') or ''
+            if not icon:
+                mapping = Skill.ICON_MAPPING
+                if name in mapping:
+                    icon = mapping[name]
+                else:
+                    name_lower = name.lower()
+                    for key, val in mapping.items():
+                        if key.lower() in name_lower or name_lower in key.lower():
+                            icon = val
+                            break
+
+            # Set show_on_home for top skills (expert/advanced) unless explicitly provided
+            show_on_home = skill_data.get('show_on_home', skill_data.get('proficiency') in ('expert', 'advanced'))
+
             skill, created = Skill.objects.get_or_create(
                 profile=profile,
-                name=skill_data['name'],
+                name=name,
                 defaults={
+                    'slug': slug,
                     'skill_type': skill_data['skill_type'],
                     'proficiency': skill_data['proficiency'],
+                    'icon': icon,
                     'order': idx,
-                    'show_on_home': True
+                    'show_on_home': show_on_home
                 }
             )
-            self.stdout.write(f'  {"Created" if created else "Exists"} skill: {skill.name}')
+
+            # If the skill existed but lacked an icon or slug, update it
+            if not created:
+                changed = False
+                if not skill.icon and icon:
+                    skill.icon = icon
+                    changed = True
+                if not skill.slug:
+                    skill.slug = slug
+                    changed = True
+                if changed:
+                    skill.save()
+
+            self.stdout.write(f'  {"Created" if created else "Exists"} skill: {skill.name} (icon: {skill.icon})')
 
         # Create Work Experience
         work_data = [

@@ -228,12 +228,22 @@ class SocialLink(models.Model):
 class Skill(models.Model):
     """Technical and soft skills"""
     SKILL_TYPE_CHOICES = [
-        ('technical', 'Technical'),
-        ('soft', 'Soft Skill'),
-        ('tool', 'Tool/Software'),
-        ('language', 'Programming Language'),
-        ('framework', 'Framework'),
-        ('other', 'Other'),
+        ('language', 'Language'),
+        ('frontend-dev', 'Frontend Development'),
+        ('backend-dev', 'Backend Development'),
+        ('mobile-app-dev', 'Mobile App Development'),
+        ('ai-ml', 'AI/ML'),
+        ('database', 'Database'),
+        ('data-visualization', 'Data Visualization'),
+        ('devops', 'DevOps'),
+        ('baas', 'Backend Services (BaaS)'),
+        ('frameworks', 'Frameworks'),
+        ('testing', 'Testing'),
+        ('softwares', 'Softwares'),
+        ('static-site-generator', 'Static Site Generator'),
+        ('game-engine', 'Game Engine'),
+        ('automation', 'Automation'),
+        ('others', 'Others'),
     ]
     
     PROFICIENCY_CHOICES = [
@@ -245,7 +255,8 @@ class Skill(models.Model):
     
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='skills')
     name = models.CharField(max_length=100)
-    skill_type = models.CharField(max_length=20, choices=SKILL_TYPE_CHOICES, default='technical')
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
+    skill_type = models.CharField(max_length=25, choices=SKILL_TYPE_CHOICES, default='language')
     proficiency = models.CharField(max_length=20, choices=PROFICIENCY_CHOICES, default='intermediate')
     icon = models.CharField(max_length=50, blank=True)
     order = models.PositiveIntegerField(default=0)
@@ -253,8 +264,206 @@ class Skill(models.Model):
     # Display on homepage
     show_on_home = models.BooleanField(default=False, help_text="Display this skill on homepage")
 
+    # Mapping of common skill names to icon keys in frontend
+    ICON_MAPPING = {
+        # Programming Languages
+        'C': 'c',
+        'C++': 'cplusplus',
+        'C#': 'csharp',
+        'Go': 'go',
+        'Java': 'java',
+        'JavaScript': 'javascript',
+        'TypeScript': 'typescript',
+        'PHP': 'php',
+        'Perl': 'perl',
+        'Ruby': 'ruby',
+        'Scala': 'scala',
+        'Python': 'python',
+        'Swift': 'swift',
+        'Objective-C': 'objectivec',
+        'Clojure': 'clojure',
+        'Rust': 'rust',
+        'Haskell': 'haskell',
+        'CoffeeScript': 'coffeescript',
+        'Elixir': 'elixir',
+        'Erlang': 'erlang',
+        'Nim': 'nim',
+
+        # Frontend
+        'Vue.js': 'vuejs',
+        'Vue': 'vuejs',
+        'React': 'react',
+        'Svelte': 'svelte',
+        'Angular': 'angular',
+        'AngularJS': 'angularjs',
+        'Backbone.js': 'backbonejs',
+        'Bootstrap': 'bootstrap',
+        'Vuetify': 'vuetify',
+        'CSS': 'css3',
+        'CSS3': 'css3',
+        'HTML': 'html5',
+        'HTML5': 'html5',
+        'Pug': 'pug',
+        'Gulp': 'gulp',
+        'Sass': 'sass',
+        'Redux': 'redux',
+        'Webpack': 'webpack',
+        'Babel': 'babel',
+        'Tailwind': 'tailwind',
+        'Materialize': 'materialize',
+        'Bulma': 'bulma',
+        'GTK': 'gtk',
+        'Qt': 'qt',
+        'wxWidgets': 'wx_widgets',
+        'Ember': 'ember',
+
+        # Backend / APIs
+        'Node.js': 'nodejs',
+        'Spring': 'spring',
+        'Express': 'express',
+        'GraphQL': 'graphql',
+        'Kafka': 'kafka',
+        'Solr': 'solr',
+        'RabbitMQ': 'rabbitmq',
+        'Hadoop': 'hadoop',
+        'Nginx': 'nginx',
+        'OpenResty': 'openresty',
+        'NestJS': 'nestjs',
+
+        # Mobile
+        'Android': 'android',
+        'Flutter': 'flutter',
+        'Dart': 'dart',
+        'Kotlin': 'kotlin',
+        'NativeScript': 'nativescript',
+        'Xamarin': 'xamarin',
+        'React Native': 'reactnative',
+        'Ionic': 'ionic',
+        'Apache Cordova': 'apachecordova',
+
+        # AI / ML / Data
+        'TensorFlow': 'tensorflow',
+        'PyTorch': 'pytorch',
+        'Pandas': 'pandas',
+        'Seaborn': 'seaborn',
+        'OpenCV': 'opencv',
+        'Scikit-learn': 'scikit_learn',
+
+        # Databases
+        'MongoDB': 'mongodb',
+        'MySQL': 'mysql',
+        'PostgreSQL': 'postgresql',
+        'Redis': 'redis',
+        'Oracle': 'oracle',
+        'Cassandra': 'cassandra',
+        'CouchDB': 'couchdb',
+        'Hive': 'hive',
+        'Realm': 'realm',
+        'MariaDB': 'mariadb',
+        'CockroachDB': 'cockroachdb',
+        'Elasticsearch': 'elasticsearch',
+        'SQLite': 'sqlite',
+        'MSSQL': 'mssql',
+
+        # Data Visualization
+        'D3.js': 'd3js',
+        'Chart.js': 'chartjs',
+        'CanvasJS': 'canvasjs',
+        'Kibana': 'kibana',
+        'Grafana': 'grafana',
+
+        # DevOps / Cloud
+        'AWS': 'aws',
+        'Docker': 'docker',
+        'Jenkins': 'jenkins',
+        'GCP': 'gcp',
+        'Kubernetes': 'kubernetes',
+        'Bash': 'bash',
+        'Azure': 'azure',
+        'Vagrant': 'vagrant',
+        'CircleCI': 'circleci',
+        'TravisCI': 'travisci',
+
+        # BaaS / Hosting
+        'Firebase': 'firebase',
+        'Appwrite': 'appwrite',
+        'Amplify': 'amplify',
+        'Heroku': 'heroku',
+
+        # Frameworks / Backend frameworks
+        'Django': 'django',
+        '.NET': 'dotnet',
+        'DotNet': 'dotnet',
+        'Electron': 'electron',
+        'Symfony': 'symfony',
+        'Laravel': 'laravel',
+        'CodeIgniter': 'codeigniter',
+        'Rails': 'rails',
+        'Flask': 'flask',
+        'Quasar': 'quasar',
+
+        # Testing
+        'Cypress': 'cypress',
+        'Selenium': 'selenium',
+        'Jest': 'jest',
+        'Mocha': 'mocha',
+        'Puppeteer': 'puppeteer',
+        'Karma': 'karma',
+        'Jasmine': 'jasmine',
+
+        # Tools / Design / Others
+        'Illustrator': 'illustrator',
+        'Photoshop': 'photoshop',
+        'XD': 'xd',
+        'Figma': 'figma',
+        'Blender': 'blender',
+        'Sketch': 'sketch',
+        'Invision': 'invision',
+        'Framer': 'framer',
+        'MATLAB': 'matlab',
+        'Postman': 'postman',
+
+        # Static sites / SSGs
+        'Gatsby': 'gatsby',
+        'Gridsome': 'gridsome',
+        'Hugo': 'hugo',
+        'Jekyll': 'jekyll',
+        'Next.js': 'nextjs',
+        'Nuxt.js': 'nuxtjs',
+        '11ty': '_11ty',
+        'Scully': 'scully',
+        'Sculpin': 'sculpin',
+        'Sapper': 'sapper',
+        'VuePress': 'vuepress',
+        'Hexo': 'hexo',
+        'Middleman': 'middleman',
+
+        # Game Engines
+        'Unity': 'unity',
+        'Unreal Engine': 'unreal',
+
+        # Automation
+        'Zapier': 'zapier',
+        'IFTTT': 'ifttt',
+
+        # Misc
+        'Linux': 'linux',
+        'Git': 'git',
+        'Arduino': 'arduino',
+    }
+
+    SKILL_CHOICES = [(name, name) for name in sorted(ICON_MAPPING.keys())] + [('other', 'Other (Manual Entry)')]
+
     class Meta:
         ordering = ['order', 'name']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        # Auto-fill icon based on name if not provided
+        if not self.icon and self.name in self.ICON_MAPPING:
+            self.icon = self.ICON_MAPPING[self.name]
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -268,6 +477,7 @@ class Education(models.Model):
     """Educational qualifications"""
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='education')
     institution = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=250, unique=True, blank=True)
     degree = models.CharField(max_length=200)
     field_of_study = models.CharField(max_length=200)
     start_date = models.DateField()
@@ -293,6 +503,11 @@ class Education(models.Model):
 
     def __str__(self):
         return f"{self.degree} - {self.institution}"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(f"{self.institution}-{self.degree}")
+        super().save(*args, **kwargs)
 
 
 # ============================================
@@ -422,6 +637,7 @@ class Certificate(models.Model):
     """Professional certifications"""
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='certificates')
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=250, unique=True, blank=True)
     issuing_organization = models.CharField(max_length=200)
     
     # Organization logo stored as BLOB
@@ -451,6 +667,11 @@ class Certificate(models.Model):
     class Meta:
         ordering = ['order', '-issue_date']
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.title} - {self.issuing_organization}"
 
@@ -469,6 +690,7 @@ class Achievement(models.Model):
     
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='achievements')
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=250, unique=True, blank=True)
     achievement_type = models.CharField(max_length=20, choices=ACHIEVEMENT_TYPE_CHOICES, default='award')
     issuer = models.CharField(max_length=200, blank=True)
     date = models.DateField()
@@ -489,6 +711,11 @@ class Achievement(models.Model):
 
     class Meta:
         ordering = ['order', '-date']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -632,6 +859,7 @@ class Testimonial(models.Model):
     """Client/colleague testimonials"""
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='testimonials')
     author_name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
     author_title = models.CharField(max_length=100, help_text="Job title")
     author_company = models.CharField(max_length=100, blank=True)
     
@@ -654,6 +882,11 @@ class Testimonial(models.Model):
 
     class Meta:
         ordering = ['-is_featured', 'order', '-date']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(f"{self.author_name}-{self.date.isoformat()}")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Testimonial by {self.author_name}"

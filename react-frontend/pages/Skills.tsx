@@ -6,39 +6,59 @@ import { Skill, ViewState } from '../types';
 import { api } from '../services/api';
 import { Icons, IconName } from '../components/Icons';
 
-export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewState) => void }> = ({ skills, onNavigate }) => (
-  <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-    <div className="flex items-center gap-4 mb-12">
-      <div className="p-3 bg-green-500/10 rounded-xl text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]"><Zap className="w-8 h-8"/></div>
-      <div>
-         <h1 className="text-4xl font-bold text-white">Skills & Expertise</h1>
-         <p className="text-gray-400 mt-2">A comprehensive list of my technical capabilities.</p>
-      </div>
-    </div>
-    
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-      {skills.map((skill, index) => (
-        <div 
-          key={skill.id} 
-          className="glass-card p-4 rounded-2xl hover:border-green-500/40 hover:bg-green-500/5 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-3 aspect-square group hover:-translate-y-2 hover:shadow-xl hover:shadow-green-500/10"
-          onClick={() => onNavigate({ type: 'SKILL_DETAIL', slug: skill.slug })}
-          style={{ animationDelay: `${index * 0.05}s` }}
-        >
-           <div className="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 group-hover:bg-green-500/10 group-hover:scale-110 transition-all duration-300">
-             {(() => {
-               const IconComponent = Icons[skill.name.toLowerCase().replace(/[\s\.\-\+]/g, '') as IconName] || Zap;
-               return <IconComponent className="w-8 h-8 text-gray-400 group-hover:text-green-400" />;
-             })()}
-           </div>
-           <div>
-             <div className="font-bold text-white mb-1 group-hover:text-green-400 transition-colors">{skill.name}</div>
-             <div className="text-xs text-gray-500 capitalize px-2 py-0.5 rounded-full border border-white/5 bg-black/20">{skill.proficiency}</div>
-           </div>
+export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewState) => void }> = ({ skills, onNavigate }) => {
+  const grouped = skills.reduce((acc, s) => {
+    const key = s.skill_type?.trim() || 'Other';
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(s);
+    return acc;
+  }, {} as Record<string, Skill[]>);
+
+  const groupKeys = Object.keys(grouped).sort();
+
+  return (
+    <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+      <div className="flex items-center gap-4 mb-12">
+        <div className="p-3 bg-green-500/10 rounded-xl text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]"><Zap className="w-8 h-8"/></div>
+        <div>
+           <h1 className="text-4xl font-bold text-white">Skills & Expertise</h1>
+           <p className="text-gray-400 mt-2">A comprehensive list of my technical capabilities.</p>
         </div>
+      </div>
+
+      {groupKeys.map((type) => (
+        <section key={type} className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold text-white">{type}</h2>
+            <div className="text-sm text-gray-400">{grouped[type].length} skills</div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {grouped[type].map((skill, index) => (
+              <div 
+                key={skill.id} 
+                className="glass-card p-4 rounded-2xl hover:border-green-500/40 hover:bg-green-500/5 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-3 aspect-square group hover:-translate-y-2 hover:shadow-xl hover:shadow-green-500/10"
+                onClick={() => onNavigate({ type: 'SKILL_DETAIL', slug: skill.slug })}
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                 <div className="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 group-hover:bg-green-500/10 group-hover:scale-110 transition-all duration-300">
+                   {(() => {
+                     const IconComponent = Icons[skill.name.toLowerCase().replace(/[\s\.\-\+]/g, '') as IconName] || Zap;
+                     return <IconComponent className="w-8 h-8 text-gray-400 group-hover:text-green-400" />;
+                   })()}
+                 </div>
+                 <div>
+                   <div className="font-bold text-white mb-1 group-hover:text-green-400 transition-colors">{skill.name}</div>
+                   <div className="text-xs text-gray-500 capitalize px-2 py-0.5 rounded-full border border-white/5 bg-black/20">{skill.proficiency}</div>
+                 </div>
+              </div>
+            ))}
+          </div>
+        </section>
       ))}
-    </div>
-  </main>
-);
+    </main>
+  );
+};
 
 export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewState) => void }> = ({ slug, onNavigate }) => {
   const [skill, setSkill] = useState<Skill | null>(null);

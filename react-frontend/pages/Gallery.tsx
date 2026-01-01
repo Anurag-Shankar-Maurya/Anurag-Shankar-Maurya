@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ImageIcon, Loader2, RefreshCw, Filter, Layers } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ImageIcon, Loader2, RefreshCw, Filter, Layers, ChevronDown } from 'lucide-react';
 import Gallery from '../components/Gallery';
 import { api } from '../services/api';
 import { Image } from '../types';
@@ -42,78 +42,99 @@ export const GalleryView: React.FC = () => {
     fetchImages();
   }, [typeFilter, objectFilter]);
 
-  const contentTypes = [
+  const contentTypes = useMemo(() => [
     { label: 'All Types', value: undefined },
     { label: 'Gallery', value: 'gallery' },
     { label: 'Covers', value: 'cover' },
     { label: 'Thumbnails', value: 'thumbnail' },
     { label: 'Logos', value: 'logo' },
-  ];
+    { label: 'Avatar', value: 'avatar' },
+    { label: 'Other', value: 'other' },
+  ], []);
 
-  const linkedObjects = [
+  const linkedObjects = useMemo(() => [
     { label: 'All Sources', value: undefined },
     { label: 'Profile', value: 'profile' },
     { label: 'Projects', value: 'project' },
     { label: 'Experience', value: 'workexperience' },
     { label: 'Education', value: 'education' },
     { label: 'Achievements', value: 'achievement' },
-  ];
+    { label: 'Testimonials', value: 'testimonial' },
+    { label: 'Blog Posts', value: 'blogpost' },
+  ], []);
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-pink-500/10 rounded-xl text-pink-400 shadow-[0_0_15px_rgba(236,72,153,0.2)]">
-            <ImageIcon className="w-8 h-8"/>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
+        <div className="flex items-center gap-5">
+          <div className="p-4 bg-pink-500/10 rounded-2xl text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.15)] ring-1 ring-pink-500/20">
+            <ImageIcon className="w-10 h-10"/>
           </div>
           <div>
-             <h1 className="text-4xl font-bold text-white tracking-tight">Visual Gallery</h1>
-             <p className="text-gray-400 mt-2">A curated collection of captures and achievements.</p>
+             <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">Visual Gallery</h1>
+             <p className="text-gray-400 mt-1.5 font-light">Explore the visual narrative of my journey.</p>
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {/* Content Type Filter */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mr-2 flex items-center gap-1">
-              <Filter className="w-3 h-3" /> Content:
-            </span>
-            {contentTypes.map((cat) => (
-              <button
-                key={cat.label}
-                onClick={() => setTypeFilter(cat.value)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  typeFilter === cat.value 
-                  ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/20' 
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={fetchImages} className="text-gray-400 hover:text-white">
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
+      </div>
+
+      {/* Modern Filter Bar */}
+      <div className="glass-card p-2 rounded-2xl mb-12 flex flex-wrap items-center gap-2 bg-white/5 border-white/10 backdrop-blur-md sticky top-24 z-30">
+        <div className="flex flex-wrap items-center gap-2 p-1 grow">
+          <div className="flex items-center gap-2 px-3 py-2 mr-2 text-gray-500 border-r border-white/10">
+            <Filter className="w-4 h-4" />
+            <span className="text-xs font-bold uppercase tracking-widest">Filters</span>
+          </div>
+          
+          {/* Content Type Selector */}
+          <div className="relative group/select">
+            <select 
+              value={typeFilter || ''} 
+              onChange={(e) => setTypeFilter(e.target.value || undefined)}
+              className="appearance-none bg-white/5 hover:bg-white/10 text-gray-300 px-4 py-2 pr-10 rounded-xl text-sm font-medium border border-white/10 focus:outline-none focus:ring-2 focus:ring-pink-500/40 transition-all cursor-pointer min-w-[140px]"
+            >
+              {contentTypes.map(c => <option key={c.label} value={c.value || ''} className="bg-gray-900 text-white">{c.label}</option>)}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none group-hover/select:text-white transition-colors" />
           </div>
 
-          {/* Linked Object Filter */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mr-2 flex items-center gap-1">
-              <Layers className="w-3 h-3" /> Linked to:
-            </span>
-            {linkedObjects.map((obj) => (
-              <button
-                key={obj.label}
-                onClick={() => setObjectFilter(obj.value)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  objectFilter === obj.value 
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5'
-                }`}
-              >
-                {obj.label}
-              </button>
-            ))}
-            <Button variant="ghost" size="sm" onClick={fetchImages} className="ml-2">
-              <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-            </Button>
+          {/* Linked Object Selector */}
+          <div className="relative group/select">
+            <select 
+              value={objectFilter || ''} 
+              onChange={(e) => setObjectFilter(e.target.value || undefined)}
+              className="appearance-none bg-white/5 hover:bg-white/10 text-gray-300 px-4 py-2 pr-10 rounded-xl text-sm font-medium border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all cursor-pointer min-w-[140px]"
+            >
+              {linkedObjects.map(o => <option key={o.label} value={o.value || ''} className="bg-gray-900 text-white">{o.label}</option>)}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none group-hover/select:text-white transition-colors" />
+          </div>
+
+          <div className="h-6 w-px bg-white/10 mx-2 hidden sm:block"></div>
+
+          {/* Active Filter Pills (Horizontal Scrollable) */}
+          <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+             {typeFilter && (
+               <button onClick={() => setTypeFilter(undefined)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-pink-500/10 text-pink-400 text-xs font-semibold border border-pink-500/20 whitespace-nowrap hover:bg-pink-500/20 transition-colors">
+                 Type: {contentTypes.find(c => c.value === typeFilter)?.label} <span>×</span>
+               </button>
+             )}
+             {objectFilter && (
+               <button onClick={() => setObjectFilter(undefined)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-semibold border border-blue-500/20 whitespace-nowrap hover:bg-blue-500/20 transition-colors">
+                 Source: {linkedObjects.find(o => o.value === objectFilter)?.label} <span>×</span>
+               </button>
+             )}
+             {(typeFilter || objectFilter) && (
+               <button onClick={() => { setTypeFilter(undefined); setObjectFilter(undefined); }} className="text-gray-500 hover:text-white text-xs font-medium px-2 py-1.5 transition-colors">
+                 Reset All
+               </button>
+             )}
           </div>
         </div>
       </div>

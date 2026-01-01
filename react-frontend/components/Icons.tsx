@@ -189,6 +189,9 @@ import {
   SiGit,
   SiArduino,
   SiApple,
+  SiPostman,
+  SiGridsome,
+  SiHexo,
   // SiMicrosoft removed, using FaMicrosoft instead
 } from 'react-icons/si';
 
@@ -282,6 +285,7 @@ export const Icons = {
   gtk: SiQt,
   qt: SiQt,
   wx_widgets: SiQt,
+  ember: SiJavascript,
 
   // Backend / APIs
   nodejs: SiNodedotjs,
@@ -386,6 +390,7 @@ export const Icons = {
   invision: SiInvision,
   framer: SiFramer,
   matlab: FaGlobe,
+  postman: SiPostman,
 
   // Static sites / SSGs
   nextjs: SiNextdotjs,
@@ -394,6 +399,13 @@ export const Icons = {
   jekyll: SiJekyll,
   nuxtjs: SiNuxtdotjs,
   _11ty: SiEleventy,
+  gridsome: SiGatsby,
+  scully: SiAngular,
+  sculpin: SiPhp,
+  sapper: SiSvelte,
+  vuepress: SiVuedotjs,
+  hexo: SiHugo,
+  middleman: SiRuby,
 
   // Game Engines
   unity: SiUnity,

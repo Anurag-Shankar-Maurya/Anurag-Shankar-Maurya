@@ -329,8 +329,8 @@ export const Home: React.FC<HomeProps> = ({
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
                  {homeGallery.slice(0, 6).map((img) => (
-                   <div key={img.id} className="aspect-square rounded-xl overflow-hidden glass-card group cursor-pointer" onClick={() => openSingle(img.image_url, img.alt_text)}>
-                      <img src={img.image_url} alt={img.alt_text} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                   <div key={img.id} className="aspect-square rounded-xl overflow-hidden glass-card group cursor-pointer" onClick={() => openSingle(img.data_uri || img.image_url, img.alt_text)}>
+                      <img src={img.data_uri || img.image_url} alt={img.alt_text} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                    </div>
                  ))}
               </div>

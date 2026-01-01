@@ -1,5 +1,5 @@
 {
-  "name": "DevPortfolio Pro",
+  "name": "Anurag's Portfolio",
   "description": "A professional, type-safe portfolio application built with React and Tailwind CSS. It features a robust component architecture designed to prevent common TypeScript errors like undefined prop passing and invalid variant assignments.",
   "requestFramePermissions": []
 }

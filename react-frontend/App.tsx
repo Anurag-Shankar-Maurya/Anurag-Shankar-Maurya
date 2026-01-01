@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { ViewState } from './types';
 import { usePortfolioData } from './hooks/usePortfolioData';
+import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 
 // Components
 import { Header } from './components/Header';
@@ -28,7 +29,62 @@ const App: React.FC = () => {
     experience, education, certificates, achievements, testimonials, skills 
   } = usePortfolioData();
 
+  const navigateHook = useNavigate();
+  const location = useLocation();
+
+  const pathFromView = (v: ViewState) => {
+    switch (v.type) {
+      case 'HOME': return '/';
+      case 'PROJECTS': return '/projects';
+      case 'PROJECT_DETAIL': return `/projects/${v.slug}`;
+      case 'BLOG': return '/blog';
+      case 'BLOG_DETAIL': return `/blog/${v.slug}`;
+      case 'ABOUT': return '/about';
+      case 'EXPERIENCE': return '/experience';
+      case 'EXPERIENCE_DETAIL': return `/experience/${v.id}`;
+      case 'EDUCATION': return '/education';
+      case 'EDUCATION_DETAIL': return `/education/${v.slug}`;
+      case 'SKILLS': return '/skills';
+      case 'SKILL_DETAIL': return `/skills/${v.slug}`;
+      case 'AWARDS_CERTS': return '/awards';
+      case 'CERTIFICATE_DETAIL': return `/awards/certificate/${v.slug}`;
+      case 'ACHIEVEMENT_DETAIL': return `/awards/achievement/${v.slug}`;
+      case 'TESTIMONIALS': return '/testimonials';
+      case 'TESTIMONIAL_DETAIL': return `/testimonials/${v.slug}`;
+      case 'CONTACT': return '/contact';
+      default: return '/';
+    }
+  };
+
+  const getViewFromPath = (pathname: string): ViewState => {
+    if (pathname === '/' || pathname === '') return { type: 'HOME' };
+    if (pathname === '/projects') return { type: 'PROJECTS' };
+    if (pathname.startsWith('/projects/')) return { type: 'PROJECT_DETAIL', slug: pathname.split('/')[2] };
+    if (pathname === '/blog') return { type: 'BLOG' };
+    if (pathname.startsWith('/blog/')) return { type: 'BLOG_DETAIL', slug: pathname.split('/')[2] };
+    if (pathname === '/about') return { type: 'ABOUT' };
+    if (pathname === '/contact') return { type: 'CONTACT' };
+    if (pathname === '/experience') return { type: 'EXPERIENCE' };
+    if (pathname.startsWith('/experience/')) return { type: 'EXPERIENCE_DETAIL', id: Number(pathname.split('/')[2]) };
+    if (pathname === '/education') return { type: 'EDUCATION' };
+    if (pathname.startsWith('/education/')) return { type: 'EDUCATION_DETAIL', slug: pathname.split('/')[2] };
+    if (pathname === '/skills') return { type: 'SKILLS' };
+    if (pathname.startsWith('/skills/')) return { type: 'SKILL_DETAIL', slug: pathname.split('/')[2] };
+    if (pathname === '/awards') return { type: 'AWARDS_CERTS' };
+    if (pathname.startsWith('/awards/certificate/')) return { type: 'CERTIFICATE_DETAIL', slug: pathname.split('/')[3] };
+    if (pathname.startsWith('/awards/achievement/')) return { type: 'ACHIEVEMENT_DETAIL', slug: pathname.split('/')[3] };
+    if (pathname === '/testimonials') return { type: 'TESTIMONIALS' };
+    if (pathname.startsWith('/testimonials/')) return { type: 'TESTIMONIAL_DETAIL', slug: pathname.split('/')[2] };
+    return { type: 'HOME' };
+  };
+
+  useEffect(() => {
+    setView(getViewFromPath(location.pathname));
+  }, [location.pathname]);
+
   const navigateTo = (newView: ViewState) => {
+    const path = pathFromView(newView);
+    navigateHook(path);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setView(newView);
   };
@@ -41,48 +97,15 @@ const App: React.FC = () => {
     );
   }
 
-  const renderContent = () => {
-    switch (view.type) {
-      case 'HOME':
-        return <Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} onNavigate={navigateTo} />;
-      case 'PROJECTS':
-        return <ProjectsView projects={projects} onNavigate={navigateTo} />;
-      case 'PROJECT_DETAIL':
-        return <ProjectDetailView slug={view.slug} onNavigate={navigateTo} />;
-      case 'BLOG':
-        return <BlogView posts={blogPosts} onNavigate={navigateTo} />;
-      case 'BLOG_DETAIL':
-        return <BlogDetailView slug={view.slug} onNavigate={navigateTo} />;
-      case 'ABOUT':
-        return <About profile={profile} experience={experience} onNavigate={navigateTo} />;
-      case 'EXPERIENCE':
-        return <ExperienceView experience={experience} onNavigate={navigateTo} />;
-      case 'EXPERIENCE_DETAIL':
-        return <ExperienceDetailView id={view.id} onNavigate={navigateTo} />;
-      case 'EDUCATION':
-        return <EducationView education={education} onNavigate={navigateTo} />;
-      case 'EDUCATION_DETAIL':
-        return <EducationDetailView slug={view.slug} onNavigate={navigateTo} />;
-      case 'SKILLS':
-        return <SkillsView skills={skills} onNavigate={navigateTo} />;
-      case 'SKILL_DETAIL':
-        return <SkillDetailView slug={view.slug} onNavigate={navigateTo} />;
-      case 'AWARDS_CERTS':
-        return <AwardsView certificates={certificates} achievements={achievements} onNavigate={navigateTo} />;
-      case 'CERTIFICATE_DETAIL':
-        return <CertificateDetailView slug={view.slug} onNavigate={navigateTo} />;
-      case 'ACHIEVEMENT_DETAIL':
-        return <AchievementDetailView slug={view.slug} onNavigate={navigateTo} />;
-      case 'TESTIMONIALS':
-        return <TestimonialsView testimonials={testimonials} onNavigate={navigateTo} />;
-      case 'TESTIMONIAL_DETAIL':
-        return <TestimonialDetailView slug={view.slug} onNavigate={navigateTo} />;
-      case 'CONTACT':
-        return <Contact profile={profile} />;
-      default:
-        return <div>Page not found</div>;
-    }
-  };
+  // small wrappers to extract params for detail routes
+  const ProjectDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Project not found</div>; return <ProjectDetailView slug={slug} onNavigate={navigateTo} />; };
+  const BlogDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Post not found</div>; return <BlogDetailView slug={slug} onNavigate={navigateTo} />; };
+  const ExperienceDetailRoute = () => { const { id } = useParams(); if (!id) return <div>Not found</div>; return <ExperienceDetailView id={Number(id)} onNavigate={navigateTo} />; };
+  const EducationDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <EducationDetailView slug={slug} onNavigate={navigateTo} />; };
+  const SkillDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <SkillDetailView slug={slug} onNavigate={navigateTo} />; };
+  const CertificateDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <CertificateDetailView slug={slug} onNavigate={navigateTo} />; };
+  const AchievementDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <AchievementDetailView slug={slug} onNavigate={navigateTo} />; };
+  const TestimonialDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <TestimonialDetailView slug={slug} onNavigate={navigateTo} />; };
 
   return (
     <div className="min-h-screen bg-background text-white selection:bg-blue-500/30 font-sans flex flex-col relative z-10 overflow-hidden">
@@ -96,7 +119,27 @@ const App: React.FC = () => {
       <Header view={view} onNavigate={navigateTo} profile={profile} />
       
       <div className="relative z-10 animate-fade-in">
-        {renderContent()}
+        <Routes>
+          <Route path="/" element={<Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} onNavigate={navigateTo} />} />
+          <Route path="/projects" element={<ProjectsView projects={projects} onNavigate={navigateTo} />} />
+          <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
+          <Route path="/blog" element={<BlogView posts={blogPosts} onNavigate={navigateTo} />} />
+          <Route path="/blog/:slug" element={<BlogDetailRoute />} />
+          <Route path="/about" element={<About profile={profile} experience={experience} onNavigate={navigateTo} />} />
+          <Route path="/contact" element={<Contact profile={profile} />} />
+          <Route path="/experience" element={<ExperienceView experience={experience} onNavigate={navigateTo} />} />
+          <Route path="/experience/:id" element={<ExperienceDetailRoute />} />
+          <Route path="/education" element={<EducationView education={education} onNavigate={navigateTo} />} />
+          <Route path="/education/:slug" element={<EducationDetailRoute />} />
+          <Route path="/skills" element={<SkillsView skills={skills} onNavigate={navigateTo} />} />
+          <Route path="/skills/:slug" element={<SkillDetailRoute />} />
+          <Route path="/awards" element={<AwardsView certificates={certificates} achievements={achievements} onNavigate={navigateTo} />} />
+          <Route path="/awards/certificate/:slug" element={<CertificateDetailRoute />} />
+          <Route path="/awards/achievement/:slug" element={<AchievementDetailRoute />} />
+          <Route path="/testimonials" element={<TestimonialsView testimonials={testimonials} onNavigate={navigateTo} />} />
+          <Route path="/testimonials/:slug" element={<TestimonialDetailRoute />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
       
       <MobileNav currentView={view} onNavigate={navigateTo} />

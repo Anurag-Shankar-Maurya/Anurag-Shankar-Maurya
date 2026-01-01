@@ -213,7 +213,7 @@ class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['profile', 'category', 'tags', 'is_featured', 'show_on_home']
-    search_fields = ['title', 'excerpt', 'content', 'meta_keywords']
+    search_fields = ['title', 'excerpt', 'content', 'meta_keywords', 'tags__name']
     ordering_fields = ['published_at', 'views_count', 'reading_time']
     ordering = ['-published_at']
     

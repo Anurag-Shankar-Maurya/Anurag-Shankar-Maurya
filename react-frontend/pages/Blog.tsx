@@ -156,14 +156,26 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
                     {post.category.name}
                   </div>
                 </div>
-                <div className="px-2 pb-2">
+                <div className="px-2 pb-2 flex flex-col flex-grow">
                   <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
                     <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-purple-400"/> {new Date(post.published_at).toLocaleDateString()}</span>
                     <span>•</span>
                     <span>{post.reading_time} min read</span>
                   </div>
                   <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors leading-tight">{post.title}</h3>
-                  <p className="text-gray-400 line-clamp-2 text-sm leading-relaxed">{post.excerpt}</p>
+                  <p className="text-gray-400 line-clamp-2 text-sm leading-relaxed mb-4">{post.excerpt}</p>
+                  
+                  {/* Tags */}
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="mt-auto flex flex-wrap gap-2">
+                      {post.tags.slice(0, 3).map(tag => (
+                        <span key={tag.slug} className="px-2 py-1 text-xs bg-white/5 rounded-md text-gray-300 border border-white/5 hover:bg-white/10 transition-colors cursor-default">{tag.name}</span>
+                      ))}
+                      {post.tags.length > 3 && (
+                        <span className="px-2 py-1 text-xs text-gray-500">+{post.tags.length - 3}</span>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

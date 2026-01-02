@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin, Trophy } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
+import { MetaTags } from '../components/MetaTags';
 import { ViewState, ProfileDetail, Project, BlogPost, Skill, WorkExperience, Education, Certificate, Achievement, Testimonial, Image } from '../types';
 import { getSocialIcon } from '../utils/helpers';
 import { Icons, SocialIcons, IconName } from '../components/Icons';
@@ -50,8 +51,31 @@ export const Home: React.FC<HomeProps> = ({
 
   const homeGallery = galleryImages.filter(img => img.show_on_home).slice(0, 6);
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": profile?.full_name || "Anurag Shankar Maurya",
+    "jobTitle": profile?.headline,
+    "description": profile?.bio,
+    "image": profile?.profile_image,
+    "url": window.location.origin,
+    "email": profile?.email,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": profile?.location
+    },
+    "sameAs": profile?.social_links.map(l => l.url) || []
+  };
+
   return (
     <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-32">
+      <MetaTags 
+        title={`${profile?.full_name || "Anurag Shankar Maurya"} | Portfolio`}
+        description={profile?.bio}
+        keywords={`portfolio, ${profile?.full_name}, ${profile?.headline}, developer, projects`}
+        ogImage={profile?.profile_image}
+        schemaData={schemaData}
+      />
       {/* Hero */}
       <section className="min-h-[70vh] flex flex-col justify-center">
         {profile?.available_for_hire && (

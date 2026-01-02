@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, Calendar, Briefcase, ArrowRight, Download, Mail, Phone, ExternalLink, User, Award } from 'lucide-react';
 import { Button } from '../components/Button';
+import { MetaTags } from '../components/MetaTags';
 import Gallery from '../components/Gallery';
 import { ProfileDetail, WorkExperience, ViewState } from '../types';
 
@@ -13,7 +14,12 @@ interface AboutProps {
 export const About: React.FC<AboutProps> = ({ profile, experience, onNavigate }) => {
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-32 animate-fade-in-up">
-      
+      <MetaTags 
+        title={`About ${profile?.full_name || "Anurag Shankar Maurya"}`}
+        description={`Learn more about ${profile?.full_name}, ${profile?.headline}. Experience, background, and career path.`}
+        keywords={`about, biography, experience, ${profile?.full_name}`}
+        ogImage={profile?.profile_image}
+      />
       {/* Hero Section */}
       <section className="relative group">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[100px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />

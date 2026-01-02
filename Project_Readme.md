@@ -1,5 +1,7 @@
 # DevPortfolio — A Complete, Deployable Portfolio Platform (Frontend + Backend) 🚀
 
+**Made by Anurag Shankar Maurya** — crafted for professionals who want to showcase their work with confidence.
+
 DevPortfolio is a full-stack, production-ready portfolio platform combining a modern React frontend (Vite) with a lightweight Django REST backend. It’s designed for developers, designers, and professionals who want a beautiful online presence that’s easy to manage, extend, and deploy.
 
 ---
@@ -111,5 +113,6 @@ Contributions are welcome! Please open issues for bugs or feature requests and s
 ---
 
 ## License & Contact 📬
-- See `LICENSE` at project root for license terms.
+- This project is licensed under the **MIT License** — see the `LICENSE` file for details.
+- **Made by Anurag Shankar Maurya**.
 - Questions, feature requests, or help with deployment? Open an issue or reach out via the project issue tracker.

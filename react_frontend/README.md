@@ -1,51 +1,92 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# DevPortfolio (React + Vite) — Modern, fast, and production-ready ⚡️
 
-# Run and deploy your AI Studio app
+DevPortfolio is a polished, high-performance React portfolio template built with Vite and TypeScript-ready tooling. It ships with responsive UI components, mock data, and built-in integration with a companion Django REST API so you can deploy a modern, content-driven portfolio quickly.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/drive/1dlqElnonLiFUW-2d3LxElu82F61g2pw5
+## Why use this? 💡
+- **Lightning-fast dev experience** — Vite + React gives near-instant HMR and snappy builds. 🔥
+- **Production-ready** — Optimized builds, preview script, and easy deploy to Vercel/Netlify. 🚀
+- **API-first** — Works seamlessly with the project's Django backend (or any REST API) via VITE_API_URL. 🔗
+- **TypeScript-friendly** — Types live in `types.ts` so you can iterate confidently. 🛡️
+- **Beautiful, accessible UI** — Responsive design, icon sets, and reusable components for a professional presentation. 🎨
 
-## Run Locally
+---
 
-**Prerequisites:**  Node.js
+## Live demo & Showcase ✨
+You can hook this frontend to the included backend to preview live content managed via the Django admin. The frontend fetches content (profile, projects, blog posts, testimonials, images, etc.) from the API and renders it dynamically — change content in the admin and the site updates immediately on the next request.
 
+---
 
+## What’s inside 🚀
+- React 19 + React Router for fast client routing
+- Vite for development and production builds
+- Icon support via `lucide-react` and `react-icons`
+- Integration helpers in `services/api.ts` and mock data in `services/mockData.ts`
+- Centralized data hook `hooks/usePortfolioData.ts` that bootstraps the site with profile, projects, blog posts, experience, certificates, testimonials, and images
+
+---
+
+## Quickstart (developer friendly) 🛠️
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
 
-### Environment variables ⚙️
+```bash
+# from project root
+cd react_frontend
+npm install
+```
 
-Copy `.env.example` to `.env.local` and edit the variables for your environment. The frontend expects Vite-prefixed variables so they are available at build/runtime:
+2. Run locally (dev server):
 
-- `VITE_API_URL` (default: `http://127.0.0.1:8000`)
-- `VITE_API_BASE_PATH` (default: `/api`)
+```bash
+npm run dev
+```
 
-Example `.env.local`:
+3. Build for production:
+
+```bash
+npm run build
+npm run preview    # test production build locally
+```
+
+---
+
+## Configure API (connect to backend) 🔌
+This frontend detects API configuration via Vite env variables. Create a `.env.local` in `react_frontend/` with the values below:
+
 ```
 VITE_API_URL=http://127.0.0.1:8000
 VITE_API_BASE_PATH=/api
 ```
 
-## Routing (new)
+- `VITE_API_URL` — root URL of your backend (defaults to `http://127.0.0.1:8000`)
+- `VITE_API_BASE_PATH` — base path for API endpoints (defaults to `/api`)
 
-This project now uses `react-router-dom` for page-based routing. The main routes are:
+Tip: If you want to preview without a backend, the app ships with `services/mockData.ts` to get you started quickly.
 
-- `/` → Home
-- `/about` → About
-- `/projects` → Projects list
-- `/projects/:slug` → Project detail
-- `/blog` → Blog list
-- `/blog/:slug` → Blog post
-- `/experience` and `/experience/:id` → Experience list and detail
-- `/education` and `/education/:slug`
-- `/skills` and `/skills/:slug`
-- `/awards` and detailed award routes under `/awards/certificate/:slug` and `/awards/achievement/:slug`
-- `/testimonials` and `/testimonials/:slug`
+---
 
-To test locally, run `npm run dev` and open e.g. `http://localhost:3000/blog` or visit a detail route like `http://localhost:3000/projects/<slug>`.
+## Customize & Brand it 🎨
+- Replace images and content in the Django admin (if using the companion backend) or swap out the mock data files for your own content.
+- Update styles and layout under `components/` and global styles as needed.
+- Add or remove sections by editing `hooks/usePortfolioData.ts` and the corresponding routes/components.
+
+---
+
+## Deployment notes 🔧
+- Deploy static assets to Vercel, Netlify, or any static host. For Vercel, add the same `VITE_API_URL` env var in the project settings.
+- Ensure CORS is configured on the backend to allow your frontend origin.
+
+---
+
+## Contributing & community 🤝
+Contributions are welcome. Open PRs for bug fixes, accessibility improvements, or new features. Please add tests where appropriate and keep changes focused.
+
+---
+
+## License & contact 📄
+See the repository `LICENSE` at the project root for license details. For feedback or feature requests, open an issue in the repository.
+
+---
+
+Want me to add a polished demo screenshot, automated CI (test + build), or a quick deployment guide for Vercel/Netlify? Pick one and I'll add it next. ✅

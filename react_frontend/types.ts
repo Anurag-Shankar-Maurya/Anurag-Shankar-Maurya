@@ -126,6 +126,7 @@ export interface Certificate {
   id: number;
   title: string;
   issuing_organization: string;
+  organization_logo?: string;
   issue_date: string;
   credential_url: string;
   credential_id?: string;

@@ -45,7 +45,14 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], achieveme
                    {cert.certificate_image && <img onClick={(e) => { e.stopPropagation(); openSingle(cert.certificate_image); }} src={cert.certificate_image} alt={cert.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700 cursor-pointer"/>}
                  </div>
                  <div className="p-6">
-                    <h3 className="font-bold text-white text-lg mb-2 group-hover:text-blue-400 transition-colors leading-snug">{cert.title}</h3>
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                      <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors leading-snug flex-1">{cert.title}</h3>
+                      {cert.organization_logo && (
+                        <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 p-1">
+                          <img src={cert.organization_logo} alt={cert.issuing_organization} className="max-w-full max-h-full object-contain" />
+                        </div>
+                      )}
+                    </div>
                     <div className="text-sm text-gray-400 mb-6 font-medium">{cert.issuing_organization}</div>
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
                        <span className="text-xs text-gray-500 font-mono">{new Date(cert.issue_date).toLocaleDateString()}</span>
@@ -113,7 +120,14 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
       </Button>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
          <div className="order-2 md:order-1">
-            <div className="text-blue-400 font-bold mb-3 uppercase tracking-wide text-sm">{cert.issuing_organization}</div>
+            <div className="flex items-center gap-4 mb-4">
+              {cert.organization_logo && (
+                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center p-2">
+                  <img src={cert.organization_logo} alt={cert.issuing_organization} className="max-w-full max-h-full object-contain" />
+                </div>
+              )}
+              <div className="text-blue-400 font-bold uppercase tracking-wide text-sm">{cert.issuing_organization}</div>
+            </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">{cert.title}</h1>
             <div className="space-y-6 text-gray-300 text-lg mb-10">
               <p className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Issued on: {new Date(cert.issue_date).toLocaleDateString()}</p>

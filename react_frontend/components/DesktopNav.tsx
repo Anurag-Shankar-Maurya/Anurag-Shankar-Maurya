@@ -91,6 +91,15 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                     <div className="text-xs text-gray-400">Academic background</div>
                   </div>
                 </div>
+                <div onClick={() => handleMegaMenuClick({ type: 'TESTIMONIALS' })} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors group">
+                  <div className="p-2 bg-orange-500/10 rounded-lg text-orange-400 group-hover:text-orange-300">
+                    <Star className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-white">Testimonials</div>
+                    <div className="text-xs text-gray-400">What others say</div>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-4">
@@ -120,15 +129,6 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                   <div>
                     <div className="text-sm font-medium text-white">Achievements</div>
                     <div className="text-xs text-gray-400">Honors and recognitions</div>
-                  </div>
-                </div>
-                 <div onClick={() => handleMegaMenuClick({ type: 'TESTIMONIALS' })} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors group">
-                  <div className="p-2 bg-orange-500/10 rounded-lg text-orange-400 group-hover:text-orange-300">
-                    <Star className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-white">Testimonials</div>
-                    <div className="text-xs text-gray-400">What others say</div>
                   </div>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Home, Briefcase, BookOpen, User, Grid, GraduationCap, Zap, Award, Star, Mail, Trophy } from 'lucide-react';
+import { Home, Briefcase, BookOpen, User, Grid, File, ArrowUp, GraduationCap, Zap, Award, Star, Mail, Trophy } from 'lucide-react';
 import { ViewState } from '../types';
 
 interface MobileNavProps {
@@ -13,7 +13,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
 
   const mainItems = [
     { icon: Home, label: 'Home', view: 'HOME' as const },
-    { icon: Briefcase, label: 'Projects', view: 'PROJECTS' as const },
+    { icon: File, label: 'Projects', view: 'PROJECTS' as const },
     { icon: BookOpen, label: 'Blog', view: 'BLOG' as const },
     { icon: User, label: 'Profile', view: 'ABOUT' as const },
   ];
@@ -86,7 +86,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
               isMenuOpen ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Grid className="w-5 h-5" />
+            <ArrowUp className="w-5 h-5" />
             <span className="sr-only">Menu</span>
           </button>
         </div>

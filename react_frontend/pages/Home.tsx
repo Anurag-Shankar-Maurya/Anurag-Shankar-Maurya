@@ -269,9 +269,9 @@ export const Home: React.FC<HomeProps> = ({
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500"><Award className="w-5 h-5"/></div>
-                  <h2 className="text-2xl font-bold text-white">Awards & Certs</h2>
+                  <h2 className="text-2xl font-bold text-white">Certificates</h2>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'AWARDS_CERTS' })}>View All</Button>
+                <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'CERTIFICATES' })}>View All</Button>
               </div>
               <div className="space-y-4">
                  {homeAwards.map((award: any) => (

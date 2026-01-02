@@ -104,12 +104,12 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                     <div className="text-xs text-gray-400">Technical proficiency</div>
                   </div>
                 </div>
-                <div onClick={() => handleMegaMenuClick({ type: 'AWARDS_CERTS' })} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors group">
+                <div onClick={() => handleMegaMenuClick({ type: 'CERTIFICATES' })} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors group">
                   <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-400 group-hover:text-yellow-300">
                     <Award className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-white">Awards & Certs</div>
+                    <div className="text-sm font-medium text-white">Certificates</div>
                     <div className="text-xs text-gray-400">Honors and validations</div>
                   </div>
                 </div>

@@ -7,7 +7,7 @@ import { Button } from '../components/Button';
 import { Certificate, Achievement, ViewState } from '../types';
 import { api } from '../services/api';
 
-export const AwardsView: React.FC<{ certificates: Certificate[], achievements: Achievement[], onNavigate: (view: ViewState) => void }> = ({ certificates, achievements, onNavigate }) => {
+export const CertificatesView: React.FC<{ certificates: Certificate[], achievements: Achievement[], onNavigate: (view: ViewState) => void }> = ({ certificates, achievements, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
   const [lbImages, setLbImages] = useState<{ src: string; alt?: string; caption?: string }[]>([]);
   const [lbIndex, setLbIndex] = useState(0);
@@ -23,7 +23,7 @@ export const AwardsView: React.FC<{ certificates: Certificate[], achievements: A
        <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-yellow-500/10 rounded-xl text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.2)]"><Award className="w-8 h-8"/></div>
         <div>
-           <h1 className="text-4xl font-bold text-white">Awards & Certifications</h1>
+           <h1 className="text-4xl font-bold text-white">Certificates</h1>
            <p className="text-gray-400 mt-2">Recognitions and professional validations.</p>
         </div>
       </div>
@@ -108,7 +108,7 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'AWARDS_CERTS' })} className="mb-8 pl-0 hover:pl-2 transition-all">
+      <Button variant="ghost" onClick={() => onNavigate({ type: 'CERTIFICATES' })} className="mb-8 pl-0 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to List
       </Button>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
@@ -165,7 +165,7 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'AWARDS_CERTS' })} className="mb-8 pl-0 hover:pl-2 transition-all">
+      <Button variant="ghost" onClick={() => onNavigate({ type: 'CERTIFICATES' })} className="mb-8 pl-0 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to List
       </Button>
       

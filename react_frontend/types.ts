@@ -179,7 +179,7 @@ export type ViewState =
   | { type: 'EDUCATION_DETAIL'; slug: string }
   | { type: 'SKILLS' }
   | { type: 'SKILL_DETAIL'; slug: string }
-  | { type: 'AWARDS_CERTS' }
+  | { type: 'CERTIFICATES' }
   | { type: 'CERTIFICATE_DETAIL'; slug: string }
   | { type: 'ACHIEVEMENT_DETAIL'; slug: string }
   | { type: 'TESTIMONIALS' }

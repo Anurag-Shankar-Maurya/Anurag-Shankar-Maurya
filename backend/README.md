@@ -2,6 +2,9 @@
 
 A lightweight REST API powering the portfolio site. It provides read-only endpoints for the public content (profiles, projects, blog posts, certificates, testimonials, images, etc.) and a public contact endpoint to accept messages from the frontend. OpenAPI/Swagger docs are available.
 
+### Content management (Admin) 🛠️
+- The Django admin interface is mounted at the site root (`/`) in this project — use it to **dynamically add, update, or remove** profiles, projects, blog posts, certificates, testimonials, images, and site settings.
+- The frontend fetches the latest data from the API endpoints, so changes made in the admin are reflected by the frontend on next API requests (no code deploy needed for content changes).
 ---
 
 ## Table of Contents

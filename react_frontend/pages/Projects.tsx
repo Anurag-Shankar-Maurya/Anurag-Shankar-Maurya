@@ -4,6 +4,7 @@ import { ArrowRight, ArrowLeft, Loader2, Search, X } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
+import { MetaTags } from '../components/MetaTags';
 import { Project, ViewState, PaginatedResponse } from '../types';
 import { api } from '../services/api';
 import { Icons, SocialIcons } from '../components/Icons';
@@ -55,6 +56,11 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+      <MetaTags 
+        title="Portfolio Projects | Anurag Shankar Maurya"
+        description="A complete archive of my open source contributions, client work, and side projects."
+        keywords="projects, portfolio, software development, open source"
+      />
       <h1 className="text-4xl font-bold text-white mb-4">All Projects</h1>
       <p className="text-gray-400 max-w-2xl mb-12">A complete archive of my open source contributions, client work, and side projects.</p>
       
@@ -261,6 +267,19 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
   if (loading) return <div className="pt-32 text-center text-white"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
   if (!project) return <div>Project not found</div>;
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": project.title,
+    "description": project.short_description,
+    "image": project.featured_image,
+    "url": window.location.href,
+    "author": {
+      "@type": "Person",
+      "name": "Anurag Shankar Maurya"
+    }
+  };
+
   const openGallery = (startIndex = 0) => {
     const imgs = [
       { src: project.featured_image, alt: project.title },
@@ -273,6 +292,13 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+      <MetaTags 
+        title={`${project.title} | Projects | Anurag Shankar Maurya`}
+        description={project.short_description}
+        keywords={`${project.technologies}, project detail`}
+        ogImage={project.featured_image}
+        schemaData={schemaData}
+      />
       <Button variant="ghost" onClick={() => onNavigate({ type: 'PROJECTS' })} className="mb-8 pl-0 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Projects
       </Button>
@@ -289,7 +315,7 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
         <div className="flex-1">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{project.title}</h1>
           <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-gray-300" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
-             <p>{project.description}</p>
+             <p className="whitespace-pre-wrap">{project.description}</p>
           </div>
           {needsTruncate && (
             <div className="mt-6">
@@ -335,7 +361,7 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
       {project.images && project.images.length > 0 && (
         <div className="mt-8 mb-8">
           <h3 className="text-lg font-bold text-white mb-4">Project Gallery</h3>
-          <Gallery images={project.images} columns={3} />
+          <Gallery images={project.images} />
         </div>
       )}
 

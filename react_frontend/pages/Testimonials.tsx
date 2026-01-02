@@ -144,12 +144,12 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
               )}
            </div>
 
-           {test.images && test.images.length > 0 && (
-            <div className="glass-card p-6 rounded-3xl">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Attached Images</h3>
-              <Gallery images={test.images} columns={2} />
-            </div>
-           )}
+      {test.images && test.images.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+          <Gallery images={test.images} />
+        </div>
+      )}
         </div>
 
         {/* Right Column: Content */}

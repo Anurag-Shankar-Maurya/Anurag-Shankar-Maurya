@@ -81,6 +81,7 @@ export interface BlogPost {
   excerpt: string;
   content: string;
   featured_image: string;
+  featured_image_alt?: string;
   images?: Image[];
   published_at: string;
   reading_time: number;
@@ -88,6 +89,16 @@ export interface BlogPost {
   tags: { name: string; slug: string; show_on_home?: boolean }[];
   author: string;
   show_on_home?: boolean;
+  // SEO Fields
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+  canonical_url?: string;
+  og_title?: string;
+  og_description?: string;
+  og_image_data?: string;
+  schema_type?: string;
+  updated_at?: string;
 }
 
 export interface WorkExperience {
@@ -126,9 +137,12 @@ export interface Certificate {
   id: number;
   title: string;
   issuing_organization: string;
+  organization_logo?: string;
   issue_date: string;
   credential_url: string;
+  credential_id?: string;
   certificate_image: string;
+  description?: string;
   skills: string;
   slug: string;
   images?: Image[];
@@ -179,8 +193,9 @@ export type ViewState =
   | { type: 'EDUCATION_DETAIL'; slug: string }
   | { type: 'SKILLS' }
   | { type: 'SKILL_DETAIL'; slug: string }
-  | { type: 'AWARDS_CERTS' }
+  | { type: 'CERTIFICATES' }
   | { type: 'CERTIFICATE_DETAIL'; slug: string }
+  | { type: 'ACHIEVEMENTS' }
   | { type: 'ACHIEVEMENT_DETAIL'; slug: string }
   | { type: 'TESTIMONIALS' }
   | { type: 'TESTIMONIAL_DETAIL'; slug: string }

@@ -166,7 +166,7 @@ export const GalleryView: React.FC = () => {
         </div>
       ) : images.length > 0 ? (
         <div className="animate-fade-in flex flex-col gap-12">
-           <Gallery images={images} columns={3} className="rounded-3xl overflow-hidden" />
+           <Gallery images={images} className="rounded-3xl overflow-hidden" />
            
            {/* Pagination UI */}
            {totalPages > 1 && (

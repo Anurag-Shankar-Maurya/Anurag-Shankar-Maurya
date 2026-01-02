@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Mail, MapPin, ArrowRight } from 'lucide-react';
 import { Button } from '../components/Button';
+import { MetaTags } from '../components/MetaTags';
 import { ProfileDetail } from '../types';
 import { api } from '../services/api';
 import { getSocialIcon } from '../utils/helpers';
@@ -25,6 +26,11 @@ export const Contact: React.FC<{ profile: ProfileDetail | null }> = ({ profile }
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+      <MetaTags 
+        title={`Contact | ${profile?.full_name || "Anurag Shankar Maurya"}`}
+        description={`Get in touch with ${profile?.full_name} for freelance projects or job opportunities.`}
+        keywords="contact, hire, developer, freelance"
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
          <div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">Get in Touch</h1>

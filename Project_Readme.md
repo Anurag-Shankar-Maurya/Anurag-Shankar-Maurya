@@ -20,7 +20,7 @@ DevPortfolio is a full-stack, production-ready portfolio platform combining a mo
 - Public contact endpoint to capture messages from visitors
 - Filtering, searching, ordering and pagination for lists
 - OpenAPI/Swagger + Redoc docs via drf-spectacular
-- Django admin mounted at `/` for dynamic content management (no redeploys required)
+- Django admin mounted at `/admin` for dynamic content management (no redeploys required)
 - Vite-powered React frontend with centralized data hook and mock data for quick previews
 - Whitenoise-ready static serving and simple Postgres support for production
 
@@ -46,7 +46,7 @@ DevPortfolio is a full-stack, production-ready portfolio platform combining a mo
    python manage.py createsuperuser
    python manage.py runserver
    ```
-   - Visit `127.0.0.1:8000/` for the Django admin (mounted at root). Use it to add/update projects, posts, images, and site settings — the frontend will pick up changes on the next API fetch.
+   - Visit `127.0.0.1:8000/admin/` for the Django admin. Use it to add/update projects, posts, images, and site settings — the frontend will pick up changes on the next API fetch.
 
 2. Frontend (React + Vite):
    ```bash
@@ -95,7 +95,7 @@ Common read endpoints:
 ---
 
 ## How content flows (simple + powerful) 🔁
-- Author uses Django admin (mounted at `/`) to add or edit content (projects, blog posts, images). No code changes needed.
+- Author uses Django admin (mounted at `/admin`) to add or edit content (projects, blog posts, images). No code changes needed.
 - The frontend fetches the latest data from the read-only API endpoints and renders updated content on next visit.
 
 ---

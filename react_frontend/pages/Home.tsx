@@ -1,7 +1,8 @@
 import React from 'react';
-import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin } from 'lucide-react';
+import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin, Trophy, Quote, Linkedin } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
+import { MetaTags } from '../components/MetaTags';
 import { ViewState, ProfileDetail, Project, BlogPost, Skill, WorkExperience, Education, Certificate, Achievement, Testimonial, Image } from '../types';
 import { getSocialIcon } from '../utils/helpers';
 import { Icons, SocialIcons, IconName } from '../components/Icons';
@@ -36,7 +37,7 @@ export const Home: React.FC<HomeProps> = ({
 
   // Filtering and slicing for home page display
   const homeProjects = featuredProjects.filter((p) => p.show_on_home).slice(0, 4);
-  const homeBlogPosts = blogPosts.slice(0, 3);
+  const homeBlogPosts = blogPosts.filter(b => b.show_on_home).slice(0, 3);
   const homeExperience = experience.filter(e => e.show_on_home).slice(0, 3);
   const homeEducation = education.filter(e => e.show_on_home).slice(0, 2);
   const homeTestimonials = testimonials.filter(t => t.show_on_home).slice(0, 3);
@@ -50,8 +51,31 @@ export const Home: React.FC<HomeProps> = ({
 
   const homeGallery = galleryImages.filter(img => img.show_on_home).slice(0, 6);
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": profile?.full_name || "Anurag Shankar Maurya",
+    "jobTitle": profile?.headline,
+    "description": profile?.bio,
+    "image": profile?.profile_image,
+    "url": window.location.origin,
+    "email": profile?.email,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": profile?.location
+    },
+    "sameAs": profile?.social_links.map(l => l.url) || []
+  };
+
   return (
     <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-32">
+      <MetaTags 
+        title={`${profile?.full_name || "Anurag Shankar Maurya"} | Portfolio`}
+        description={profile?.bio}
+        keywords={`portfolio, ${profile?.full_name}, ${profile?.headline}, developer, projects`}
+        ogImage={profile?.profile_image}
+        schemaData={schemaData}
+      />
       {/* Hero */}
       <section className="min-h-[70vh] flex flex-col justify-center">
         {profile?.available_for_hire && (
@@ -269,15 +293,15 @@ export const Home: React.FC<HomeProps> = ({
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500"><Award className="w-5 h-5"/></div>
-                  <h2 className="text-2xl font-bold text-white">Awards & Certs</h2>
+                  <h2 className="text-2xl font-bold text-white">Awards</h2>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'AWARDS_CERTS' })}>View All</Button>
+                <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'CERTIFICATES' })}>View All</Button>
               </div>
               <div className="space-y-4">
-                 {homeAwards.map((award: any) => (
+                 {homeAwards.slice(0, 3).map((award: any) => (
                    <div key={award.id} className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer" onClick={() => onNavigate({ type: award.type === 'certificate' ? 'CERTIFICATE_DETAIL' : 'ACHIEVEMENT_DETAIL', slug: award.slug })}>
-                      <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500 shrink-0 group-hover:scale-110 transition-transform">
-                         <Award className="w-5 h-5"/>
+                      <div className={`w-10 h-10 rounded-lg ${award.type === 'certificate' ? 'bg-blue-500/10 text-blue-500' : 'bg-yellow-500/10 text-yellow-500'} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                         {award.type === 'certificate' ? <Award className="w-5 h-5"/> : <Trophy className="w-5 h-5"/>}
                       </div>
                       <div className="min-w-0">
                          <div className="text-white font-medium truncate text-sm">{award.title}</div>
@@ -298,20 +322,52 @@ export const Home: React.FC<HomeProps> = ({
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'TESTIMONIALS' })}>View All</Button>
                 </div>
-                <div className="relative">
-                   <div className="glass-card p-6 rounded-2xl border-orange-500/20">
-                      <div className="text-orange-400 mb-4 flex gap-1">
-                         {[...Array(5)].map((_, i) => <Star key={i} className={`w-3 h-3 ${i < homeTestimonials[0].rating ? 'fill-orange-400' : ''}`}/>)}
-                      </div>
-                      <p className="text-gray-300 italic text-sm line-clamp-3 mb-4">"{homeTestimonials[0].content}"</p>
-                      <div className="flex items-center gap-3">
-                         <img src={homeTestimonials[0].author_image} alt={homeTestimonials[0].author_name} className="w-8 h-8 rounded-full object-cover" />
-                         <div>
-                            <div className="text-white text-xs font-bold">{homeTestimonials[0].author_name}</div>
-                            <div className="text-gray-500 text-[10px]">{homeTestimonials[0].author_title}</div>
-                         </div>
-                      </div>
-                   </div>
+                <div className="space-y-4">
+                   {homeTestimonials.map((testimonial, index) => (
+                     <div 
+                       key={testimonial.id} 
+                       className="glass-card p-6 rounded-3xl border-orange-500/20 hover:border-orange-500/30 transition-all cursor-pointer group hover:-translate-y-1 hover:bg-white/5 relative overflow-hidden flex flex-col" 
+                       onClick={() => onNavigate({ type: 'TESTIMONIAL_DETAIL', slug: testimonial.slug || String(testimonial.id) })}
+                     >
+                        {/* Top Row: Stars & Date */}
+                        <div className="flex justify-between items-center mb-4">
+                           <div className="flex gap-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star 
+                                  key={i} 
+                                  className={`w-4 h-4 ${i < testimonial.rating ? 'fill-orange-400 text-orange-400' : 'text-gray-600'}`} 
+                                />
+                              ))}
+                           </div>
+                           <div className="text-[10px] text-gray-300 font-medium bg-white/5 px-2 py-0.5 rounded-md">
+                              {new Date(testimonial.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+                           </div>
+                        </div>
+
+                        <div className="relative mb-4 flex-grow">
+                          <Quote className="absolute -top-1 -left-1 w-6 h-6 text-white/5 transform -scale-x-100" />
+                          <p className="text-gray-300 relative z-10 leading-relaxed text-sm line-clamp-3 pl-4 border-l-2 border-orange-500/20 group-hover:border-orange-500/50 transition-colors">
+                             {testimonial.content}
+                          </p>
+                        </div>
+
+                        <div className="mt-auto pt-4 border-t border-white/5 flex items-center gap-3">
+                          <img 
+                            src={testimonial.author_image} 
+                            alt={testimonial.author_name} 
+                            className="w-8 h-8 rounded-full object-cover bg-white/10 ring-2 ring-white/10 group-hover:ring-orange-500/30 transition-all"
+                          />
+                          <div className="flex-1 min-w-0">
+                             <div className="flex items-center justify-between">
+                                <div className="font-bold text-white text-xs truncate group-hover:text-orange-400 transition-colors">{testimonial.author_name}</div>
+                                {testimonial.linkedin_url && <Linkedin className="w-3 h-3 text-blue-400/50 group-hover:text-blue-400 shrink-0 transition-opacity" />}
+                             </div>
+                             <div className="text-[10px] text-gray-500 truncate">{testimonial.author_title}</div>
+                             {testimonial.author_company && <div className="text-[10px] text-orange-400/80 font-medium truncate">{testimonial.author_company}</div>}
+                          </div>
+                        </div>
+                     </div>
+                   ))}
                 </div>
              </section>
            )}

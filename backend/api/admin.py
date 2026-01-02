@@ -11,6 +11,93 @@ from .models import (
     SiteConfiguration
 )
 
+# ============================================
+# CUSTOM ADMIN SITE (Regrouping)
+# ============================================
+
+class PortfolioAdminSite(admin.AdminSite):
+    site_header = "Portfolio Management"
+    site_title = "Portfolio Admin"
+    index_title = "Welcome to Portfolio Management Dashboard"
+
+    def get_app_list(self, request, app_label=None):
+        """
+        Custom regrouping of models into logical sections.
+        """
+        app_dict = self._build_app_dict(request, app_label)
+        if not app_dict:
+            return []
+
+        # Get all models from our 'api' app
+        api_models = app_dict.get('api', {}).get('models', [])
+        auth_models = app_dict.get('auth', {}).get('models', [])
+
+        # Map model names to their objects
+        model_map = {model['object_name'].lower(): model for model in api_models}
+
+        # Define custom groups matching user request
+        groups = [
+            {
+                'name': '1. Portfolio Showcase',
+                'app_label': 'portfolio_showcase',
+                'models': [
+                    model_map.get('profile'),
+                    model_map.get('project'),
+                    model_map.get('skill'),
+                    model_map.get('certificate'),
+                    model_map.get('achievement'),
+                ]
+            },
+            {
+                'name': '2. Career & Social',
+                'app_label': 'career_social',
+                'models': [
+                    model_map.get('education'),
+                    model_map.get('workexperience'),
+                    model_map.get('sociallink'),
+                    model_map.get('testimonial'),
+                ]
+            },
+            {
+                'name': '3. Editorial & Media',
+                'app_label': 'editorial_media',
+                'models': [
+                    model_map.get('blogpost'),
+                    model_map.get('blogcategory'),
+                    model_map.get('blogtag'),
+                    model_map.get('image'),
+                ]
+            },
+            {
+                'name': '4. Infrastructure & Communication',
+                'app_label': 'infrastructure_comm',
+                'models': [
+                    model_map.get('siteconfiguration'),
+                    model_map.get('contactmessage'),
+                ]
+            }
+        ]
+
+        # Clean up: remove missing models
+        for group in groups:
+            group['models'] = [m for m in group['models'] if m]
+            # Ensure permissions are shown (default in app_dict)
+            group['has_module_perms'] = True
+
+        result = [g for g in groups if g['models']]
+        if auth_models:
+             result.append({
+                'name': 'User Management',
+                'app_label': 'auth',
+                'models': auth_models,
+                'has_module_perms': True
+            })
+
+        return result
+
+# Instantiate custom site
+portfolio_admin_site = PortfolioAdminSite(name='portfolio_admin')
+
 
 # ============================================
 # CUSTOM FORMS WITH FILE UPLOAD
@@ -387,7 +474,7 @@ class ImageInline(GenericTabularInline):
 # IMAGE ADMIN
 # ============================================
 
-@admin.register(Image)
+@admin.register(Image, site=portfolio_admin_site)
 class ImageAdmin(admin.ModelAdmin):
     form = ImageAdminForm
     list_display = ['image_preview', 'filename', 'image_type', 'content_type', 'file_size_display', 'show_on_home', 'created_at']
@@ -539,7 +626,7 @@ class SkillInline(admin.TabularInline):
     fields = ['skill_select', 'manual_name', 'skill_type', 'proficiency', 'order', 'show_on_home']
 
 
-@admin.register(Profile)
+@admin.register(Profile, site=portfolio_admin_site)
 class ProfileAdmin(admin.ModelAdmin):
     form = ProfileAdminForm
     list_display = ['profile_preview', 'full_name', 'headline', 'email', 'available_for_hire', 'updated_at']
@@ -607,7 +694,7 @@ class ProfileAdmin(admin.ModelAdmin):
     resume_info.short_description = 'Current Resume Status'
 
 
-@admin.register(SocialLink)
+@admin.register(SocialLink, site=portfolio_admin_site)
 class SocialLinkAdmin(admin.ModelAdmin):
     form = SocialLinkAdminForm
     list_display = ['platform', 'profile', 'url', 'order', 'show_on_home']
@@ -617,7 +704,7 @@ class SocialLinkAdmin(admin.ModelAdmin):
     list_editable = ['show_on_home']
 
 
-@admin.register(Skill)
+@admin.register(Skill, site=portfolio_admin_site)
 class SkillAdmin(admin.ModelAdmin):
     form = SkillAdminForm
     list_display = ['name', 'profile', 'skill_type', 'proficiency', 'order', 'show_on_home']
@@ -630,7 +717,7 @@ class SkillAdmin(admin.ModelAdmin):
 # EDUCATION SECTION
 # ============================================
 
-@admin.register(Education)
+@admin.register(Education, site=portfolio_admin_site)
 class EducationAdmin(admin.ModelAdmin):
     form = EducationAdminForm
     list_display = ['logo_preview', 'degree', 'institution', 'field_of_study', 'start_date', 'end_date', 'is_current', 'show_on_home']
@@ -671,7 +758,7 @@ class EducationAdmin(admin.ModelAdmin):
 # WORK EXPERIENCE SECTION
 # ============================================
 
-@admin.register(WorkExperience)
+@admin.register(WorkExperience, site=portfolio_admin_site)
 class WorkExperienceAdmin(admin.ModelAdmin):
     form = WorkExperienceAdminForm
     list_display = ['company_logo_preview', 'job_title', 'company_name', 'employment_type', 'work_mode', 'start_date', 'is_current', 'show_on_home']
@@ -717,7 +804,7 @@ class WorkExperienceAdmin(admin.ModelAdmin):
 # PROJECTS SECTION
 # ============================================
 
-@admin.register(Project)
+@admin.register(Project, site=portfolio_admin_site)
 class ProjectAdmin(admin.ModelAdmin):
     form = ProjectAdminForm
     list_display = ['featured_preview', 'title', 'status', 'is_featured', 'is_visible', 'show_on_home', 'order', 'created_at']
@@ -768,7 +855,7 @@ class ProjectAdmin(admin.ModelAdmin):
 # CERTIFICATES & ACHIEVEMENTS
 # ============================================
 
-@admin.register(Certificate)
+@admin.register(Certificate, site=portfolio_admin_site)
 class CertificateAdmin(admin.ModelAdmin):
     form = CertificateAdminForm
     list_display = ['org_logo_preview', 'title', 'issuing_organization', 'issue_date', 'does_not_expire', 'show_on_home', 'order']
@@ -816,7 +903,7 @@ class CertificateAdmin(admin.ModelAdmin):
     cert_preview_large.short_description = 'Certificate Image'
 
 
-@admin.register(Achievement)
+@admin.register(Achievement, site=portfolio_admin_site)
 class AchievementAdmin(admin.ModelAdmin):
     form = AchievementAdminForm
     list_display = ['image_preview', 'title', 'achievement_type', 'issuer', 'date', 'order', 'show_on_home']
@@ -853,7 +940,7 @@ class AchievementAdmin(admin.ModelAdmin):
 # BLOG SECTION
 # ============================================
 
-@admin.register(BlogCategory)
+@admin.register(BlogCategory, site=portfolio_admin_site)
 class BlogCategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug', 'post_count', 'order', 'show_on_home']
     list_editable = ['order', 'show_on_home']
@@ -866,7 +953,7 @@ class BlogCategoryAdmin(admin.ModelAdmin):
     post_count.short_description = 'Posts'
 
 
-@admin.register(BlogTag)
+@admin.register(BlogTag, site=portfolio_admin_site)
 class BlogTagAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug', 'post_count', 'show_on_home']
     list_editable = ['show_on_home']
@@ -879,7 +966,7 @@ class BlogTagAdmin(admin.ModelAdmin):
     post_count.short_description = 'Posts'
 
 
-@admin.register(BlogPost)
+@admin.register(BlogPost, site=portfolio_admin_site)
 class BlogPostAdmin(admin.ModelAdmin):
     form = BlogPostAdminForm
     list_display = ['featured_preview', 'title', 'category', 'status', 'is_featured', 'show_on_home', 'views_count', 'published_at']
@@ -957,7 +1044,7 @@ class BlogPostAdmin(admin.ModelAdmin):
 # TESTIMONIALS SECTION
 # ============================================
 
-@admin.register(Testimonial)
+@admin.register(Testimonial, site=portfolio_admin_site)
 class TestimonialAdmin(admin.ModelAdmin):
     form = TestimonialAdminForm
     list_display = ['author_preview', 'author_name', 'author_title', 'author_company', 'rating_display', 'is_featured', 'is_visible', 'show_on_home', 'order']
@@ -1002,7 +1089,7 @@ class TestimonialAdmin(admin.ModelAdmin):
 # CONTACT MESSAGES SECTION
 # ============================================
 
-@admin.register(ContactMessage)
+@admin.register(ContactMessage, site=portfolio_admin_site)
 class ContactMessageAdmin(admin.ModelAdmin):
     list_display = ['status_badge', 'name', 'email', 'subject', 'created_at', 'replied_at']
     list_display_links = ['name']
@@ -1063,7 +1150,7 @@ class ContactMessageAdmin(admin.ModelAdmin):
 # SITE CONFIGURATION ADMIN
 # ============================================
 
-@admin.register(SiteConfiguration)
+@admin.register(SiteConfiguration, site=portfolio_admin_site)
 class SiteConfigurationAdmin(admin.ModelAdmin):
     """Admin interface for SiteConfiguration"""
     
@@ -1126,12 +1213,3 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         """Prevent deletion of the configuration"""
         return False
-
-
-# ============================================
-# ADMIN SITE CUSTOMIZATION
-# ============================================
-
-admin.site.site_header = "Portfolio Management"
-admin.site.site_title = "Portfolio Admin"
-admin.site.index_title = "Welcome to Portfolio Management Dashboard"

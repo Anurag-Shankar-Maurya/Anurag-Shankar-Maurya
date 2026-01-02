@@ -17,9 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from api.admin import portfolio_admin_site
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', portfolio_admin_site.urls),
     path('api/', include('api.urls')),
     
     # OpenAPI/Swagger documentation

@@ -4,6 +4,19 @@ from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 import base64
+from django.db.models import F, Max
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+
+def reorder_model_items(model_class, filter_kwargs, order_field='order'):
+    """
+    Utility to reorder items of a model to ensure no gaps and consistent sequence.
+    """
+    items = model_class.objects.filter(**filter_kwargs).order_by(order_field, 'pk')
+    for i, item in enumerate(items):
+        if getattr(item, order_field) != i:
+            model_class.objects.filter(pk=item.pk).update(**{order_field: i})
 
 
 # ============================================
@@ -219,6 +232,19 @@ class SocialLink(models.Model):
         # Auto-fill icon based on platform if not provided
         if not self.icon and self.platform in self.ICON_MAPPING:
             self.icon = self.ICON_MAPPING[self.platform]
+        
+        if not self.pk and self.order == 0:
+            max_order = SocialLink.objects.filter(profile=self.profile).aggregate(Max('order'))['order__max']
+            self.order = (max_order + 1) if max_order is not None else 0
+        
+        # Shift others if order is taken
+        if self.pk:
+            old_instance = SocialLink.objects.get(pk=self.pk)
+            if old_instance.order != self.order:
+                SocialLink.objects.filter(profile=self.profile, order__gte=self.order).exclude(pk=self.pk).update(order=F('order') + 1)
+        elif self.order != 0:
+            SocialLink.objects.filter(profile=self.profile, order__gte=self.order).update(order=F('order') + 1)
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -475,6 +501,19 @@ class Skill(models.Model):
         # Auto-fill icon based on name if not provided
         if not self.icon and self.name in self.ICON_MAPPING:
             self.icon = self.ICON_MAPPING[self.name]
+            
+        if not self.pk and self.order == 0:
+            max_order = Skill.objects.filter(profile=self.profile).aggregate(Max('order'))['order__max']
+            self.order = (max_order + 1) if max_order is not None else 0
+            
+        # Shift others if order is taken
+        if self.pk:
+            old_instance = Skill.objects.get(pk=self.pk)
+            if old_instance.order != self.order:
+                Skill.objects.filter(profile=self.profile, order__gte=self.order).exclude(pk=self.pk).update(order=F('order') + 1)
+        else:
+            Skill.objects.filter(profile=self.profile, order__gte=self.order).update(order=F('order') + 1)
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -657,6 +696,19 @@ class Project(models.Model):
             while queryset.filter(slug=self.slug).exists():
                 self.slug = f"{original_slug}-{counter}"
                 counter += 1
+                
+        if not self.pk and self.order == 0:
+            max_order = Project.objects.filter(profile=self.profile).aggregate(Max('order'))['order__max']
+            self.order = (max_order + 1) if max_order is not None else 0
+            
+        # Shift others if order is taken
+        if self.pk:
+            old_instance = Project.objects.get(pk=self.pk)
+            if old_instance.order != self.order:
+                Project.objects.filter(profile=self.profile, order__gte=self.order).exclude(pk=self.pk).update(order=F('order') + 1)
+        else:
+            Project.objects.filter(profile=self.profile, order__gte=self.order).update(order=F('order') + 1)
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -715,6 +767,19 @@ class Certificate(models.Model):
             while queryset.filter(slug=self.slug).exists():
                 self.slug = f"{original_slug}-{counter}"
                 counter += 1
+                
+        if not self.pk and self.order == 0:
+            max_order = Certificate.objects.filter(profile=self.profile).aggregate(Max('order'))['order__max']
+            self.order = (max_order + 1) if max_order is not None else 0
+            
+        # Shift others if order is taken
+        if self.pk:
+            old_instance = Certificate.objects.get(pk=self.pk)
+            if old_instance.order != self.order:
+                Certificate.objects.filter(profile=self.profile, order__gte=self.order).exclude(pk=self.pk).update(order=F('order') + 1)
+        else:
+            Certificate.objects.filter(profile=self.profile, order__gte=self.order).update(order=F('order') + 1)
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -771,6 +836,19 @@ class Achievement(models.Model):
             while queryset.filter(slug=self.slug).exists():
                 self.slug = f"{original_slug}-{counter}"
                 counter += 1
+                
+        if not self.pk and self.order == 0:
+            max_order = Achievement.objects.filter(profile=self.profile).aggregate(Max('order'))['order__max']
+            self.order = (max_order + 1) if max_order is not None else 0
+            
+        # Shift others if order is taken
+        if self.pk:
+            old_instance = Achievement.objects.get(pk=self.pk)
+            if old_instance.order != self.order:
+                Achievement.objects.filter(profile=self.profile, order__gte=self.order).exclude(pk=self.pk).update(order=F('order') + 1)
+        else:
+            Achievement.objects.filter(profile=self.profile, order__gte=self.order).update(order=F('order') + 1)
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -807,6 +885,19 @@ class BlogCategory(models.Model):
             while queryset.filter(slug=self.slug).exists():
                 self.slug = f"{original_slug}-{counter}"
                 counter += 1
+                
+        if not self.pk and self.order == 0:
+            max_order = BlogCategory.objects.all().aggregate(Max('order'))['order__max']
+            self.order = (max_order + 1) if max_order is not None else 0
+            
+        # Shift others if order is taken
+        if self.pk:
+            old_instance = BlogCategory.objects.get(pk=self.pk)
+            if old_instance.order != self.order:
+                BlogCategory.objects.filter(order__gte=self.order).exclude(pk=self.pk).update(order=F('order') + 1)
+        else:
+            BlogCategory.objects.filter(order__gte=self.order).update(order=F('order') + 1)
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -986,6 +1077,19 @@ class Testimonial(models.Model):
             while queryset.filter(slug=self.slug).exists():
                 self.slug = f"{original_slug}-{counter}"
                 counter += 1
+                
+        if not self.pk and self.order == 0:
+            max_order = Testimonial.objects.filter(profile=self.profile).aggregate(Max('order'))['order__max']
+            self.order = (max_order + 1) if max_order is not None else 0
+            
+        # Shift others if order is taken
+        if self.pk:
+            old_instance = Testimonial.objects.get(pk=self.pk)
+            if old_instance.order != self.order:
+                Testimonial.objects.filter(profile=self.profile, order__gte=self.order).exclude(pk=self.pk).update(order=F('order') + 1)
+        else:
+            Testimonial.objects.filter(profile=self.profile, order__gte=self.order).update(order=F('order') + 1)
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -1154,3 +1258,40 @@ class SiteConfiguration(models.Model):
         """Get or create the singleton configuration object"""
         config, created = cls.objects.get_or_create(pk=1)
         return config
+
+
+# ============================================
+# SIGNALS FOR AUTO-REORDERING ON DELETE
+# ============================================
+
+@receiver(post_delete, sender=SocialLink)
+def reorder_social_links(sender, instance, **kwargs):
+    reorder_model_items(SocialLink, {'profile': instance.profile})
+
+@receiver(post_delete, sender=Skill)
+def reorder_skills(sender, instance, **kwargs):
+    reorder_model_items(Skill, {'profile': instance.profile})
+
+@receiver(post_delete, sender=Project)
+def reorder_projects(sender, instance, **kwargs):
+    reorder_model_items(Project, {'profile': instance.profile})
+
+@receiver(post_delete, sender=Certificate)
+def reorder_certificates(sender, instance, **kwargs):
+    reorder_model_items(Certificate, {'profile': instance.profile})
+
+@receiver(post_delete, sender=Achievement)
+def reorder_achievements(sender, instance, **kwargs):
+    reorder_model_items(Achievement, {'profile': instance.profile})
+
+@receiver(post_delete, sender=BlogCategory)
+def reorder_blog_categories(sender, instance, **kwargs):
+    reorder_model_items(BlogCategory, {})
+
+@receiver(post_delete, sender=Testimonial)
+def reorder_testimonials(sender, instance, **kwargs):
+    reorder_model_items(Testimonial, {'profile': instance.profile})
+
+@receiver(post_delete, sender=Image)
+def reorder_images(sender, instance, **kwargs):
+    reorder_model_items(Image, {'content_type': instance.content_type, 'object_id': instance.object_id})

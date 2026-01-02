@@ -1,5 +1,5 @@
-
-import React, { useEffect } from 'react';
+import React from 'react';
+import { Helmet } from 'react-helmet-async';
 
 interface MetaTagsProps {
   title?: string;
@@ -30,70 +30,43 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
   author,
   schemaData
 }) => {
-  useEffect(() => {
-    // Update Title
-    if (title) {
-      document.title = title;
-    }
+  const currentTitle = title || "Anurag Shankar Maurya";
+  const currentDescription = description || "Professional Portfolio of Anurag Shankar Maurya";
 
-    // Update Meta Description
-    const updateMeta = (name: string, content: string, attr: 'name' | 'property' = 'name') => {
-      if (!content) return;
-      let el = document.querySelector(`meta[${attr}="${name}"]`);
-      if (el) {
-        el.setAttribute('content', content);
-      } else {
-        el = document.createElement('meta');
-        el.setAttribute(attr, name);
-        el.setAttribute('content', content);
-        document.head.appendChild(el);
-      }
-    };
+  return (
+    <Helmet>
+      {/* Basic Meta Tags */}
+      <title>{currentTitle}</title>
+      <meta name="description" content={currentDescription} />
+      {keywords && <meta name="keywords" content={keywords} />}
+      {author && <meta name="author" content={author} />}
 
-    updateMeta('description', description || '');
-    updateMeta('keywords', keywords || '');
-    
-    // Open Graph
-    updateMeta('og:title', ogTitle || title || '', 'property');
-    updateMeta('og:description', ogDescription || description || '', 'property');
-    updateMeta('og:type', ogType, 'property');
-    if (ogImage) updateMeta('og:image', ogImage, 'property');
-    
-    if (publishedTime) updateMeta('article:published_time', publishedTime, 'property');
-    if (modifiedTime) updateMeta('article:modified_time', modifiedTime, 'property');
-    if (author) updateMeta('article:author', author, 'property');
+      {/* Open Graph / Facebook */}
+      <meta property="og:type" content={ogType} />
+      <meta property="og:title" content={ogTitle || currentTitle} />
+      <meta property="og:description" content={ogDescription || currentDescription} />
+      {ogImage && <meta property="og:image" content={ogImage} />}
 
-    // Canonical Link
-    if (canonical) {
-      let link: HTMLLinkElement | null = document.querySelector('link[rel="canonical"]');
-      if (link) {
-        link.setAttribute('href', canonical);
-      } else {
-        link = document.createElement('link');
-        link.setAttribute('rel', 'canonical');
-        link.setAttribute('href', canonical);
-        document.head.appendChild(link);
-      }
-    }
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={ogTitle || currentTitle} />
+      <meta name="twitter:description" content={ogDescription || currentDescription} />
+      {ogImage && <meta name="twitter:image" content={ogImage} />}
 
-    // Schema.org JSON-LD
-    if (schemaData) {
-      let script = document.querySelector('script[type="application/ld+json"]#schema-data');
-      if (script) {
-        script.textContent = JSON.stringify(schemaData);
-      } else {
-        script = document.createElement('script');
-        script.setAttribute('type', 'application/ld+json');
-        script.setAttribute('id', 'schema-data');
-        script.textContent = JSON.stringify(schemaData);
-        document.head.appendChild(script);
-      }
-    }
+      {/* Article Specific */}
+      {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+      {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+      {author && <meta property="article:author" content={author} />}
 
-    return () => {
-        // Cleanup if necessary (optional, usually title is enough to revert)
-    };
-  }, [title, description, keywords, canonical, ogTitle, ogDescription, ogImage, ogType, publishedTime, modifiedTime, author, schemaData]);
+      {/* Canonical */}
+      {canonical && <link rel="canonical" href={canonical} />}
 
-  return null; // This component doesn't render anything to the DOM
+      {/* Structured Data */}
+      {schemaData && (
+        <script type="application/ld+json">
+          {JSON.stringify(schemaData)}
+        </script>
+      )}
+    </Helmet>
+  );
 };

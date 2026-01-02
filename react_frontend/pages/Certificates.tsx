@@ -117,6 +117,14 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">{cert.title}</h1>
             <div className="space-y-6 text-gray-300 text-lg mb-10">
               <p className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Issued on: {new Date(cert.issue_date).toLocaleDateString()}</p>
+              {cert.credential_id && (
+                <p className="flex items-center gap-3 text-sm text-gray-400 font-mono tracking-wider"><span className="w-2 h-2 rounded-full bg-gray-600"></span> ID: {cert.credential_id}</p>
+              )}
+              {cert.description && (
+                <div className="prose prose-invert max-w-none text-gray-300 text-base leading-relaxed mb-6 italic border-l-2 border-blue-500/30 pl-4 py-1">
+                   <p className="whitespace-pre-wrap">{cert.description}</p>
+                </div>
+              )}
               {cert.credential_url && (
                 <a href={cert.credential_url} target="_blank" rel="noreferrer" className="inline-flex items-center text-white bg-blue-600 hover:bg-blue-500 px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 hover:-translate-y-1">
                   Verify Credential <ExternalLink className="w-4 h-4 ml-2"/>

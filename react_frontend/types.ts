@@ -128,7 +128,9 @@ export interface Certificate {
   issuing_organization: string;
   issue_date: string;
   credential_url: string;
+  credential_id?: string;
   certificate_image: string;
+  description?: string;
   skills: string;
   slug: string;
   images?: Image[];

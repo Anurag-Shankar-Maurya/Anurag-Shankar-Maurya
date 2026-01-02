@@ -132,6 +132,11 @@ class EducationAdminForm(forms.ModelForm):
         widgets = {
             'logo_data': forms.HiddenInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk and self.instance.logo_data:
+            self.fields['logo_file'].help_text = f'✓ Current: Logo uploaded ({len(self.instance.logo_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -156,6 +161,11 @@ class WorkExperienceAdminForm(forms.ModelForm):
         widgets = {
             'company_logo_data': forms.HiddenInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk and self.instance.company_logo_data:
+            self.fields['company_logo_file'].help_text = f'✓ Current: Logo uploaded ({len(self.instance.company_logo_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -180,6 +190,11 @@ class ProjectAdminForm(forms.ModelForm):
         widgets = {
             'featured_image_data': forms.HiddenInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk and self.instance.featured_image_data:
+            self.fields['featured_image_file'].help_text = f'✓ Current: Featured image uploaded ({len(self.instance.featured_image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -206,6 +221,14 @@ class CertificateAdminForm(forms.ModelForm):
             'organization_logo_data': forms.HiddenInput(),
             'certificate_image_data': forms.HiddenInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            if self.instance.organization_logo_data:
+                self.fields['organization_logo_file'].help_text = f'✓ Current: Org logo uploaded ({len(self.instance.organization_logo_data)} bytes). Upload new file to replace.'
+            if self.instance.certificate_image_data:
+                self.fields['certificate_image_file'].help_text = f'✓ Current: Certificate image uploaded ({len(self.instance.certificate_image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -237,6 +260,11 @@ class AchievementAdminForm(forms.ModelForm):
         widgets = {
             'image_data': forms.HiddenInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk and self.instance.image_data:
+            self.fields['image_file'].help_text = f'✓ Current: Achievement image uploaded ({len(self.instance.image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -263,6 +291,14 @@ class BlogPostAdminForm(forms.ModelForm):
             'featured_image_data': forms.HiddenInput(),
             'og_image_data': forms.HiddenInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            if self.instance.featured_image_data:
+                self.fields['featured_image_file'].help_text = f'✓ Current: Featured image uploaded ({len(self.instance.featured_image_data)} bytes). Upload new file to replace.'
+            if self.instance.og_image_data:
+                self.fields['og_image_file'].help_text = f'✓ Current: OG image uploaded ({len(self.instance.og_image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -294,6 +330,11 @@ class TestimonialAdminForm(forms.ModelForm):
         widgets = {
             'author_image_data': forms.HiddenInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk and self.instance.author_image_data:
+            self.fields['author_image_file'].help_text = f'✓ Current: Author image uploaded ({len(self.instance.author_image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)

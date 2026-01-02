@@ -4,6 +4,7 @@ import { ArrowLeft, BookOpen, Calendar, Loader2, Search, X } from 'lucide-react'
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
+import { MetaTags } from '../components/MetaTags';
 import { BlogPost, ViewState, PaginatedResponse } from '../types';
 import { api } from '../services/api';
 
@@ -256,8 +257,43 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
   if (loading) return <div className="pt-32 text-center text-white"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
   if (!post) return <div>Post not found</div>;
 
+  const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name || "Anurag Shankar Maurya";
+
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": post.schema_type || "BlogPosting",
+    "headline": post.title,
+    "image": [post.featured_image],
+    "datePublished": post.published_at,
+    "dateModified": post.updated_at || post.published_at,
+    "author": [{
+      "@type": "Person",
+      "name": authorName,
+      "url": window.location.origin
+    }],
+    "description": post.meta_description || post.excerpt,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": window.location.href
+    }
+  };
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto animate-fade-in-up">
+      <MetaTags 
+        title={`${post.meta_title || post.title} | Anurag Shankar Maurya`}
+        description={post.meta_description || post.excerpt}
+        keywords={post.meta_keywords}
+        canonical={post.canonical_url || window.location.href}
+        ogTitle={post.og_title || post.title}
+        ogDescription={post.og_description || post.excerpt}
+        ogImage={(post as any).og_image || post.featured_image}
+        ogType="article"
+        publishedTime={post.published_at}
+        modifiedTime={post.updated_at}
+        author={authorName}
+        schemaData={schemaData}
+      />
       <Button variant="ghost" onClick={() => onNavigate({ type: 'BLOG' })} className="mb-8 pl-0 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Blog
       </Button>

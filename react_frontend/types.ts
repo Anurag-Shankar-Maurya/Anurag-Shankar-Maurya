@@ -81,6 +81,7 @@ export interface BlogPost {
   excerpt: string;
   content: string;
   featured_image: string;
+  featured_image_alt?: string;
   images?: Image[];
   published_at: string;
   reading_time: number;
@@ -88,6 +89,16 @@ export interface BlogPost {
   tags: { name: string; slug: string; show_on_home?: boolean }[];
   author: string;
   show_on_home?: boolean;
+  // SEO Fields
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+  canonical_url?: string;
+  og_title?: string;
+  og_description?: string;
+  og_image_data?: string;
+  schema_type?: string;
+  updated_at?: string;
 }
 
 export interface WorkExperience {

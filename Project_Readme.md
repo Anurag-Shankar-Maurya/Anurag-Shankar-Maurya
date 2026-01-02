@@ -112,6 +112,11 @@ Contributions are welcome! Please open issues for bugs or feature requests and s
 
 ---
 
+## Acknowledgements 🙏
+- The original **Next.js** `frontend/` directory (not the Vite-based `react_frontend/` directory) was adapted from the **Magic Portfolio** template by **Once UI** (https://once-ui.com/, https://github.com/once-ui-system/magic-portfolio). This repository customizes and extends that template to integrate with a Django + DRF backend to power a full-stack portfolio. Big thanks to the Once UI team for the excellent foundation.
+
+---
+
 ## License & Contact 📬
 - This project is licensed under the **MIT License** — see the `LICENSE` file for details.
 - **Made by Anurag Shankar Maurya**.

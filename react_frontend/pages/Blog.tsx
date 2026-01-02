@@ -338,7 +338,7 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
       {post.images && post.images.length > 0 && (
         <div className="mb-8 mt-8">
           <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
-          <Gallery images={post.images} columns={3} />
+          <Gallery images={post.images} />
         </div>
       )}
     </main>

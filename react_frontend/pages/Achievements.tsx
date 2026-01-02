@@ -111,9 +111,9 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
       </div>
 
       {ach.images && ach.images.length > 0 && (
-        <div className="mt-8 px-8 md:px-12">
+        <div className="mt-8">
           <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
-          <Gallery images={ach.images} columns={3} />
+          <Gallery images={ach.images} />
         </div>
       )}
 

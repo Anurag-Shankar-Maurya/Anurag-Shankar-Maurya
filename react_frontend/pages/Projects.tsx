@@ -361,7 +361,7 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
       {project.images && project.images.length > 0 && (
         <div className="mt-8 mb-8">
           <h3 className="text-lg font-bold text-white mb-4">Project Gallery</h3>
-          <Gallery images={project.images} columns={3} />
+          <Gallery images={project.images} />
         </div>
       )}
 

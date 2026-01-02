@@ -89,12 +89,12 @@ export const EducationDetailView: React.FC<{ slug: string, onNavigate: (view: Vi
               <p className="whitespace-pre-wrap leading-relaxed">{education.description}</p>
             </div>
 
-            {education.images && education.images.length > 0 && (
-              <div className="mt-8 px-8 md:px-12">
-                <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
-                <Gallery images={education.images} columns={3} />
-              </div>
-            )}
+      {education.images && education.images.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+          <Gallery images={education.images} />
+        </div>
+      )}
          </div>
       </div>
     </main>

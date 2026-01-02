@@ -8,14 +8,24 @@ interface GalleryProps {
   columns?: number;
 }
 
-export const Gallery: React.FC<GalleryProps> = ({ images = [], className = '', columns = 3 }) => {
+export const Gallery: React.FC<GalleryProps> = ({ images = [], className = '', columns }) => {
   const norm = (images as any[]).map((i) => ({ src: i.data_uri || i.image_url || i.src || i, alt: i.alt_text || i.alt || '', caption: i.caption || '' }));
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
+  // If columns prop is provided, use it (inline style for flexibility).
+  // Otherwise, default to responsive behavior: 1 col on mobile, 2 on tablet, 3 on desktop.
+  const gridStyle = columns 
+    ? { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }
+    : undefined;
+    
+  const gridClassName = columns 
+    ? 'grid gap-4' 
+    : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+
   return (
     <div className={className}>
-      <div className={`grid gap-4`} style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
+      <div className={gridClassName} style={gridStyle}>
         {norm.map((img, i) => (
           <button
             key={i}

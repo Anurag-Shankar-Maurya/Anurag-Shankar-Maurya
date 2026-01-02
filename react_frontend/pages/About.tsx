@@ -245,7 +245,7 @@ export const About: React.FC<AboutProps> = ({ profile, experience, onNavigate })
             <p className="text-gray-400 text-sm bg-white/5 px-4 py-2 rounded-full border border-white/10">{profile.images.length} photos</p>
           </div>
           <div className="p-4 rounded-3xl bg-white/5 border border-white/5">
-             <Gallery images={profile.images} columns={4} />
+             <Gallery images={profile.images} />
           </div>
         </section>
       )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin, Trophy } from 'lucide-react';
+import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin, Trophy, Quote, Linkedin } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
@@ -37,7 +37,7 @@ export const Home: React.FC<HomeProps> = ({
 
   // Filtering and slicing for home page display
   const homeProjects = featuredProjects.filter((p) => p.show_on_home).slice(0, 4);
-  const homeBlogPosts = blogPosts.slice(0, 3);
+  const homeBlogPosts = blogPosts.filter(b => b.show_on_home).slice(0, 3);
   const homeExperience = experience.filter(e => e.show_on_home).slice(0, 3);
   const homeEducation = education.filter(e => e.show_on_home).slice(0, 2);
   const homeTestimonials = testimonials.filter(t => t.show_on_home).slice(0, 3);
@@ -323,18 +323,48 @@ export const Home: React.FC<HomeProps> = ({
                   <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'TESTIMONIALS' })}>View All</Button>
                 </div>
                 <div className="space-y-4">
-                   {homeTestimonials.map((testimonial) => (
-                     <div key={testimonial.id} className="glass-card p-6 rounded-2xl border-orange-500/20">
-                        <div className="text-orange-400 mb-4 flex gap-1">
-                           {[...Array(5)].map((_, i) => <Star key={i} className={`w-3 h-3 ${i < testimonial.rating ? 'fill-orange-400' : ''}`}/>)}
-                        </div>
-                        <p className="text-gray-300 italic text-sm line-clamp-3 mb-4">"{testimonial.content}"</p>
-                        <div className="flex items-center gap-3">
-                           <img src={testimonial.author_image} alt={testimonial.author_name} className="w-8 h-8 rounded-full object-cover" />
-                           <div>
-                              <div className="text-white text-xs font-bold">{testimonial.author_name}</div>
-                              <div className="text-gray-500 text-[10px]">{testimonial.author_title}</div>
+                   {homeTestimonials.map((testimonial, index) => (
+                     <div 
+                       key={testimonial.id} 
+                       className="glass-card p-6 rounded-3xl border-orange-500/20 hover:border-orange-500/30 transition-all cursor-pointer group hover:-translate-y-1 hover:bg-white/5 relative overflow-hidden flex flex-col" 
+                       onClick={() => onNavigate({ type: 'TESTIMONIAL_DETAIL', slug: testimonial.slug || String(testimonial.id) })}
+                     >
+                        {/* Top Row: Stars & Date */}
+                        <div className="flex justify-between items-center mb-4">
+                           <div className="flex gap-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star 
+                                  key={i} 
+                                  className={`w-4 h-4 ${i < testimonial.rating ? 'fill-orange-400 text-orange-400' : 'text-gray-600'}`} 
+                                />
+                              ))}
                            </div>
+                           <div className="text-[10px] text-gray-300 font-medium bg-white/5 px-2 py-0.5 rounded-md">
+                              {new Date(testimonial.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+                           </div>
+                        </div>
+
+                        <div className="relative mb-4 flex-grow">
+                          <Quote className="absolute -top-1 -left-1 w-6 h-6 text-white/5 transform -scale-x-100" />
+                          <p className="text-gray-300 relative z-10 leading-relaxed text-sm line-clamp-3 pl-4 border-l-2 border-orange-500/20 group-hover:border-orange-500/50 transition-colors">
+                             {testimonial.content}
+                          </p>
+                        </div>
+
+                        <div className="mt-auto pt-4 border-t border-white/5 flex items-center gap-3">
+                          <img 
+                            src={testimonial.author_image} 
+                            alt={testimonial.author_name} 
+                            className="w-8 h-8 rounded-full object-cover bg-white/10 ring-2 ring-white/10 group-hover:ring-orange-500/30 transition-all"
+                          />
+                          <div className="flex-1 min-w-0">
+                             <div className="flex items-center justify-between">
+                                <div className="font-bold text-white text-xs truncate group-hover:text-orange-400 transition-colors">{testimonial.author_name}</div>
+                                {testimonial.linkedin_url && <Linkedin className="w-3 h-3 text-blue-400/50 group-hover:text-blue-400 shrink-0 transition-opacity" />}
+                             </div>
+                             <div className="text-[10px] text-gray-500 truncate">{testimonial.author_title}</div>
+                             {testimonial.author_company && <div className="text-[10px] text-orange-400/80 font-medium truncate">{testimonial.author_company}</div>}
+                          </div>
                         </div>
                      </div>
                    ))}

@@ -293,12 +293,12 @@ export const Home: React.FC<HomeProps> = ({
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500"><Award className="w-5 h-5"/></div>
-                  <h2 className="text-2xl font-bold text-white">Certificates</h2>
+                  <h2 className="text-2xl font-bold text-white">Awards</h2>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'CERTIFICATES' })}>View All</Button>
               </div>
               <div className="space-y-4">
-                 {homeAwards.map((award: any) => (
+                 {homeAwards.slice(0, 3).map((award: any) => (
                    <div key={award.id} className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer" onClick={() => onNavigate({ type: award.type === 'certificate' ? 'CERTIFICATE_DETAIL' : 'ACHIEVEMENT_DETAIL', slug: award.slug })}>
                       <div className={`w-10 h-10 rounded-lg ${award.type === 'certificate' ? 'bg-blue-500/10 text-blue-500' : 'bg-yellow-500/10 text-yellow-500'} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
                          {award.type === 'certificate' ? <Award className="w-5 h-5"/> : <Trophy className="w-5 h-5"/>}
@@ -322,20 +322,22 @@ export const Home: React.FC<HomeProps> = ({
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'TESTIMONIALS' })}>View All</Button>
                 </div>
-                <div className="relative">
-                   <div className="glass-card p-6 rounded-2xl border-orange-500/20">
-                      <div className="text-orange-400 mb-4 flex gap-1">
-                         {[...Array(5)].map((_, i) => <Star key={i} className={`w-3 h-3 ${i < homeTestimonials[0].rating ? 'fill-orange-400' : ''}`}/>)}
-                      </div>
-                      <p className="text-gray-300 italic text-sm line-clamp-3 mb-4">"{homeTestimonials[0].content}"</p>
-                      <div className="flex items-center gap-3">
-                         <img src={homeTestimonials[0].author_image} alt={homeTestimonials[0].author_name} className="w-8 h-8 rounded-full object-cover" />
-                         <div>
-                            <div className="text-white text-xs font-bold">{homeTestimonials[0].author_name}</div>
-                            <div className="text-gray-500 text-[10px]">{homeTestimonials[0].author_title}</div>
-                         </div>
-                      </div>
-                   </div>
+                <div className="space-y-4">
+                   {homeTestimonials.map((testimonial) => (
+                     <div key={testimonial.id} className="glass-card p-6 rounded-2xl border-orange-500/20">
+                        <div className="text-orange-400 mb-4 flex gap-1">
+                           {[...Array(5)].map((_, i) => <Star key={i} className={`w-3 h-3 ${i < testimonial.rating ? 'fill-orange-400' : ''}`}/>)}
+                        </div>
+                        <p className="text-gray-300 italic text-sm line-clamp-3 mb-4">"{testimonial.content}"</p>
+                        <div className="flex items-center gap-3">
+                           <img src={testimonial.author_image} alt={testimonial.author_name} className="w-8 h-8 rounded-full object-cover" />
+                           <div>
+                              <div className="text-white text-xs font-bold">{testimonial.author_name}</div>
+                              <div className="text-gray-500 text-[10px]">{testimonial.author_title}</div>
+                           </div>
+                        </div>
+                     </div>
+                   ))}
                 </div>
              </section>
            )}

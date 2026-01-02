@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronDown, Briefcase, GraduationCap, Award, Star, Zap } from 'lucide-react';
+import { ChevronDown, Briefcase, GraduationCap, Award, Star, Zap, Trophy } from 'lucide-react';
 import { ViewState } from '../types';
 
 interface DesktopNavProps {
@@ -105,12 +105,21 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                   </div>
                 </div>
                 <div onClick={() => handleMegaMenuClick({ type: 'CERTIFICATES' })} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors group">
-                  <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-400 group-hover:text-yellow-300">
+                  <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400 group-hover:text-blue-300">
                     <Award className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="text-sm font-medium text-white">Certificates</div>
-                    <div className="text-xs text-gray-400">Honors and validations</div>
+                    <div className="text-xs text-gray-400">Professional validations</div>
+                  </div>
+                </div>
+                <div onClick={() => handleMegaMenuClick({ type: 'ACHIEVEMENTS' })} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors group">
+                  <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-400 group-hover:text-yellow-300">
+                    <Trophy className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-white">Achievements</div>
+                    <div className="text-xs text-gray-400">Honors and recognitions</div>
                   </div>
                 </div>
                  <div onClick={() => handleMegaMenuClick({ type: 'TESTIMONIALS' })} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer transition-colors group">

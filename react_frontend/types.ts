@@ -184,6 +184,7 @@ export type ViewState =
   | { type: 'SKILL_DETAIL'; slug: string }
   | { type: 'CERTIFICATES' }
   | { type: 'CERTIFICATE_DETAIL'; slug: string }
+  | { type: 'ACHIEVEMENTS' }
   | { type: 'ACHIEVEMENT_DETAIL'; slug: string }
   | { type: 'TESTIMONIALS' }
   | { type: 'TESTIMONIAL_DETAIL'; slug: string }

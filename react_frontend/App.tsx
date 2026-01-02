@@ -19,7 +19,8 @@ import { Contact } from './pages/Contact';
 import { ExperienceView, ExperienceDetailView } from './pages/Experience';
 import { EducationView, EducationDetailView } from './pages/Education';
 import { SkillsView, SkillDetailView } from './pages/Skills';
-import { CertificatesView, CertificateDetailView, AchievementDetailView } from './pages/Certificates';
+import { CertificatesView, CertificateDetailView } from './pages/Certificates';
+import { AchievementsView, AchievementDetailView } from './pages/Achievements';
 import { TestimonialsView, TestimonialDetailView } from './pages/Testimonials';
 import { GalleryView } from './pages/Gallery';
 
@@ -49,7 +50,8 @@ const App: React.FC = () => {
       case 'SKILL_DETAIL': return `/skills/${v.slug}`;
       case 'CERTIFICATES': return '/certificates';
       case 'CERTIFICATE_DETAIL': return `/certificates/${v.slug}`;
-      case 'ACHIEVEMENT_DETAIL': return `/certificates/achievement/${v.slug}`;
+      case 'ACHIEVEMENTS': return '/achievements';
+      case 'ACHIEVEMENT_DETAIL': return `/achievements/${v.slug}`;
       case 'TESTIMONIALS': return '/testimonials';
       case 'TESTIMONIAL_DETAIL': return `/testimonials/${v.slug}`;
       case 'CONTACT': return '/contact';
@@ -73,8 +75,9 @@ const App: React.FC = () => {
     if (pathname === '/skills') return { type: 'SKILLS' };
     if (pathname.startsWith('/skills/')) return { type: 'SKILL_DETAIL', slug: pathname.split('/')[2] };
     if (pathname === '/certificates') return { type: 'CERTIFICATES' };
-    if (pathname.startsWith('/certificates/achievement/')) return { type: 'ACHIEVEMENT_DETAIL', slug: pathname.split('/')[3] };
     if (pathname.startsWith('/certificates/')) return { type: 'CERTIFICATE_DETAIL', slug: pathname.split('/')[2] };
+    if (pathname === '/achievements') return { type: 'ACHIEVEMENTS' };
+    if (pathname.startsWith('/achievements/')) return { type: 'ACHIEVEMENT_DETAIL', slug: pathname.split('/')[2] };
     if (pathname === '/testimonials') return { type: 'TESTIMONIALS' };
     if (pathname.startsWith('/testimonials/')) return { type: 'TESTIMONIAL_DETAIL', slug: pathname.split('/')[2] };
     if (pathname === '/gallery') return { type: 'GALLERY' };
@@ -136,9 +139,10 @@ const App: React.FC = () => {
           <Route path="/education/:slug" element={<EducationDetailRoute />} />
           <Route path="/skills" element={<SkillsView skills={skills} onNavigate={navigateTo} />} />
           <Route path="/skills/:slug" element={<SkillDetailRoute />} />
-          <Route path="/certificates" element={<CertificatesView certificates={certificates} achievements={achievements} onNavigate={navigateTo} />} />
-          <Route path="/certificates/achievement/:slug" element={<AchievementDetailRoute />} />
+          <Route path="/certificates" element={<CertificatesView certificates={certificates} onNavigate={navigateTo} />} />
           <Route path="/certificates/:slug" element={<CertificateDetailRoute />} />
+          <Route path="/achievements" element={<AchievementsView achievements={achievements} onNavigate={navigateTo} />} />
+          <Route path="/achievements/:slug" element={<AchievementDetailRoute />} />
           <Route path="/testimonials" element={<TestimonialsView testimonials={testimonials} onNavigate={navigateTo} />} />
           <Route path="/testimonials/:slug" element={<TestimonialDetailRoute />} />
           <Route path="/gallery" element={<GalleryView />} />

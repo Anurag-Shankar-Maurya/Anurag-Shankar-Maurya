@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin } from 'lucide-react';
+import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin, Trophy } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
 import { ViewState, ProfileDetail, Project, BlogPost, Skill, WorkExperience, Education, Certificate, Achievement, Testimonial, Image } from '../types';
@@ -276,8 +276,8 @@ export const Home: React.FC<HomeProps> = ({
               <div className="space-y-4">
                  {homeAwards.map((award: any) => (
                    <div key={award.id} className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer" onClick={() => onNavigate({ type: award.type === 'certificate' ? 'CERTIFICATE_DETAIL' : 'ACHIEVEMENT_DETAIL', slug: award.slug })}>
-                      <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500 shrink-0 group-hover:scale-110 transition-transform">
-                         <Award className="w-5 h-5"/>
+                      <div className={`w-10 h-10 rounded-lg ${award.type === 'certificate' ? 'bg-blue-500/10 text-blue-500' : 'bg-yellow-500/10 text-yellow-500'} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                         {award.type === 'certificate' ? <Award className="w-5 h-5"/> : <Trophy className="w-5 h-5"/>}
                       </div>
                       <div className="min-w-0">
                          <div className="text-white font-medium truncate text-sm">{award.title}</div>

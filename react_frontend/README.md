@@ -14,7 +14,7 @@ DevPortfolio is a polished, high-performance React portfolio template built with
 ---
 
 ## Live demo & Showcase ✨
-You can hook this frontend to the included backend to preview live content managed via the Django admin. The frontend fetches content (profile, projects, blog posts, testimonials, images, etc.) from the API and renders it dynamically — change content in the admin and the site updates immediately on the next request.
+You can hook this frontend to the included backend to preview live content managed via the Django admin (mounted at `/admin`). The frontend fetches content (profile, projects, blog posts, testimonials, images, etc.) from the API and renders it dynamically — change content in the admin and the site updates immediately on the next request.
 
 ---
 

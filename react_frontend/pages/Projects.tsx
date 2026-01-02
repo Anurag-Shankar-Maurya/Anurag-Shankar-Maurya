@@ -289,7 +289,7 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
         <div className="flex-1">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{project.title}</h1>
           <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-gray-300" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
-             <p>{project.description}</p>
+             <p className="whitespace-pre-wrap">{project.description}</p>
           </div>
           {needsTruncate && (
             <div className="mt-6">

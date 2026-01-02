@@ -460,6 +460,18 @@ class Skill(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+            
+            # Ensure slug uniqueness
+            original_slug = self.slug
+            queryset = Skill.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
+
         # Auto-fill icon based on name if not provided
         if not self.icon and self.name in self.ICON_MAPPING:
             self.icon = self.ICON_MAPPING[self.name]
@@ -507,6 +519,17 @@ class Education(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(f"{self.institution}-{self.degree}")
+            
+            # Ensure slug uniqueness
+            original_slug = self.slug
+            queryset = Education.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
         super().save(*args, **kwargs)
 
 
@@ -623,6 +646,17 @@ class Project(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+            
+            # Ensure slug uniqueness
+            original_slug = self.slug
+            queryset = Project.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -670,6 +704,17 @@ class Certificate(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+            
+            # Ensure slug uniqueness
+            original_slug = self.slug
+            queryset = Certificate.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -715,6 +760,17 @@ class Achievement(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+            
+            # Ensure slug uniqueness
+            original_slug = self.slug
+            queryset = Achievement.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -740,6 +796,17 @@ class BlogCategory(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+            
+            # Ensure slug uniqueness
+            original_slug = self.slug
+            queryset = BlogCategory.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -758,6 +825,17 @@ class BlogTag(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+            
+            # Ensure slug uniqueness
+            original_slug = self.slug
+            queryset = BlogTag.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -830,6 +908,17 @@ class BlogPost(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+            
+            # Ensure slug uniqueness
+            original_slug = self.slug
+            queryset = BlogPost.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
         if self.status == 'published' and not self.published_at:
             self.published_at = timezone.now()
         # Auto-populate SEO fields if empty
@@ -886,6 +975,17 @@ class Testimonial(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(f"{self.author_name}-{self.date.isoformat()}")
+            
+            # Ensure slug uniqueness
+            original_slug = self.slug
+            queryset = Testimonial.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
         super().save(*args, **kwargs)
 
     def __str__(self):

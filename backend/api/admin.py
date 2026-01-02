@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.utils.html import format_html
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django import forms
@@ -97,6 +99,10 @@ class PortfolioAdminSite(admin.AdminSite):
 
 # Instantiate custom site
 portfolio_admin_site = PortfolioAdminSite(name='portfolio_admin')
+
+# Register Auth models
+portfolio_admin_site.register(User, UserAdmin)
+portfolio_admin_site.register(Group, GroupAdmin)
 
 
 # ============================================

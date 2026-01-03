@@ -145,13 +145,6 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
                  </a>
               )}
            </div>
-
-      {test.images && test.images.length > 0 && (
-        <div className="mt-8">
-          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
-          <Gallery images={test.images} />
-        </div>
-      )}
         </div>
 
         {/* Right Column: Content */}
@@ -174,6 +167,13 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
            </div>
         </div>
       </div>
+
+      {test.images && test.images.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+          <Gallery images={test.images} />
+        </div>
+      )}
 
       <Lightbox images={[{ src: test.author_image, alt: test.author_name }]} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
     </main>

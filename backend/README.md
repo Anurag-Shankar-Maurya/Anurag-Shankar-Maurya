@@ -113,6 +113,47 @@ cp .env.example .env
 
 ---
 
+## Media migration & cleanup (BinaryField → FileField / Cloudinary) 🔁
+This project historically stored images and other binary files as BLOBs in the database (BinaryField). To use cloud storage (Cloudinary, Supabase, Backblaze, etc.) we added File/ImageFields and provide two management commands to migrate and clean up safely.
+
+Important: Always back up your database before performing destructive operations.
+
+### 1) Migrate blobs to FileFields (uploads to configured storage)
+- Ensure you have Cloudinary (or your chosen storage) configured in `.env` and enabled via `USE_CLOUDINARY=True` and `CLOUDINARY_URL` set.
+- Install required packages if using Cloudinary:
+  ```bash
+  pip install cloudinary django-cloudinary-storage
+  ```
+- Run the migration command to copy binary bytes into FileFields (uploads to the configured storage backend):
+  ```bash
+  python manage.py migrate_binary_to_cloudinary -b 50
+  ```
+  Options:
+  - `-b N` / `--batch-size N`: set iterator chunk size for processing (default 50 in the command). The command is idempotent and safe to re-run.
+
+### 2) Clear migrated BLOB values (keeps columns, removes BLOB data)
+- After verifying files uploaded and FileFields populated, remove the large binary values from the DB to reduce DB size while keeping the schema intact.
+- Available flags:
+  - `--dry-run` (default): shows which rows would be cleared without applying changes.
+  - `--verify`: checks that the file exists in the configured storage before clearing the DB blob.
+  - `--confirm`: apply the clears (required to make changes).
+- Example dry-run / verify:
+  ```bash
+  python manage.py clear_migrated_blobs --dry-run --verify
+  ```
+- Example apply (do a DB backup first):
+  ```bash
+  python manage.py clear_migrated_blobs --confirm --verify
+  ```
+
+Both commands live in `api/management/commands/`:
+- `migrate_binary_to_cloudinary.py` — copies existing binary data into FileFields (uploads to configured storage)
+- `clear_migrated_blobs.py` — clears BinaryField values for rows that have a valid FileField (dry-run and confirm flows)
+
+If you'd like, I can add small internal tests that exercise these commands in dry-run mode to avoid regressions. Let me know if you want that added.
+
+---
+
 ## API docs & endpoints 📚
 - OpenAPI schema: `GET /api/schema/`
 - Swagger UI: `GET /api/swagger/`

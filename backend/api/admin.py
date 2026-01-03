@@ -113,6 +113,7 @@ portfolio_admin_site.register(Group, GroupAdmin)
 class ImageAdminForm(forms.ModelForm):
     """Custom form for Image model with file upload"""
     upload_image = forms.FileField(required=False, label='Upload Image', help_text='Upload an image file')
+    clear_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the current image')
     
     class Meta:
         model = Image
@@ -125,8 +126,15 @@ class ImageAdminForm(forms.ModelForm):
         instance = super().save(commit=False)
         image_file = self.cleaned_data.get('upload_image')
         
+        # Handle clear checkbox
+        if self.cleaned_data.get('clear_image'):
+            instance.image_data = b''
+            instance.filename = ''
+            instance.file_size = 0
+            instance.width = None
+            instance.height = None
         # Only process newly uploaded files (UploadedFile with non-zero size). Existing ImageFieldFile instances should be left as-is.
-        if isinstance(image_file, UploadedFile) and getattr(image_file, 'size', 0) > 0:
+        elif isinstance(image_file, UploadedFile) and getattr(image_file, 'size', 0) > 0:
             from PIL import Image as PILImage
             import io
             
@@ -156,11 +164,13 @@ class ProfileAdminForm(forms.ModelForm):
         label='Upload Profile Image',
         help_text='Current profile image will be replaced if new file is uploaded'
     )
+    clear_profile_image = forms.BooleanField(required=False, label='Clear Profile Image', help_text='Check to remove the profile image')
     upload_resume = forms.FileField(
         required=False, 
         label='Upload Resume',
         help_text='Upload PDF, DOC, DOCX or TXT file. Current resume will be replaced if new file is uploaded'
     )
+    clear_resume = forms.BooleanField(required=False, label='Clear Resume', help_text='Check to remove the resume')
     
     class Meta:
         model = Profile
@@ -183,34 +193,45 @@ class ProfileAdminForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
         
-        # Handle profile image
-        profile_image = self.cleaned_data.get('upload_profile_image')
-        if isinstance(profile_image, UploadedFile) and getattr(profile_image, 'size', 0) > 0:
-            image_data = profile_image.read()
-            instance.profile_image_data = image_data
-            instance.profile_image_mime = _get_mime_type(profile_image, fallback='image/jpeg')
+        # Handle clear profile image
+        if self.cleaned_data.get('clear_profile_image'):
+            instance.profile_image_data = b''
+            instance.profile_image_mime = ''
+        # Handle profile image upload
+        else:
+            profile_image = self.cleaned_data.get('upload_profile_image')
+            if isinstance(profile_image, UploadedFile) and getattr(profile_image, 'size', 0) > 0:
+                image_data = profile_image.read()
+                instance.profile_image_data = image_data
+                instance.profile_image_mime = _get_mime_type(profile_image, fallback='image/jpeg')
         
-        # Handle resume - accept various file types
-        resume = self.cleaned_data.get('upload_resume')
-        if isinstance(resume, UploadedFile) and getattr(resume, 'size', 0) > 0:
-            resume_data = resume.read()
-            instance.resume_data = resume_data
-            instance.resume_filename = resume.name
-            # Determine MIME type
-            content_type = getattr(resume, 'content_type', None) or _get_mime_type(resume)
-            if not content_type:
-                # Fallback based on file extension
-                if resume.name.lower().endswith('.pdf'):
-                    content_type = 'application/pdf'
-                elif resume.name.lower().endswith('.doc'):
-                    content_type = 'application/msword'
-                elif resume.name.lower().endswith('.docx'):
-                    content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                elif resume.name.lower().endswith('.txt'):
-                    content_type = 'text/plain'
-                else:
-                    content_type = 'application/octet-stream'
-            instance.resume_mime = content_type
+        # Handle clear resume
+        if self.cleaned_data.get('clear_resume'):
+            instance.resume_data = b''
+            instance.resume_filename = ''
+            instance.resume_mime = ''
+        # Handle resume upload - accept various file types
+        else:
+            resume = self.cleaned_data.get('upload_resume')
+            if isinstance(resume, UploadedFile) and getattr(resume, 'size', 0) > 0:
+                resume_data = resume.read()
+                instance.resume_data = resume_data
+                instance.resume_filename = resume.name
+                # Determine MIME type
+                content_type = getattr(resume, 'content_type', None) or _get_mime_type(resume)
+                if not content_type:
+                    # Fallback based on file extension
+                    if resume.name.lower().endswith('.pdf'):
+                        content_type = 'application/pdf'
+                    elif resume.name.lower().endswith('.doc'):
+                        content_type = 'application/msword'
+                    elif resume.name.lower().endswith('.docx'):
+                        content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                    elif resume.name.lower().endswith('.txt'):
+                        content_type = 'text/plain'
+                    else:
+                        content_type = 'application/octet-stream'
+                instance.resume_mime = content_type
         
         if commit:
             instance.save()
@@ -220,6 +241,7 @@ class ProfileAdminForm(forms.ModelForm):
 class EducationAdminForm(forms.ModelForm):
     """Custom form for Education model with logo upload"""
     upload_logo = forms.ImageField(required=False, label='Upload Institution Logo')
+    clear_logo = forms.BooleanField(required=False, label='Clear Logo', help_text='Check to remove the logo')
     
     class Meta:
         model = Education
@@ -235,11 +257,16 @@ class EducationAdminForm(forms.ModelForm):
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        logo = self.cleaned_data.get('upload_logo')
         
-        if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
-            instance.logo_data = logo.read()
-            instance.logo_mime = _get_mime_type(logo, fallback='image/png')
+        # Handle clear checkbox
+        if self.cleaned_data.get('clear_logo'):
+            instance.logo_data = b''
+            instance.logo_mime = ''
+        else:
+            logo = self.cleaned_data.get('upload_logo')
+            if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
+                instance.logo_data = logo.read()
+                instance.logo_mime = _get_mime_type(logo, fallback='image/png')
         
         if commit:
             instance.save()
@@ -249,6 +276,7 @@ class EducationAdminForm(forms.ModelForm):
 class WorkExperienceAdminForm(forms.ModelForm):
     """Custom form for WorkExperience model with logo upload"""
     upload_company_logo = forms.ImageField(required=False, label='Upload Company Logo')
+    clear_company_logo = forms.BooleanField(required=False, label='Clear Logo', help_text='Check to remove the company logo')
     
     class Meta:
         model = WorkExperience
@@ -264,11 +292,16 @@ class WorkExperienceAdminForm(forms.ModelForm):
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        logo = self.cleaned_data.get('upload_company_logo')
         
-        if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
-            instance.company_logo_data = logo.read()
-            instance.company_logo_mime = _get_mime_type(logo, fallback='image/png')
+        # Handle clear checkbox
+        if self.cleaned_data.get('clear_company_logo'):
+            instance.company_logo_data = b''
+            instance.company_logo_mime = ''
+        else:
+            logo = self.cleaned_data.get('upload_company_logo')
+            if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
+                instance.company_logo_data = logo.read()
+                instance.company_logo_mime = _get_mime_type(logo, fallback='image/png')
         
         if commit:
             instance.save()
@@ -278,6 +311,7 @@ class WorkExperienceAdminForm(forms.ModelForm):
 class ProjectAdminForm(forms.ModelForm):
     """Custom form for Project model with featured image upload"""
     upload_featured_image = forms.ImageField(required=False, label='Upload Featured Image')
+    clear_featured_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the featured image')
     
     class Meta:
         model = Project
@@ -293,11 +327,16 @@ class ProjectAdminForm(forms.ModelForm):
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        image = self.cleaned_data.get('upload_featured_image')
         
-        if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
-            instance.featured_image_data = image.read()
-            instance.featured_image_mime = _get_mime_type(image, fallback='image/jpeg')
+        # Handle clear checkbox
+        if self.cleaned_data.get('clear_featured_image'):
+            instance.featured_image_data = b''
+            instance.featured_image_mime = ''
+        else:
+            image = self.cleaned_data.get('upload_featured_image')
+            if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
+                instance.featured_image_data = image.read()
+                instance.featured_image_mime = _get_mime_type(image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -307,7 +346,9 @@ class ProjectAdminForm(forms.ModelForm):
 class CertificateAdminForm(forms.ModelForm):
     """Custom form for Certificate model with image uploads"""
     upload_organization_logo = forms.ImageField(required=False, label='Upload Organization Logo')
+    clear_organization_logo = forms.BooleanField(required=False, label='Clear Org Logo', help_text='Check to remove the organization logo')
     upload_certificate_image = forms.ImageField(required=False, label='Upload Certificate Image')
+    clear_certificate_image = forms.BooleanField(required=False, label='Clear Certificate Image', help_text='Check to remove the certificate image')
     
     class Meta:
         model = Certificate
@@ -328,17 +369,25 @@ class CertificateAdminForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
         
-        # Handle org logo
-        org_logo = self.cleaned_data.get('upload_organization_logo')
-        if isinstance(org_logo, UploadedFile) and getattr(org_logo, 'size', 0) > 0:
-            instance.organization_logo_data = org_logo.read()
-            instance.organization_logo_mime = _get_mime_type(org_logo, fallback='image/png')
+        # Handle clear org logo
+        if self.cleaned_data.get('clear_organization_logo'):
+            instance.organization_logo_data = b''
+            instance.organization_logo_mime = ''
+        else:
+            org_logo = self.cleaned_data.get('upload_organization_logo')
+            if isinstance(org_logo, UploadedFile) and getattr(org_logo, 'size', 0) > 0:
+                instance.organization_logo_data = org_logo.read()
+                instance.organization_logo_mime = _get_mime_type(org_logo, fallback='image/png')
         
-        # Handle certificate image
-        cert_image = self.cleaned_data.get('upload_certificate_image')
-        if isinstance(cert_image, UploadedFile) and getattr(cert_image, 'size', 0) > 0:
-            instance.certificate_image_data = cert_image.read()
-            instance.certificate_image_mime = _get_mime_type(cert_image, fallback='image/jpeg')
+        # Handle clear certificate image
+        if self.cleaned_data.get('clear_certificate_image'):
+            instance.certificate_image_data = b''
+            instance.certificate_image_mime = ''
+        else:
+            cert_image = self.cleaned_data.get('upload_certificate_image')
+            if isinstance(cert_image, UploadedFile) and getattr(cert_image, 'size', 0) > 0:
+                instance.certificate_image_data = cert_image.read()
+                instance.certificate_image_mime = _get_mime_type(cert_image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -348,6 +397,7 @@ class CertificateAdminForm(forms.ModelForm):
 class AchievementAdminForm(forms.ModelForm):
     """Custom form for Achievement model with image upload"""
     upload_achievement_image = forms.ImageField(required=False, label='Upload Achievement Image')
+    clear_achievement_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the achievement image')
     
     class Meta:
         model = Achievement
@@ -363,11 +413,16 @@ class AchievementAdminForm(forms.ModelForm):
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        image = self.cleaned_data.get('upload_achievement_image')
         
-        if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
-            instance.image_data = image.read()
-            instance.image_mime = _get_mime_type(image, fallback='image/jpeg')
+        # Handle clear checkbox
+        if self.cleaned_data.get('clear_achievement_image'):
+            instance.image_data = b''
+            instance.image_mime = ''
+        else:
+            image = self.cleaned_data.get('upload_achievement_image')
+            if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
+                instance.image_data = image.read()
+                instance.image_mime = _get_mime_type(image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -377,7 +432,9 @@ class AchievementAdminForm(forms.ModelForm):
 class BlogPostAdminForm(forms.ModelForm):
     """Custom form for BlogPost model with image uploads"""
     upload_featured_image = forms.ImageField(required=False, label='Upload Featured Image')
+    clear_featured_image = forms.BooleanField(required=False, label='Clear Featured Image', help_text='Check to remove the featured image')
     upload_og_image = forms.ImageField(required=False, label='Upload OG Image')
+    clear_og_image = forms.BooleanField(required=False, label='Clear OG Image', help_text='Check to remove the OG image')
     
     class Meta:
         model = BlogPost
@@ -398,17 +455,25 @@ class BlogPostAdminForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
         
-        # Handle featured image
-        featured = self.cleaned_data.get('upload_featured_image')
-        if isinstance(featured, UploadedFile) and getattr(featured, 'size', 0) > 0:
-            instance.featured_image_data = featured.read()
-            instance.featured_image_mime = _get_mime_type(featured, fallback='image/jpeg')
+        # Handle clear featured image
+        if self.cleaned_data.get('clear_featured_image'):
+            instance.featured_image_data = b''
+            instance.featured_image_mime = ''
+        else:
+            featured = self.cleaned_data.get('upload_featured_image')
+            if isinstance(featured, UploadedFile) and getattr(featured, 'size', 0) > 0:
+                instance.featured_image_data = featured.read()
+                instance.featured_image_mime = _get_mime_type(featured, fallback='image/jpeg')
         
-        # Handle OG image
-        og_image = self.cleaned_data.get('upload_og_image')
-        if isinstance(og_image, UploadedFile) and getattr(og_image, 'size', 0) > 0:
-            instance.og_image_data = og_image.read()
-            instance.og_image_mime = _get_mime_type(og_image, fallback='image/jpeg')
+        # Handle clear OG image
+        if self.cleaned_data.get('clear_og_image'):
+            instance.og_image_data = b''
+            instance.og_image_mime = ''
+        else:
+            og_image = self.cleaned_data.get('upload_og_image')
+            if isinstance(og_image, UploadedFile) and getattr(og_image, 'size', 0) > 0:
+                instance.og_image_data = og_image.read()
+                instance.og_image_mime = _get_mime_type(og_image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -418,6 +483,7 @@ class BlogPostAdminForm(forms.ModelForm):
 class TestimonialAdminForm(forms.ModelForm):
     """Custom form for Testimonial model with author image upload"""
     upload_author_image = forms.ImageField(required=False, label='Upload Author Image')
+    clear_author_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the author image')
     
     class Meta:
         model = Testimonial
@@ -433,11 +499,16 @@ class TestimonialAdminForm(forms.ModelForm):
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        image = self.cleaned_data.get('upload_author_image')
         
-        if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
-            instance.author_image_data = image.read()
-            instance.author_image_mime = _get_mime_type(image, fallback='image/jpeg')
+        # Handle clear checkbox
+        if self.cleaned_data.get('clear_author_image'):
+            instance.author_image_data = b''
+            instance.author_image_mime = ''
+        else:
+            image = self.cleaned_data.get('upload_author_image')
+            if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
+                instance.author_image_data = image.read()
+                instance.author_image_mime = _get_mime_type(image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -532,7 +603,7 @@ class ImageAdmin(admin.ModelAdmin):
             'fields': ('image_preview_large',)
         }),
         ('Upload Image', {
-            'fields': ('upload_image',)
+            'fields': ('upload_image', 'clear_image')
         }),
         ('Image Data', {
             'fields': ('filename', 'mime_type'),
@@ -680,7 +751,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Profile Image', {
-            'fields': ('profile_preview_large', 'upload_profile_image')
+            'fields': ('profile_preview_large', 'upload_profile_image', 'clear_profile_image')
         }),
         ('Basic Information', {
             'fields': ('full_name', 'headline', 'bio')
@@ -692,7 +763,7 @@ class ProfileAdmin(admin.ModelAdmin):
             'fields': ('current_role', 'current_company', 'years_of_experience', 'available_for_hire')
         }),
         ('Resume', {
-            'fields': ('resume_info', 'upload_resume', 'resume_filename'),
+            'fields': ('resume_info', 'upload_resume', 'clear_resume', 'resume_filename'),
             'description': 'Upload PDF, DOC, DOCX, or TXT files. The resume filename will be auto-filled from uploaded file.'
         }),
         ('Timestamps', {
@@ -773,7 +844,7 @@ class EducationAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Institution Logo', {
-            'fields': ('logo_preview_large', 'upload_logo')
+            'fields': ('logo_preview_large', 'upload_logo', 'clear_logo')
         }),
         ('Education Details', {
             'fields': ('profile', 'institution', 'degree', 'field_of_study', 'grade')
@@ -814,7 +885,7 @@ class WorkExperienceAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Company Logo', {
-            'fields': ('company_logo_preview_large', 'upload_company_logo')
+            'fields': ('company_logo_preview_large', 'upload_company_logo', 'clear_company_logo')
         }),
         ('Company Information', {
             'fields': ('profile', 'company_name', 'company_url', 'location')
@@ -861,7 +932,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Featured Image', {
-            'fields': ('featured_preview_large', 'upload_featured_image', 'featured_image_alt')
+            'fields': ('featured_preview_large', 'upload_featured_image', 'clear_featured_image', 'featured_image_alt')
         }),
         ('Basic Information', {
             'fields': ('profile', 'title', 'slug', 'short_description', 'description')
@@ -916,7 +987,7 @@ class CertificateAdmin(admin.ModelAdmin):
             )
         }),
         ('Upload Images', {
-            'fields': ('upload_organization_logo', 'upload_certificate_image')
+            'fields': ('upload_organization_logo', 'clear_organization_logo', 'upload_certificate_image', 'clear_certificate_image')
         }),
         ('Certificate Details', {
             'fields': ('profile', 'title', 'issuing_organization', 'description')
@@ -959,7 +1030,7 @@ class AchievementAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Achievement Image', {
-            'fields': ('image_preview_large', 'image_file')
+            'fields': ('image_preview_large', 'upload_achievement_image', 'clear_achievement_image')
         }),
         ('Details', {
             'fields': ('profile', 'title', 'achievement_type', 'issuer', 'date')
@@ -1025,7 +1096,7 @@ class BlogPostAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Featured Image', {
-            'fields': ('featured_preview_large', 'featured_image_file', 'featured_image_alt')
+            'fields': ('featured_preview_large', 'upload_featured_image', 'clear_featured_image', 'featured_image_alt')
         }),
         ('Content', {
             'fields': ('profile', 'title', 'slug', 'excerpt', 'content')
@@ -1045,7 +1116,7 @@ class BlogPostAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('SEO - Open Graph', {
-            'fields': ('og_preview', 'og_title', 'og_description', 'og_image_file'),
+            'fields': ('og_preview', 'og_title', 'og_description', 'upload_og_image', 'clear_og_image'),
             'classes': ('collapse',)
         }),
         ('Schema.org', {
@@ -1100,7 +1171,7 @@ class TestimonialAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Author Image', {
-            'fields': ('author_preview_large', 'author_image_file')
+            'fields': ('author_preview_large', 'upload_author_image', 'clear_author_image')
         }),
         ('Author Info', {
             'fields': ('profile', 'author_name', 'author_title', 'author_company', 'linkedin_url')

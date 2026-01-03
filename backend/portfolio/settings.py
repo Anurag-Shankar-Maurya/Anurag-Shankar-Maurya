@@ -194,6 +194,36 @@ STATICFILES_DIRS = [
 # Use WhiteNoise's storage backend to create compressed, cacheable files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# -------------------------
+# Cloudinary / External Media Toggle
+# -------------------------
+USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False').lower() == 'true'
+
+if USE_CLOUDINARY:
+    # Add Cloudinary apps and configure storages to use Cloudinary for media
+    INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
+    STORAGES = {
+        "default": {
+            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "cloudinary_storage.storage.StaticHashedCloudinaryStorage",
+        },
+    }
+    CLOUDINARY_STORAGE = {
+        "CLOUDINARY_URL": os.getenv('CLOUDINARY_URL')
+    }
+else:
+    # Default to local filesystem storage for development
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

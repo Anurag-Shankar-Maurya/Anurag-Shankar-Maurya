@@ -971,6 +971,8 @@ class BlogPost(models.Model):
     # Featured image stored as BLOB
     featured_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Featured image as binary")
     featured_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
+    # File-based featured image
+    featured_image_file = models.ImageField(upload_to='blog_featured/', null=True, blank=True)
     featured_image_alt = models.CharField(max_length=200, blank=True, help_text="Alt text for SEO")
     
     # Related images (gallery)
@@ -1004,6 +1006,8 @@ class BlogPost(models.Model):
     # OG image stored as BLOB
     og_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Social sharing image as binary (1200x630)")
     og_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
+    # File-based OG image
+    og_image_file = models.ImageField(upload_to='blog_og/', null=True, blank=True)
     
     # Schema.org structured data
     schema_type = models.CharField(max_length=50, default='BlogPosting', help_text="Schema.org type")

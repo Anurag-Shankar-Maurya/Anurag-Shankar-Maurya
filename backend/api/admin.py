@@ -1275,7 +1275,7 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
             'fields': (
                 'theme', 'neutral_color', 'brand_color', 'accent_color',
                 'solid_style', 'border_style', 'surface_style',
-                'transition_style', 'scaling'
+                'transition_style', 'scaling', 'viz_style'
             ),
             'classes': ('collapse',)
         }),

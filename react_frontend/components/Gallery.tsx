@@ -9,7 +9,7 @@ interface GalleryProps {
 }
 
 export const Gallery: React.FC<GalleryProps> = ({ images = [], className = '', columns }) => {
-  const norm = (images as any[]).map((i) => ({ src: i.data_uri || i.image_url || i.src || i, alt: i.alt_text || i.alt || '', caption: i.caption || '' }));
+  const norm = (images as any[]).map((i) => ({ src: i.image_url || i.src || i, alt: i.alt_text || i.alt || '', caption: i.caption || '' }));
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 

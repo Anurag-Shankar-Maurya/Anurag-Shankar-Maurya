@@ -47,7 +47,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
   const handleOpenGallery = (project: Project, index = 0) => {
     const imgs = [
       { src: project.featured_image, alt: project.title },
-      ...(project.images?.map((i) => ({ src: i.data_uri || i.image_url, alt: i.alt_text, caption: i.caption })) || []),
+      ...(project.images?.map((i) => ({ src: i.image_url, alt: i.alt_text, caption: i.caption })) || []),
     ];
     setLbImages(imgs);
     setLbIndex(index);
@@ -283,7 +283,7 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
   const openGallery = (startIndex = 0) => {
     const imgs = [
       { src: project.featured_image, alt: project.title },
-      ...(project.images?.map((i) => ({ src: i.data_uri || i.image_url, alt: i.alt_text, caption: i.caption })) || []),
+      ...(project.images?.map((i) => ({ src: i.image_url, alt: i.alt_text, caption: i.caption })) || []),
     ];
     setLbImages(imgs);
     setLbIndex(startIndex);

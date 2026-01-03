@@ -22,7 +22,11 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
   const [translate, setTranslate] = React.useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = React.useState(false);
   const [isPlaying, setIsPlaying] = React.useState(false);
-  const intervalRef = React.useRef<number | null>(null);
+  const [progress, setProgress] = React.useState(0); // 0..1 for autoplay progress
+  const rafRef = React.useRef<number | null>(null);
+  const startTimeRef = React.useRef<number | null>(null);
+  const AUTOPLAY_MS = 3000; // slideshow duration per slide (ms)
+
 
   // refs and helpers for pan/zoom calculations
   const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -96,23 +100,61 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
   }, [index, images]);
 
 
-  // Autoplay handling
+  // Autoplay handling using requestAnimationFrame so we can show progress
   useEffect(() => {
-    if (isPlaying) {
-      intervalRef.current = window.setInterval(() => {
+    let cancelled = false;
+
+    const tick = (now: number) => {
+      if (!isPlaying || cancelled) return;
+      if (!startTimeRef.current) startTimeRef.current = now;
+      const elapsed = now - startTimeRef.current;
+      const frac = elapsed / AUTOPLAY_MS;
+      if (frac >= 1) {
+        // advance slide and reset timer
         setIndex((i) => (i + 1) % images.length);
-      }, 3000);
-      return () => {
-        if (intervalRef.current) window.clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      };
+        startTimeRef.current = now;
+        setProgress(0);
+      } else {
+        setProgress(frac);
+      }
+      rafRef.current = window.requestAnimationFrame(tick);
+    };
+
+    if (isPlaying) {
+      // start loop
+      startTimeRef.current = performance.now();
+      setProgress(0);
+      rafRef.current = window.requestAnimationFrame(tick);
+    } else {
+      // when paused, cancel RAF
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     }
-    // clear if stopped
+
     return () => {
-      if (intervalRef.current) window.clearInterval(intervalRef.current);
-      intervalRef.current = null;
+      cancelled = true;
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
   }, [isPlaying, images.length]);
+
+  // If user manually changes slide while playing, reset timer/progress
+  useEffect(() => {
+    if (isPlaying) {
+      startTimeRef.current = performance.now();
+      setProgress(0);
+    } else {
+      // when paused, leave progress as-is; ensure RAF is stopped
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    }
+  }, [index, isPlaying]);
 
   const goPrev = () => {
     setIndex((i) => (i - 1 + images.length) % images.length);
@@ -207,12 +249,12 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative max-w-[95%] max-h-[95%] w-full flex flex-col items-center justify-center p-4">
-        <button className="fixed top-4 right-4 z-60 p-2 rounded-md bg-black/60 text-white" onClick={(e) => { e.stopPropagation(); onClose(); }} aria-label="Close">
+        <button className="fixed top-4 right-4 z-60 p-2 rounded-md bg-gray-700/60 text-white" onClick={(e) => { e.stopPropagation(); onClose(); }} aria-label="Close">
           <X className="w-5 h-5" />
         </button>
 
         {images.length > 1 && (
-          <button className="fixed left-6 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-black/60 text-white" onClick={(e) => { e.stopPropagation(); goPrev(); }} aria-label="Previous">
+          <button className="fixed left-6 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-gray-700/60 text-white" onClick={(e) => { e.stopPropagation(); goPrev(); }} aria-label="Previous">
             <ChevronLeft className="w-6 h-6" />
           </button>
         )}
@@ -248,7 +290,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
         >
           <div
             ref={containerRef}
-            className={`relative max-w-full max-h-[70vh] rounded shadow-lg bg-black/60 p-2 flex items-center justify-center ${zoom > 1 ? (isPanning ? 'cursor-grabbing' : 'cursor-grab') : ''}`}
+            className={`relative max-w-full max-h-[70vh] rounded shadow-lg p-2 flex items-center justify-center ${zoom > 1 ? (isPanning ? 'cursor-grabbing' : 'cursor-grab') : ''}`}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -273,7 +315,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
           {/* Controls (zoom, play/pause) */}
           <div className="fixed right-6 top-20 z-60 flex flex-col gap-2">
             <button
-              className="p-2 rounded-md bg-black/60 text-white"
+              className="p-2 rounded-md bg-gray-700/60 text-white"
               onClick={(e) => { e.stopPropagation(); zoomIn(); }}
               aria-label="Zoom in"
               title="Zoom in"
@@ -281,7 +323,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
               +
             </button>
             <button
-              className="p-2 rounded-md bg-black/60 text-white"
+              className="p-2 rounded-md bg-gray-700/60 text-white"
               onClick={(e) => { e.stopPropagation(); zoomOut(); }}
               aria-label="Zoom out"
               title="Zoom out"
@@ -289,7 +331,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
               −
             </button>
             <button
-              className={`p-2 rounded-md bg-black/60 text-white ${isPlaying ? 'ring-2 ring-white' : ''}`}
+              className={`p-2 rounded-md bg-gray-700/60 text-white ${isPlaying ? 'ring-2 ring-white' : ''}`}
               onClick={(e) => { e.stopPropagation(); togglePlay(); }}
               aria-label={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
               title={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
@@ -306,7 +348,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
         )}
 
         {images.length > 1 && (
-          <button className="fixed right-6 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-black/60 text-white" onClick={(e) => { e.stopPropagation(); goNext(); }} aria-label="Next">
+          <button className="fixed right-6 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-gray-700/60 text-white" onClick={(e) => { e.stopPropagation(); goNext(); }} aria-label="Next">
             <ChevronRight className="w-6 h-6" />
           </button>
         )}
@@ -319,11 +361,20 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
                 <button
                   key={i}
                   onClick={(e) => { e.stopPropagation(); setIndex(i); setZoom(1); }}
-                  className={`rounded-md overflow-hidden border-2 transform transition ${i === index ? 'border-white scale-105' : 'border-transparent'} focus:outline-none`}
+                  className={`relative rounded-md overflow-hidden border-2 transform transition ${i === index ? 'border-white scale-105' : 'border-transparent'} focus:outline-none`}
                   style={{ width: 80, height: 56 }}
                   aria-label={`Preview ${i + 1}`}
                 >
                   <img src={img.src} alt={img.alt || ''} className="w-full h-full object-cover transition-transform duration-150 hover:scale-110" />
+
+                  {i === index && (
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-white/30">
+                      <div
+                        className="h-1 bg-white"
+                        style={{ width: `${Math.round(100 * Math.max(0, Math.min(1, progress))) }%`, transition: isPlaying ? 'width 0.05s linear' : 'none' }}
+                      />
+                    </div>
+                  )}
                 </button>
               ))}
             </div>

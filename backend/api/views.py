@@ -440,10 +440,11 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'uuid'
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['image_type', 'content_type', 'object_id', 'show_on_home']
 
-    @action(detail=True, methods=['get'], lookup_field='uuid')
+    @action(detail=True, methods=['get'])
     def data(self, request, uuid=None):
         """Serve the raw image data from BinaryField using UUID"""
         from django.http import HttpResponse

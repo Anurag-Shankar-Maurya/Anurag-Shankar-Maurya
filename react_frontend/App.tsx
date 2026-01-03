@@ -5,9 +5,7 @@ import { usePortfolioData } from './hooks/usePortfolioData';
 import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 
 // Components
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { MobileNav } from './components/MobileNav';
+import { Layout } from './components/Layout';
 
 // Lazy Loaded Pages
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
@@ -123,47 +121,33 @@ const App: React.FC = () => {
   const TestimonialDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <TestimonialDetailView slug={slug} onNavigate={navigateTo} />; };
 
   return (
-    <div className="min-h-screen bg-background text-white selection:bg-blue-500/30 font-sans flex flex-col relative z-10 overflow-hidden">
-      {/* Ambient Background Blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-         <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-blob"></div>
-         <div className="absolute top-[20%] right-[-10%] w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
-         <div className="absolute bottom-[-10%] left-[20%] w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
-      </div>
-
-      <Header view={view} onNavigate={navigateTo} profile={profile} />
-      
-      <div className="relative z-10 animate-fade-in">
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/" element={<Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} experience={experience} education={education} certificates={certificates} achievements={achievements} testimonials={testimonials} galleryImages={images} onNavigate={navigateTo} />} />
-            <Route path="/projects" element={<ProjectsView projects={projects} onNavigate={navigateTo} />} />
-            <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
-            <Route path="/blog" element={<BlogView posts={blogPosts} onNavigate={navigateTo} />} />
-            <Route path="/blog/:slug" element={<BlogDetailRoute />} />
-            <Route path="/about" element={<About profile={profile} experience={experience} onNavigate={navigateTo} />} />
-            <Route path="/contact" element={<Contact profile={profile} />} />
-            <Route path="/experience" element={<ExperienceView experience={experience} onNavigate={navigateTo} />} />
-            <Route path="/experience/:id" element={<ExperienceDetailRoute />} />
-            <Route path="/education" element={<EducationView education={education} onNavigate={navigateTo} />} />
-            <Route path="/education/:slug" element={<EducationDetailRoute />} />
-            <Route path="/skills" element={<SkillsView skills={skills} onNavigate={navigateTo} />} />
-            <Route path="/skills/:slug" element={<SkillDetailRoute />} />
-            <Route path="/certificates" element={<CertificatesView certificates={certificates} onNavigate={navigateTo} />} />
-            <Route path="/certificates/:slug" element={<CertificateDetailRoute />} />
-            <Route path="/achievements" element={<AchievementsView achievements={achievements} onNavigate={navigateTo} />} />
-            <Route path="/achievements/:slug" element={<AchievementDetailRoute />} />
-            <Route path="/testimonials" element={<TestimonialsView testimonials={testimonials} onNavigate={navigateTo} />} />
-            <Route path="/testimonials/:slug" element={<TestimonialDetailRoute />} />
-            <Route path="/gallery" element={<GalleryView />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </div>
-      
-      <MobileNav currentView={view} onNavigate={navigateTo} />
-      <Footer profile={profile} />
-    </div>
+    <Layout view={view} onNavigate={navigateTo} profile={profile}>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="/" element={<Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} experience={experience} education={education} certificates={certificates} achievements={achievements} testimonials={testimonials} galleryImages={images} onNavigate={navigateTo} />} />
+          <Route path="/projects" element={<ProjectsView projects={projects} onNavigate={navigateTo} />} />
+          <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
+          <Route path="/blog" element={<BlogView posts={blogPosts} onNavigate={navigateTo} />} />
+          <Route path="/blog/:slug" element={<BlogDetailRoute />} />
+          <Route path="/about" element={<About profile={profile} experience={experience} onNavigate={navigateTo} />} />
+          <Route path="/contact" element={<Contact profile={profile} />} />
+          <Route path="/experience" element={<ExperienceView experience={experience} onNavigate={navigateTo} />} />
+          <Route path="/experience/:id" element={<ExperienceDetailRoute />} />
+          <Route path="/education" element={<EducationView education={education} onNavigate={navigateTo} />} />
+          <Route path="/education/:slug" element={<EducationDetailRoute />} />
+          <Route path="/skills" element={<SkillsView skills={skills} onNavigate={navigateTo} />} />
+          <Route path="/skills/:slug" element={<SkillDetailRoute />} />
+          <Route path="/certificates" element={<CertificatesView certificates={certificates} onNavigate={navigateTo} />} />
+          <Route path="/certificates/:slug" element={<CertificateDetailRoute />} />
+          <Route path="/achievements" element={<AchievementsView achievements={achievements} onNavigate={navigateTo} />} />
+          <Route path="/achievements/:slug" element={<AchievementDetailRoute />} />
+          <Route path="/testimonials" element={<TestimonialsView testimonials={testimonials} onNavigate={navigateTo} />} />
+          <Route path="/testimonials/:slug" element={<TestimonialDetailRoute />} />
+          <Route path="/gallery" element={<GalleryView />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </Layout>
   );
 };
 

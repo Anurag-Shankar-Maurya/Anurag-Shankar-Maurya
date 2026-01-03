@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
@@ -28,6 +29,8 @@ class Image(models.Model):
     Generic image storage table using BLOB format.
     Can be linked to any model using GenericForeignKey.
     """
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
     IMAGE_TYPE_CHOICES = [
         ('cover', 'Cover Image'),
         ('gallery', 'Gallery Image'),
@@ -40,6 +43,8 @@ class Image(models.Model):
     
     # Image data stored as BLOB
     image_data = models.BinaryField(editable=True, help_text="Image stored as binary data")
+    # FileField for external storage (Cloudinary/S3). Use this to migrate away from BinaryField.
+    image_file = models.ImageField(upload_to='images/', null=True, blank=True)
     
     # Image metadata
     filename = models.CharField(max_length=255)
@@ -136,11 +141,15 @@ class Profile(models.Model):
     # Cover image stored as BLOB
     profile_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Profile image as binary")
     profile_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
+    # File-based profile image (for external storage)
+    profile_image_file = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     
     # Resume as BLOB
     resume_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Resume file as binary")
     resume_filename = models.CharField(max_length=255, blank=True)
     resume_mime = models.CharField(max_length=100, blank=True)
+    # File-based resume
+    resume_file = models.FileField(upload_to='resumes/', null=True, blank=True)
     
     # Related images (gallery)
     images = GenericRelation(Image)
@@ -541,6 +550,8 @@ class Education(models.Model):
     # Logo stored as BLOB
     logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Institution logo as binary")
     logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
+    # File-based logo
+    logo_file = models.ImageField(upload_to='education_logos/', null=True, blank=True)
     
     # Display on homepage
     show_on_home = models.BooleanField(default=False, help_text="Display this education on homepage")
@@ -599,6 +610,8 @@ class WorkExperience(models.Model):
     # Company logo stored as BLOB
     company_logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Company logo as binary")
     company_logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
+    # File-based company logo
+    company_logo_file = models.ImageField(upload_to='company_logos/', null=True, blank=True)
     
     company_url = models.URLField(blank=True)
     job_title = models.CharField(max_length=200)
@@ -650,6 +663,8 @@ class Project(models.Model):
     # Featured/Cover image stored as BLOB
     featured_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Featured image as binary")
     featured_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
+    # File-based featured image
+    featured_image_file = models.ImageField(upload_to='project_images/', null=True, blank=True)
     featured_image_alt = models.CharField(max_length=255, blank=True, help_text="Alt text for SEO")
     
     # Related images (gallery) - replaces ProjectImage model
@@ -729,6 +744,8 @@ class Certificate(models.Model):
     # Organization logo stored as BLOB
     organization_logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Organization logo as binary")
     organization_logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
+    # File-based organization logo
+    organization_logo_file = models.ImageField(upload_to='certificate_org_logos/', null=True, blank=True)
     
     issue_date = models.DateField()
     expiry_date = models.DateField(blank=True, null=True)
@@ -739,6 +756,8 @@ class Certificate(models.Model):
     # Certificate image stored as BLOB
     certificate_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Certificate image as binary")
     certificate_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
+    # File-based certificate image
+    certificate_image_file = models.ImageField(upload_to='certificate_images/', null=True, blank=True)
     
     description = models.TextField(blank=True)
     skills = models.CharField(max_length=500, blank=True, help_text="Related skills, comma-separated")
@@ -810,6 +829,8 @@ class Achievement(models.Model):
     # Achievement image stored as BLOB
     image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Achievement image as binary")
     image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
+    # File-based achievement image
+    image_file = models.ImageField(upload_to='achievements/', null=True, blank=True)
     
     order = models.PositiveIntegerField(default=0)
     
@@ -953,6 +974,8 @@ class BlogPost(models.Model):
     # Featured image stored as BLOB
     featured_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Featured image as binary")
     featured_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
+    # File-based featured image
+    featured_image_file = models.ImageField(upload_to='blog_featured/', null=True, blank=True)
     featured_image_alt = models.CharField(max_length=200, blank=True, help_text="Alt text for SEO")
     
     # Related images (gallery)
@@ -986,6 +1009,8 @@ class BlogPost(models.Model):
     # OG image stored as BLOB
     og_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Social sharing image as binary (1200x630)")
     og_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
+    # File-based OG image
+    og_image_file = models.ImageField(upload_to='blog_og/', null=True, blank=True)
     
     # Schema.org structured data
     schema_type = models.CharField(max_length=50, default='BlogPosting', help_text="Schema.org type")
@@ -1046,6 +1071,8 @@ class Testimonial(models.Model):
     # Author image stored as BLOB
     author_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Author image as binary")
     author_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
+    # File-based author image
+    author_image_file = models.ImageField(upload_to='testimonial_authors/', null=True, blank=True)
     
     content = models.TextField()
     rating = models.PositiveIntegerField(default=5, help_text="Rating out of 5")

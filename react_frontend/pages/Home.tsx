@@ -179,7 +179,7 @@ export const Home: React.FC<HomeProps> = ({
                     </button>
                   )}
                   {project.images && project.images.length > 0 && (
-                    <button onClick={(e) => { e.stopPropagation(); const imgs = [{ src: project.featured_image, alt: project.title }, ...(project.images?.map((i) => ({ src: i.data_uri || i.image_url, alt: i.alt_text, caption: i.caption })) || [])]; setLbImages(imgs); setLbOpen(true); }} className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60" aria-label={`Open gallery for ${project.title}`}>
+                    <button onClick={(e) => { e.stopPropagation(); const imgs = [{ src: project.featured_image, alt: project.title }, ...(project.images?.map((i) => ({ src: i.image_url, alt: i.alt_text, caption: i.caption })) || [])]; setLbImages(imgs); setLbOpen(true); }} className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60" aria-label={`Open gallery for ${project.title}`}>
                       {React.createElement(Icons.gallery, { className: 'w-4 h-4' })}
                     </button>
                   )}
@@ -385,8 +385,8 @@ export const Home: React.FC<HomeProps> = ({
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
                  {homeGallery.slice(0, 6).map((img) => (
-                   <div key={img.id} className="aspect-square rounded-xl overflow-hidden glass-card group cursor-pointer" onClick={() => openSingle(img.data_uri || img.image_url, img.alt_text)}>
-                      <img src={img.data_uri || img.image_url} alt={img.alt_text} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                   <div key={img.id} className="aspect-square rounded-xl overflow-hidden glass-card group cursor-pointer" onClick={() => openSingle(img.image_url, img.alt_text)}>
+                      <img src={img.image_url} alt={img.alt_text} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                    </div>
                  ))}
               </div>

@@ -9,7 +9,6 @@ export interface PaginatedResponse<T> {
 export interface Image {
   id: number;
   image_url: string;
-  data_uri: string;
   alt_text: string;
   caption?: string;
   show_on_home?: boolean;

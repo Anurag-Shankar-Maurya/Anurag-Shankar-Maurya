@@ -65,12 +65,14 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
              </div>
 
              <div className="mt-auto pt-5 border-t border-white/5 flex items-center gap-3">
-               <img 
-                 onClick={(e) => { e.stopPropagation(); openSingle(test.author_image, test.author_name); }} 
-                 src={test.author_image} 
-                 alt={test.author_name} 
-                 className="w-10 h-10 rounded-full object-cover bg-white/10 ring-2 ring-white/10 group-hover:ring-orange-500/30 transition-all cursor-pointer"
-               />
+               {test.author_image && (
+                 <img 
+                   onClick={(e) => { e.stopPropagation(); openSingle(test.author_image, test.author_name); }} 
+                   src={test.author_image} 
+                   alt={test.author_name} 
+                   className="w-10 h-10 rounded-full object-cover bg-white/10 ring-2 ring-white/10 group-hover:ring-orange-500/30 transition-all cursor-pointer"
+                 />
+               )}
                <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                      <div className="font-bold text-white text-sm truncate group-hover:text-orange-400 transition-colors">{test.author_name}</div>
@@ -143,13 +145,6 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
                  </a>
               )}
            </div>
-
-      {test.images && test.images.length > 0 && (
-        <div className="mt-8">
-          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
-          <Gallery images={test.images} />
-        </div>
-      )}
         </div>
 
         {/* Right Column: Content */}
@@ -172,6 +167,13 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
            </div>
         </div>
       </div>
+
+      {test.images && test.images.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+          <Gallery images={test.images} />
+        </div>
+      )}
 
       <Lightbox images={[{ src: test.author_image, alt: test.author_name }]} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
     </main>

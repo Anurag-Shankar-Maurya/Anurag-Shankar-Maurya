@@ -14,9 +14,8 @@ from .models import (
 # ============================================
 
 class ImageSerializer(serializers.ModelSerializer):
-    """Serializer for Image model with base64 encoding"""
+    """Serializer for Image model with absolute URLs"""
     image_url = serializers.SerializerMethodField()
-    data_uri = serializers.SerializerMethodField()
     linked_object_type = serializers.SerializerMethodField()
     
     class Meta:
@@ -24,20 +23,18 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'filename', 'mime_type', 'file_size', 'width', 'height',
             'image_type', 'alt_text', 'caption', 'order', 'show_on_home',
-            'image_url', 'data_uri', 'linked_object_type', 'created_at'
+            'image_url', 'linked_object_type', 'created_at'
         ]
     
     def get_image_url(self, obj):
-        """Return API endpoint for image"""
-        if obj.pk:
+        """Return absolute URL for image"""
+        if obj.image_file:
+            return obj.image_file.url
+        if obj.uuid:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(f'/api/images/{obj.pk}/data/')
+                return request.build_absolute_uri(f'/api/images/{obj.uuid}/data/')
         return None
-    
-    def get_data_uri(self, obj):
-        """Return image as data URI"""
-        return obj.get_data_uri()
     
     def get_linked_object_type(self, obj):
         """Return the name of the model this image is linked to"""
@@ -81,10 +78,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
     
     def get_profile_image(self, obj):
-        """Return profile image as data URI"""
+        """Return profile image URL"""
+        if obj.profile_image_file:
+            return obj.profile_image_file.url
         if obj.profile_image_data:
-            b64 = base64.b64encode(obj.profile_image_data).decode('utf-8')
-            return f"data:{obj.profile_image_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/profiles/{obj.pk}/photo/')
         return None
     
     def get_resume_url(self, obj):
@@ -123,10 +123,13 @@ class EducationSerializer(serializers.ModelSerializer):
         ]
     
     def get_logo(self, obj):
-        """Return logo as data URI"""
+        """Return logo URL"""
+        if obj.logo_file:
+            return obj.logo_file.url
         if obj.logo_data:
-            b64 = base64.b64encode(obj.logo_data).decode('utf-8')
-            return f"data:{obj.logo_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/education/{obj.slug}/logo/')
         return None
 
 
@@ -149,10 +152,13 @@ class WorkExperienceSerializer(serializers.ModelSerializer):
         ]
     
     def get_company_logo(self, obj):
-        """Return company logo as data URI"""
+        """Return company logo URL"""
+        if obj.company_logo_file:
+            return obj.company_logo_file.url
         if obj.company_logo_data:
-            b64 = base64.b64encode(obj.company_logo_data).decode('utf-8')
-            return f"data:{obj.company_logo_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/work-experience/{obj.pk}/logo/')
         return None
 
 
@@ -175,10 +181,13 @@ class ProjectSerializer(serializers.ModelSerializer):
         ]
     
     def get_featured_image(self, obj):
-        """Return featured image as data URI"""
+        """Return featured image URL"""
+        if obj.featured_image_file:
+            return obj.featured_image_file.url
         if obj.featured_image_data:
-            b64 = base64.b64encode(obj.featured_image_data).decode('utf-8')
-            return f"data:{obj.featured_image_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/projects/{obj.slug}/image/')
         return None
 
 
@@ -212,17 +221,23 @@ class CertificateSerializer(serializers.ModelSerializer):
         ]
     
     def get_organization_logo(self, obj):
-        """Return organization logo as data URI"""
+        """Return organization logo URL"""
+        if obj.organization_logo_file:
+            return obj.organization_logo_file.url
         if obj.organization_logo_data:
-            b64 = base64.b64encode(obj.organization_logo_data).decode('utf-8')
-            return f"data:{obj.organization_logo_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/certificates/{obj.slug}/org-logo/')
         return None
     
     def get_certificate_image(self, obj):
-        """Return certificate image as data URI"""
+        """Return certificate image URL"""
+        if obj.certificate_image_file:
+            return obj.certificate_image_file.url
         if obj.certificate_image_data:
-            b64 = base64.b64encode(obj.certificate_image_data).decode('utf-8')
-            return f"data:{obj.certificate_image_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/certificates/{obj.slug}/cert-image/')
         return None
 
 
@@ -242,10 +257,13 @@ class AchievementSerializer(serializers.ModelSerializer):
         ]
     
     def get_image(self, obj):
-        """Return achievement image as data URI"""
+        """Return achievement image URL"""
+        if obj.image_file:
+            return obj.image_file.url
         if obj.image_data:
-            b64 = base64.b64encode(obj.image_data).decode('utf-8')
-            return f"data:{obj.image_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/achievements/{obj.slug}/image/')
         return None
 
 
@@ -292,10 +310,13 @@ class BlogPostListSerializer(serializers.ModelSerializer):
         ]
     
     def get_featured_image(self, obj):
-        """Return featured image as data URI"""
+        """Return featured image URL"""
+        if obj.featured_image_file:
+            return obj.featured_image_file.url
         if obj.featured_image_data:
-            b64 = base64.b64encode(obj.featured_image_data).decode('utf-8')
-            return f"data:{obj.featured_image_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/blog/{obj.slug}/image/')
         return None
     
     def get_author(self, obj):
@@ -326,10 +347,13 @@ class BlogPostDetailSerializer(BlogPostSerializer):
         ]
     
     def get_og_image(self, obj):
-        """Return OG image as data URI"""
+        """Return OG image URL"""
+        if obj.og_image_file:
+            return obj.og_image_file.url
         if obj.og_image_data:
-            b64 = base64.b64encode(obj.og_image_data).decode('utf-8')
-            return f"data:{obj.og_image_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/blog/{obj.slug}/og-image/')
         return None
 
 
@@ -350,10 +374,13 @@ class TestimonialSerializer(serializers.ModelSerializer):
         ]
     
     def get_author_image(self, obj):
-        """Return author image as data URI"""
+        """Return author image URL"""
+        if obj.author_image_file:
+            return obj.author_image_file.url
         if obj.author_image_data:
-            b64 = base64.b64encode(obj.author_image_data).decode('utf-8')
-            return f"data:{obj.author_image_mime};base64,{b64}"
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/api/testimonials/{obj.slug}/photo/')
         return None
 
 

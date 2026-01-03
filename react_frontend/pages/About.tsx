@@ -34,11 +34,13 @@ export const About: React.FC<AboutProps> = ({ profile, experience, onNavigate })
                
                {/* Main Image */}
                <div className="relative h-full w-full rounded-[2.5rem] overflow-hidden border-2 border-white/10 shadow-2xl shadow-blue-500/10 bg-gray-900/50 backdrop-blur-sm z-10">
-                 <img 
-                   src={profile?.profile_image} 
-                   alt={profile?.full_name} 
-                   className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-1000"
-                 />
+                 {profile?.profile_image && (
+                   <img 
+                     src={profile.profile_image} 
+                     alt={profile.full_name} 
+                     className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-1000"
+                   />
+                 )}
                  
                  {/* Floating Status Badge */}
                  {profile?.available_for_hire && (

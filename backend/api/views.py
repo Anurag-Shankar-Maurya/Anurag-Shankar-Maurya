@@ -61,6 +61,18 @@ class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
             return response
         return Response({'error': 'Resume not found'}, status=status.HTTP_404_NOT_FOUND)
 
+    @action(detail=True, methods=['get'])
+    def photo(self, request, pk=None):
+        """Serve profile image"""
+        from django.http import HttpResponse
+        profile = self.get_object()
+        if profile.profile_image_data:
+            return HttpResponse(
+                profile.profile_image_data,
+                content_type=profile.profile_image_mime or 'image/jpeg'
+            )
+        return Response({'error': 'Photo not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 # ============================================
 # RELATED MODELS VIEWSETS
@@ -94,6 +106,18 @@ class EducationViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['profile', 'is_current', 'show_on_home']
 
+    @action(detail=True, methods=['get'])
+    def logo(self, request, slug=None):
+        """Serve institution logo"""
+        from django.http import HttpResponse
+        edu = self.get_object()
+        if edu.logo_data:
+            return HttpResponse(
+                edu.logo_data,
+                content_type=edu.logo_mime or 'image/png'
+            )
+        return Response({'error': 'Logo not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class WorkExperienceViewSet(viewsets.ReadOnlyModelViewSet):
     """Work experience history"""
@@ -104,6 +128,18 @@ class WorkExperienceViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['profile', 'employment_type', 'work_mode', 'is_current', 'show_on_home']
     search_fields = ['company_name', 'job_title', 'description', 'technologies_used']
     ordering_fields = ['start_date', 'company_name']
+
+    @action(detail=True, methods=['get'])
+    def logo(self, request, pk=None):
+        """Serve company logo"""
+        from django.http import HttpResponse
+        work = self.get_object()
+        if work.company_logo_data:
+            return HttpResponse(
+                work.company_logo_data,
+                content_type=work.company_logo_mime or 'image/png'
+            )
+        return Response({'error': 'Logo not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 # ============================================
@@ -142,6 +178,18 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(projects, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['get'])
+    def image(self, request, slug=None):
+        """Serve featured image"""
+        from django.http import HttpResponse
+        project = self.get_object()
+        if project.featured_image_data:
+            return HttpResponse(
+                project.featured_image_data,
+                content_type=project.featured_image_mime or 'image/jpeg'
+            )
+        return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 # ============================================
 # CERTIFICATES & ACHIEVEMENTS VIEWSETS
@@ -158,6 +206,30 @@ class CertificateViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ['title', 'issuing_organization', 'skills']
     ordering_fields = ['issue_date', 'order']
 
+    @action(detail=True, methods=['get'])
+    def org_logo(self, request, slug=None):
+        """Serve organization logo"""
+        from django.http import HttpResponse
+        cert = self.get_object()
+        if cert.organization_logo_data:
+            return HttpResponse(
+                cert.organization_logo_data,
+                content_type=cert.organization_logo_mime or 'image/png'
+            )
+        return Response({'error': 'Logo not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['get'])
+    def cert_image(self, request, slug=None):
+        """Serve certificate image"""
+        from django.http import HttpResponse
+        cert = self.get_object()
+        if cert.certificate_image_data:
+            return HttpResponse(
+                cert.certificate_image_data,
+                content_type=cert.certificate_image_mime or 'image/jpeg'
+            )
+        return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class AchievementViewSet(viewsets.ReadOnlyModelViewSet):
     """Awards, honors, and achievements"""
@@ -169,6 +241,18 @@ class AchievementViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['profile', 'achievement_type', 'show_on_home']
     search_fields = ['title', 'issuer', 'description']
     ordering_fields = ['date', 'order']
+
+    @action(detail=True, methods=['get'])
+    def image(self, request, slug=None):
+        """Serve achievement image"""
+        from django.http import HttpResponse
+        achievement = self.get_object()
+        if achievement.image_data:
+            return HttpResponse(
+                achievement.image_data,
+                content_type=achievement.image_mime or 'image/jpeg'
+            )
+        return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 # ============================================
@@ -260,6 +344,30 @@ class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = BlogPostListSerializer(posts, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['get'])
+    def image(self, request, slug=None):
+        """Serve featured image"""
+        from django.http import HttpResponse
+        post = self.get_object()
+        if post.featured_image_data:
+            return HttpResponse(
+                post.featured_image_data,
+                content_type=post.featured_image_mime or 'image/jpeg'
+            )
+        return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['get'])
+    def og_image(self, request, slug=None):
+        """Serve OG image"""
+        from django.http import HttpResponse
+        post = self.get_object()
+        if post.og_image_data:
+            return HttpResponse(
+                post.og_image_data,
+                content_type=post.og_image_mime or 'image/jpeg'
+            )
+        return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 # ============================================
 # TESTIMONIALS VIEWSET
@@ -281,6 +389,18 @@ class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
         testimonials = self.queryset.filter(is_featured=True)
         serializer = self.get_serializer(testimonials, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['get'])
+    def photo(self, request, slug=None):
+        """Serve author image"""
+        from django.http import HttpResponse
+        testimonial = self.get_object()
+        if testimonial.author_image_data:
+            return HttpResponse(
+                testimonial.author_image_data,
+                content_type=testimonial.author_image_mime or 'image/jpeg'
+            )
+        return Response({'error': 'Photo not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 # ============================================
@@ -322,6 +442,18 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['image_type', 'content_type', 'object_id', 'show_on_home']
+
+    @action(detail=True, methods=['get'])
+    def data(self, request, pk=None):
+        """Serve the raw image data from BinaryField"""
+        from django.http import HttpResponse
+        image = self.get_object()
+        if image.image_data:
+            return HttpResponse(
+                image.image_data,
+                content_type=image.mime_type or 'image/jpeg'
+            )
+        return Response({'error': 'Image data not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 # ============================================

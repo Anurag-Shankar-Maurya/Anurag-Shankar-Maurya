@@ -14,9 +14,8 @@ from .models import (
 # ============================================
 
 class ImageSerializer(serializers.ModelSerializer):
-    """Serializer for Image model with base64 encoding"""
+    """Serializer for Image model with absolute URLs"""
     image_url = serializers.SerializerMethodField()
-    data_uri = serializers.SerializerMethodField()
     linked_object_type = serializers.SerializerMethodField()
     
     class Meta:
@@ -24,20 +23,18 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'filename', 'mime_type', 'file_size', 'width', 'height',
             'image_type', 'alt_text', 'caption', 'order', 'show_on_home',
-            'image_url', 'data_uri', 'linked_object_type', 'created_at'
+            'image_url', 'linked_object_type', 'created_at'
         ]
     
     def get_image_url(self, obj):
-        """Return API endpoint for image"""
+        """Return absolute URL for image"""
+        if obj.image_file:
+            return obj.image_file.url
         if obj.pk:
             request = self.context.get('request')
             if request:
                 return request.build_absolute_uri(f'/api/images/{obj.pk}/data/')
         return None
-    
-    def get_data_uri(self, obj):
-        """Return image as data URI"""
-        return obj.get_data_uri()
     
     def get_linked_object_type(self, obj):
         """Return the name of the model this image is linked to"""

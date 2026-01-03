@@ -69,7 +69,7 @@ urlpatterns = [
     # Images
     path('images/', views.ImageViewSet.as_view({'get': 'list'}), name='image-list'),
     path('images/<int:pk>/', views.ImageViewSet.as_view({'get': 'retrieve'}), name='image-detail'),
-    path('images/<int:pk>/data/', views.ImageViewSet.as_view({'get': 'data'}), name='image-data'),
+    path('images/<uuid:uuid>/data/', views.ImageViewSet.as_view({'get': 'data'}), name='image-data'),
 
     # Site configuration
     path('config/', views.SiteConfigurationViewSet.as_view({'get': 'list'}), name='config-list'),

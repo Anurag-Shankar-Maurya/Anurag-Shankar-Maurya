@@ -443,9 +443,9 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['image_type', 'content_type', 'object_id', 'show_on_home']
 
-    @action(detail=True, methods=['get'])
-    def data(self, request, pk=None):
-        """Serve the raw image data from BinaryField"""
+    @action(detail=True, methods=['get'], lookup_field='uuid')
+    def data(self, request, uuid=None):
+        """Serve the raw image data from BinaryField using UUID"""
         from django.http import HttpResponse
         image = self.get_object()
         if image.image_data:

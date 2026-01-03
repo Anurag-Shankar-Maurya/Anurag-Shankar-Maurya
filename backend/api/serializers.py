@@ -30,10 +30,10 @@ class ImageSerializer(serializers.ModelSerializer):
         """Return absolute URL for image"""
         if obj.image_file:
             return obj.image_file.url
-        if obj.pk:
+        if obj.uuid:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(f'/api/images/{obj.pk}/data/')
+                return request.build_absolute_uri(f'/api/images/{obj.uuid}/data/')
         return None
     
     def get_linked_object_type(self, obj):

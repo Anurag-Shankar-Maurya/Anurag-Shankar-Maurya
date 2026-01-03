@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
@@ -28,6 +29,8 @@ class Image(models.Model):
     Generic image storage table using BLOB format.
     Can be linked to any model using GenericForeignKey.
     """
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
     IMAGE_TYPE_CHOICES = [
         ('cover', 'Cover Image'),
         ('gallery', 'Gallery Image'),

@@ -15,6 +15,8 @@ from django.core.files.base import ContentFile
 from django.apps import apps
 import mimetypes
 import os
+import re
+import unicodedata
 
 # Mapping: (app_label.ModelName, binary_field_name, file_field_name, fallback_basename)
 FIELD_MAP = [
@@ -96,11 +98,29 @@ class Command(BaseCommand):
                     continue
 
                 # Determine filename from existing fields if possible
+                def sanitize_filename(name, max_length=100):
+                    if not name:
+                        return name
+                    # Normalize and remove path components
+                    name = unicodedata.normalize('NFKD', str(name))
+                    name = os.path.basename(name)
+                    # Replace whitespace with underscore and remove unsafe characters
+                    name = re.sub(r'\s+', '_', name)
+                    name = re.sub(r'[^A-Za-z0-9._-]', '', name)
+                    # Ensure extension is preserved and truncate base accordingly
+                    base, ext = os.path.splitext(name)
+                    if not ext:
+                        ext = ''
+                    max_base = max(1, max_length - len(ext))
+                    if len(base) > max_base:
+                        base = base[:max_base]
+                    return f"{base}{ext}"
+
                 filename = None
                 # Try common filename fields
                 for candidate in ('filename', 'resume_filename', 'certificate_image_filename'):
                     if hasattr(obj, candidate) and getattr(obj, candidate):
-                        filename = getattr(obj, candidate)
+                        filename = sanitize_filename(getattr(obj, candidate))
                         break
 
                 if not filename:
@@ -113,7 +133,7 @@ class Command(BaseCommand):
                             break
 
                     ext = ext_from_mime(mime_attr, fallback='.bin')
-                    filename = f"{fallback_name}_{obj.pk}{ext}"
+                    filename = sanitize_filename(f"{fallback_name}_{obj.pk}{ext}")
 
                 # Save to file field using ContentFile
                 try:

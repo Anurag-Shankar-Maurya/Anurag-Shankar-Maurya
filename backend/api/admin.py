@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.utils.html import format_html
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django import forms
+from django.core.files.uploadedfile import UploadedFile
 import base64
 
 from .models import (
@@ -111,20 +112,21 @@ portfolio_admin_site.register(Group, GroupAdmin)
 
 class ImageAdminForm(forms.ModelForm):
     """Custom form for Image model with file upload"""
-    image_file = forms.FileField(required=False, label='Upload Image', help_text='Upload an image file')
+    upload_image = forms.FileField(required=False, label='Upload Image', help_text='Upload an image file')
     
     class Meta:
         model = Image
-        fields = '__all__'
+        exclude = ['image_file']  # Exclude model's FileField to avoid conflict
         widgets = {
             'image_data': forms.HiddenInput(),
         }
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        image_file = self.cleaned_data.get('image_file')
+        image_file = self.cleaned_data.get('upload_image')
         
-        if image_file:
+        # Only process newly uploaded files (UploadedFile with non-zero size). Existing ImageFieldFile instances should be left as-is.
+        if isinstance(image_file, UploadedFile) and getattr(image_file, 'size', 0) > 0:
             from PIL import Image as PILImage
             import io
             
@@ -132,7 +134,7 @@ class ImageAdminForm(forms.ModelForm):
             file_data = image_file.read()
             instance.image_data = file_data
             instance.filename = image_file.name
-            instance.mime_type = image_file.content_type or 'image/jpeg'
+            instance.mime_type = _get_mime_type(image_file, fallback='image/jpeg')
             instance.file_size = len(file_data)
             
             # Get dimensions
@@ -149,12 +151,12 @@ class ImageAdminForm(forms.ModelForm):
 
 class ProfileAdminForm(forms.ModelForm):
     """Custom form for Profile model with file uploads"""
-    profile_image_file = forms.ImageField(
+    upload_profile_image = forms.ImageField(
         required=False, 
         label='Upload Profile Image',
         help_text='Current profile image will be replaced if new file is uploaded'
     )
-    resume_file = forms.FileField(
+    upload_resume = forms.FileField(
         required=False, 
         label='Upload Resume',
         help_text='Upload PDF, DOC, DOCX or TXT file. Current resume will be replaced if new file is uploaded'
@@ -162,7 +164,7 @@ class ProfileAdminForm(forms.ModelForm):
     
     class Meta:
         model = Profile
-        fields = '__all__'
+        exclude = ['profile_image_file', 'resume_file']  # Exclude model FileFields
         widgets = {
             'profile_image_data': forms.HiddenInput(),
             'resume_data': forms.HiddenInput(),
@@ -173,29 +175,29 @@ class ProfileAdminForm(forms.ModelForm):
         # Show current file status
         if self.instance and self.instance.pk:
             if self.instance.profile_image_data:
-                self.fields['profile_image_file'].help_text = f'✓ Current: Profile image uploaded ({len(self.instance.profile_image_data)} bytes). Upload new file to replace.'
+                self.fields['upload_profile_image'].help_text = f'✓ Current: Profile image uploaded ({len(self.instance.profile_image_data)} bytes). Upload new file to replace.'
             if self.instance.resume_data:
                 resume_name = self.instance.resume_filename or 'resume file'
-                self.fields['resume_file'].help_text = f'✓ Current: {resume_name} ({len(self.instance.resume_data)} bytes). Upload new file to replace.'
+                self.fields['upload_resume'].help_text = f'✓ Current: {resume_name} ({len(self.instance.resume_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
         
         # Handle profile image
-        profile_image = self.cleaned_data.get('profile_image_file')
-        if profile_image:
+        profile_image = self.cleaned_data.get('upload_profile_image')
+        if isinstance(profile_image, UploadedFile) and getattr(profile_image, 'size', 0) > 0:
             image_data = profile_image.read()
             instance.profile_image_data = image_data
-            instance.profile_image_mime = profile_image.content_type or 'image/jpeg'
+            instance.profile_image_mime = _get_mime_type(profile_image, fallback='image/jpeg')
         
         # Handle resume - accept various file types
-        resume = self.cleaned_data.get('resume_file')
-        if resume:
+        resume = self.cleaned_data.get('upload_resume')
+        if isinstance(resume, UploadedFile) and getattr(resume, 'size', 0) > 0:
             resume_data = resume.read()
             instance.resume_data = resume_data
             instance.resume_filename = resume.name
             # Determine MIME type
-            content_type = resume.content_type
+            content_type = getattr(resume, 'content_type', None) or _get_mime_type(resume)
             if not content_type:
                 # Fallback based on file extension
                 if resume.name.lower().endswith('.pdf'):
@@ -217,11 +219,11 @@ class ProfileAdminForm(forms.ModelForm):
 
 class EducationAdminForm(forms.ModelForm):
     """Custom form for Education model with logo upload"""
-    logo_file = forms.ImageField(required=False, label='Upload Institution Logo')
+    upload_logo = forms.ImageField(required=False, label='Upload Institution Logo')
     
     class Meta:
         model = Education
-        fields = '__all__'
+        exclude = ['logo_file']  # Exclude model FileField
         widgets = {
             'logo_data': forms.HiddenInput(),
         }
@@ -229,15 +231,15 @@ class EducationAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk and self.instance.logo_data:
-            self.fields['logo_file'].help_text = f'✓ Current: Logo uploaded ({len(self.instance.logo_data)} bytes). Upload new file to replace.'
+            self.fields['upload_logo'].help_text = f'✓ Current: Logo uploaded ({len(self.instance.logo_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        logo = self.cleaned_data.get('logo_file')
+        logo = self.cleaned_data.get('upload_logo')
         
-        if logo:
+        if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
             instance.logo_data = logo.read()
-            instance.logo_mime = logo.content_type or 'image/png'
+            instance.logo_mime = _get_mime_type(logo, fallback='image/png')
         
         if commit:
             instance.save()
@@ -246,11 +248,11 @@ class EducationAdminForm(forms.ModelForm):
 
 class WorkExperienceAdminForm(forms.ModelForm):
     """Custom form for WorkExperience model with logo upload"""
-    company_logo_file = forms.ImageField(required=False, label='Upload Company Logo')
+    upload_company_logo = forms.ImageField(required=False, label='Upload Company Logo')
     
     class Meta:
         model = WorkExperience
-        fields = '__all__'
+        exclude = ['company_logo_file']  # Exclude model FileField
         widgets = {
             'company_logo_data': forms.HiddenInput(),
         }
@@ -258,15 +260,15 @@ class WorkExperienceAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk and self.instance.company_logo_data:
-            self.fields['company_logo_file'].help_text = f'✓ Current: Logo uploaded ({len(self.instance.company_logo_data)} bytes). Upload new file to replace.'
+            self.fields['upload_company_logo'].help_text = f'✓ Current: Logo uploaded ({len(self.instance.company_logo_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        logo = self.cleaned_data.get('company_logo_file')
+        logo = self.cleaned_data.get('upload_company_logo')
         
-        if logo:
+        if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
             instance.company_logo_data = logo.read()
-            instance.company_logo_mime = logo.content_type or 'image/png'
+            instance.company_logo_mime = _get_mime_type(logo, fallback='image/png')
         
         if commit:
             instance.save()
@@ -275,11 +277,11 @@ class WorkExperienceAdminForm(forms.ModelForm):
 
 class ProjectAdminForm(forms.ModelForm):
     """Custom form for Project model with featured image upload"""
-    featured_image_file = forms.ImageField(required=False, label='Upload Featured Image')
+    upload_featured_image = forms.ImageField(required=False, label='Upload Featured Image')
     
     class Meta:
         model = Project
-        fields = '__all__'
+        exclude = ['featured_image_file']  # Exclude model FileField
         widgets = {
             'featured_image_data': forms.HiddenInput(),
         }
@@ -287,15 +289,15 @@ class ProjectAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk and self.instance.featured_image_data:
-            self.fields['featured_image_file'].help_text = f'✓ Current: Featured image uploaded ({len(self.instance.featured_image_data)} bytes). Upload new file to replace.'
+            self.fields['upload_featured_image'].help_text = f'✓ Current: Featured image uploaded ({len(self.instance.featured_image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        image = self.cleaned_data.get('featured_image_file')
+        image = self.cleaned_data.get('upload_featured_image')
         
-        if image:
+        if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
             instance.featured_image_data = image.read()
-            instance.featured_image_mime = image.content_type or 'image/jpeg'
+            instance.featured_image_mime = _get_mime_type(image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -304,12 +306,12 @@ class ProjectAdminForm(forms.ModelForm):
 
 class CertificateAdminForm(forms.ModelForm):
     """Custom form for Certificate model with image uploads"""
-    organization_logo_file = forms.ImageField(required=False, label='Upload Organization Logo')
-    certificate_image_file = forms.ImageField(required=False, label='Upload Certificate Image')
+    upload_organization_logo = forms.ImageField(required=False, label='Upload Organization Logo')
+    upload_certificate_image = forms.ImageField(required=False, label='Upload Certificate Image')
     
     class Meta:
         model = Certificate
-        fields = '__all__'
+        exclude = ['organization_logo_file', 'certificate_image_file']  # Exclude model FileFields
         widgets = {
             'organization_logo_data': forms.HiddenInput(),
             'certificate_image_data': forms.HiddenInput(),
@@ -319,24 +321,24 @@ class CertificateAdminForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             if self.instance.organization_logo_data:
-                self.fields['organization_logo_file'].help_text = f'✓ Current: Org logo uploaded ({len(self.instance.organization_logo_data)} bytes). Upload new file to replace.'
+                self.fields['upload_organization_logo'].help_text = f'✓ Current: Org logo uploaded ({len(self.instance.organization_logo_data)} bytes). Upload new file to replace.'
             if self.instance.certificate_image_data:
-                self.fields['certificate_image_file'].help_text = f'✓ Current: Certificate image uploaded ({len(self.instance.certificate_image_data)} bytes). Upload new file to replace.'
+                self.fields['upload_certificate_image'].help_text = f'✓ Current: Certificate image uploaded ({len(self.instance.certificate_image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
         
         # Handle org logo
-        org_logo = self.cleaned_data.get('organization_logo_file')
-        if org_logo:
+        org_logo = self.cleaned_data.get('upload_organization_logo')
+        if isinstance(org_logo, UploadedFile) and getattr(org_logo, 'size', 0) > 0:
             instance.organization_logo_data = org_logo.read()
-            instance.organization_logo_mime = org_logo.content_type or 'image/png'
+            instance.organization_logo_mime = _get_mime_type(org_logo, fallback='image/png')
         
         # Handle certificate image
-        cert_image = self.cleaned_data.get('certificate_image_file')
-        if cert_image:
+        cert_image = self.cleaned_data.get('upload_certificate_image')
+        if isinstance(cert_image, UploadedFile) and getattr(cert_image, 'size', 0) > 0:
             instance.certificate_image_data = cert_image.read()
-            instance.certificate_image_mime = cert_image.content_type or 'image/jpeg'
+            instance.certificate_image_mime = _get_mime_type(cert_image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -345,11 +347,11 @@ class CertificateAdminForm(forms.ModelForm):
 
 class AchievementAdminForm(forms.ModelForm):
     """Custom form for Achievement model with image upload"""
-    image_file = forms.ImageField(required=False, label='Upload Achievement Image')
+    upload_achievement_image = forms.ImageField(required=False, label='Upload Achievement Image')
     
     class Meta:
         model = Achievement
-        fields = '__all__'
+        exclude = ['image_file']  # Exclude model FileField
         widgets = {
             'image_data': forms.HiddenInput(),
         }
@@ -357,15 +359,15 @@ class AchievementAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk and self.instance.image_data:
-            self.fields['image_file'].help_text = f'✓ Current: Achievement image uploaded ({len(self.instance.image_data)} bytes). Upload new file to replace.'
+            self.fields['upload_achievement_image'].help_text = f'✓ Current: Achievement image uploaded ({len(self.instance.image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        image = self.cleaned_data.get('image_file')
+        image = self.cleaned_data.get('upload_achievement_image')
         
-        if image:
+        if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
             instance.image_data = image.read()
-            instance.image_mime = image.content_type or 'image/jpeg'
+            instance.image_mime = _get_mime_type(image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -374,12 +376,12 @@ class AchievementAdminForm(forms.ModelForm):
 
 class BlogPostAdminForm(forms.ModelForm):
     """Custom form for BlogPost model with image uploads"""
-    featured_image_file = forms.ImageField(required=False, label='Upload Featured Image')
-    og_image_file = forms.ImageField(required=False, label='Upload OG Image')
+    upload_featured_image = forms.ImageField(required=False, label='Upload Featured Image')
+    upload_og_image = forms.ImageField(required=False, label='Upload OG Image')
     
     class Meta:
         model = BlogPost
-        fields = '__all__'
+        exclude = ['featured_image_file', 'og_image_file']  # Exclude model FileFields
         widgets = {
             'featured_image_data': forms.HiddenInput(),
             'og_image_data': forms.HiddenInput(),
@@ -389,24 +391,24 @@ class BlogPostAdminForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             if self.instance.featured_image_data:
-                self.fields['featured_image_file'].help_text = f'✓ Current: Featured image uploaded ({len(self.instance.featured_image_data)} bytes). Upload new file to replace.'
+                self.fields['upload_featured_image'].help_text = f'✓ Current: Featured image uploaded ({len(self.instance.featured_image_data)} bytes). Upload new file to replace.'
             if self.instance.og_image_data:
-                self.fields['og_image_file'].help_text = f'✓ Current: OG image uploaded ({len(self.instance.og_image_data)} bytes). Upload new file to replace.'
+                self.fields['upload_og_image'].help_text = f'✓ Current: OG image uploaded ({len(self.instance.og_image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
         
         # Handle featured image
-        featured = self.cleaned_data.get('featured_image_file')
-        if featured:
+        featured = self.cleaned_data.get('upload_featured_image')
+        if isinstance(featured, UploadedFile) and getattr(featured, 'size', 0) > 0:
             instance.featured_image_data = featured.read()
-            instance.featured_image_mime = featured.content_type or 'image/jpeg'
+            instance.featured_image_mime = _get_mime_type(featured, fallback='image/jpeg')
         
         # Handle OG image
-        og_image = self.cleaned_data.get('og_image_file')
-        if og_image:
+        og_image = self.cleaned_data.get('upload_og_image')
+        if isinstance(og_image, UploadedFile) and getattr(og_image, 'size', 0) > 0:
             instance.og_image_data = og_image.read()
-            instance.og_image_mime = og_image.content_type or 'image/jpeg'
+            instance.og_image_mime = _get_mime_type(og_image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -415,11 +417,11 @@ class BlogPostAdminForm(forms.ModelForm):
 
 class TestimonialAdminForm(forms.ModelForm):
     """Custom form for Testimonial model with author image upload"""
-    author_image_file = forms.ImageField(required=False, label='Upload Author Image')
+    upload_author_image = forms.ImageField(required=False, label='Upload Author Image')
     
     class Meta:
         model = Testimonial
-        fields = '__all__'
+        exclude = ['author_image_file']  # Exclude model FileField
         widgets = {
             'author_image_data': forms.HiddenInput(),
         }
@@ -427,15 +429,15 @@ class TestimonialAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk and self.instance.author_image_data:
-            self.fields['author_image_file'].help_text = f'✓ Current: Author image uploaded ({len(self.instance.author_image_data)} bytes). Upload new file to replace.'
+            self.fields['upload_author_image'].help_text = f'✓ Current: Author image uploaded ({len(self.instance.author_image_data)} bytes). Upload new file to replace.'
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        image = self.cleaned_data.get('author_image_file')
+        image = self.cleaned_data.get('upload_author_image')
         
-        if image:
+        if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
             instance.author_image_data = image.read()
-            instance.author_image_mime = image.content_type or 'image/jpeg'
+            instance.author_image_mime = _get_mime_type(image, fallback='image/jpeg')
         
         if commit:
             instance.save()
@@ -457,6 +459,40 @@ def get_image_preview(image_data, mime_type, width=50, height=50):
     return format_html('<span style="color:#999;">No image</span>')
 
 
+# Helper to safely determine content type from uploaded or stored file-like objects
+import mimetypes
+
+def _get_mime_type(file_obj, fallback='application/octet-stream'):
+    """Return a MIME type for a file-like object.
+
+    This handles UploadedFile instances (which expose .content_type),
+    ImageFieldFile/File objects (which have .name), and falls back to
+    a guessed type from the filename.
+    """
+    if not file_obj:
+        return fallback
+
+    # Prefer explicit attribute (UploadedFile)
+    ct = getattr(file_obj, 'content_type', None)
+    if ct:
+        return ct
+
+    # Try nested file (some storages expose a .file with metadata)
+    nested = getattr(file_obj, 'file', None)
+    nested_ct = getattr(nested, 'content_type', None) if nested is not None else None
+    if nested_ct:
+        return nested_ct
+
+    # Guess from filename
+    name = getattr(file_obj, 'name', None)
+    if name:
+        guessed, _ = mimetypes.guess_type(name)
+        if guessed:
+            return guessed
+
+    return fallback
+
+
 # ============================================
 # GENERIC IMAGE INLINE
 # ============================================
@@ -465,7 +501,7 @@ class ImageInline(GenericTabularInline):
     model = Image
     form = ImageAdminForm
     extra = 1
-    fields = ['image_preview', 'image_file', 'image_type', 'alt_text', 'caption', 'order', 'show_on_home']
+    fields = ['image_preview', 'upload_image', 'image_type', 'alt_text', 'caption', 'order', 'show_on_home']
     readonly_fields = ['image_preview']
     ordering = ['order']
 
@@ -496,7 +532,7 @@ class ImageAdmin(admin.ModelAdmin):
             'fields': ('image_preview_large',)
         }),
         ('Upload Image', {
-            'fields': ('image_file',)
+            'fields': ('upload_image',)
         }),
         ('Image Data', {
             'fields': ('filename', 'mime_type'),
@@ -644,7 +680,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Profile Image', {
-            'fields': ('profile_preview_large', 'profile_image_file')
+            'fields': ('profile_preview_large', 'upload_profile_image')
         }),
         ('Basic Information', {
             'fields': ('full_name', 'headline', 'bio')
@@ -656,7 +692,7 @@ class ProfileAdmin(admin.ModelAdmin):
             'fields': ('current_role', 'current_company', 'years_of_experience', 'available_for_hire')
         }),
         ('Resume', {
-            'fields': ('resume_info', 'resume_file', 'resume_filename'),
+            'fields': ('resume_info', 'upload_resume', 'resume_filename'),
             'description': 'Upload PDF, DOC, DOCX, or TXT files. The resume filename will be auto-filled from uploaded file.'
         }),
         ('Timestamps', {
@@ -737,7 +773,7 @@ class EducationAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Institution Logo', {
-            'fields': ('logo_preview_large', 'logo_file')
+            'fields': ('logo_preview_large', 'upload_logo')
         }),
         ('Education Details', {
             'fields': ('profile', 'institution', 'degree', 'field_of_study', 'grade')
@@ -778,7 +814,7 @@ class WorkExperienceAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Company Logo', {
-            'fields': ('company_logo_preview_large', 'company_logo_file')
+            'fields': ('company_logo_preview_large', 'upload_company_logo')
         }),
         ('Company Information', {
             'fields': ('profile', 'company_name', 'company_url', 'location')
@@ -825,7 +861,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Featured Image', {
-            'fields': ('featured_preview_large', 'featured_image_file', 'featured_image_alt')
+            'fields': ('featured_preview_large', 'upload_featured_image', 'featured_image_alt')
         }),
         ('Basic Information', {
             'fields': ('profile', 'title', 'slug', 'short_description', 'description')
@@ -880,7 +916,7 @@ class CertificateAdmin(admin.ModelAdmin):
             )
         }),
         ('Upload Images', {
-            'fields': ('organization_logo_file', 'certificate_image_file')
+            'fields': ('upload_organization_logo', 'upload_certificate_image')
         }),
         ('Certificate Details', {
             'fields': ('profile', 'title', 'issuing_organization', 'description')

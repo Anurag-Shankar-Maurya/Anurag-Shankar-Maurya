@@ -1,5 +1,5 @@
 from rest_framework import serializers
-import base64
+
 
 from .models import (
     Image, Profile, SocialLink, Skill, Education,
@@ -27,7 +27,10 @@ class ImageSerializer(serializers.ModelSerializer):
         ]
     
     def get_image_url(self, obj):
-        """Return absolute URL for image"""
+        """Return absolute URL for image (external URL preferred, else file or API endpoint)"""
+        # Prefer explicit image_url
+        if getattr(obj, 'image_url', None):
+            return obj.image_url
         if obj.image_file:
             return obj.image_file.url
         if obj.uuid:
@@ -78,21 +81,20 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
     
     def get_profile_image(self, obj):
-        """Return profile image URL"""
+        """Return profile image URL (file or external URL)"""
         if obj.profile_image_file:
             return obj.profile_image_file.url
-        if obj.profile_image_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/profiles/{obj.pk}/photo/')
+        if getattr(obj, 'profile_image_url', None):
+            return obj.profile_image_url
         return None
     
     def get_resume_url(self, obj):
-        """Return resume download URL"""
-        if obj.resume_data and obj.resume_filename:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/profiles/{obj.pk}/resume/')
+        """Return resume download URL (internal file endpoint or external URL)"""
+        request = self.context.get('request')
+        if obj.resume_file and request:
+            return request.build_absolute_uri(f'/api/profiles/{obj.pk}/resume/')
+        if getattr(obj, 'resume_url', None):
+            return obj.resume_url
         return None
 
 
@@ -123,13 +125,11 @@ class EducationSerializer(serializers.ModelSerializer):
         ]
     
     def get_logo(self, obj):
-        """Return logo URL"""
+        """Return logo URL (file or external URL)"""
         if obj.logo_file:
             return obj.logo_file.url
-        if obj.logo_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/education/{obj.slug}/logo/')
+        if getattr(obj, 'logo_url', None):
+            return obj.logo_url
         return None
 
 
@@ -152,13 +152,11 @@ class WorkExperienceSerializer(serializers.ModelSerializer):
         ]
     
     def get_company_logo(self, obj):
-        """Return company logo URL"""
+        """Return company logo URL (file or external URL)"""
         if obj.company_logo_file:
             return obj.company_logo_file.url
-        if obj.company_logo_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/work-experience/{obj.pk}/logo/')
+        if getattr(obj, 'company_logo_url', None):
+            return obj.company_logo_url
         return None
 
 
@@ -181,13 +179,11 @@ class ProjectSerializer(serializers.ModelSerializer):
         ]
     
     def get_featured_image(self, obj):
-        """Return featured image URL"""
+        """Return featured image URL (file or external URL)"""
         if obj.featured_image_file:
             return obj.featured_image_file.url
-        if obj.featured_image_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/projects/{obj.slug}/image/')
+        if getattr(obj, 'featured_image_url', None):
+            return obj.featured_image_url
         return None
 
 
@@ -221,23 +217,19 @@ class CertificateSerializer(serializers.ModelSerializer):
         ]
     
     def get_organization_logo(self, obj):
-        """Return organization logo URL"""
+        """Return organization logo URL (file or external URL)"""
         if obj.organization_logo_file:
             return obj.organization_logo_file.url
-        if obj.organization_logo_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/certificates/{obj.slug}/org-logo/')
+        if getattr(obj, 'organization_logo_url', None):
+            return obj.organization_logo_url
         return None
     
     def get_certificate_image(self, obj):
-        """Return certificate image URL"""
+        """Return certificate image URL (file or external URL)"""
         if obj.certificate_image_file:
             return obj.certificate_image_file.url
-        if obj.certificate_image_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/certificates/{obj.slug}/cert-image/')
+        if getattr(obj, 'certificate_image_url', None):
+            return obj.certificate_image_url
         return None
 
 
@@ -257,13 +249,11 @@ class AchievementSerializer(serializers.ModelSerializer):
         ]
     
     def get_image(self, obj):
-        """Return achievement image URL"""
+        """Return achievement image URL (file or external URL)"""
         if obj.image_file:
             return obj.image_file.url
-        if obj.image_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/achievements/{obj.slug}/image/')
+        if getattr(obj, 'image_url', None):
+            return obj.image_url
         return None
 
 
@@ -310,13 +300,11 @@ class BlogPostListSerializer(serializers.ModelSerializer):
         ]
     
     def get_featured_image(self, obj):
-        """Return featured image URL"""
+        """Return featured image URL (file or external URL)"""
         if obj.featured_image_file:
             return obj.featured_image_file.url
-        if obj.featured_image_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/blog/{obj.slug}/image/')
+        if getattr(obj, 'featured_image_url', None):
+            return obj.featured_image_url
         return None
     
     def get_author(self, obj):
@@ -347,13 +335,11 @@ class BlogPostDetailSerializer(BlogPostSerializer):
         ]
     
     def get_og_image(self, obj):
-        """Return OG image URL"""
+        """Return OG image URL (file or external URL)"""
         if obj.og_image_file:
             return obj.og_image_file.url
-        if obj.og_image_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/blog/{obj.slug}/og-image/')
+        if getattr(obj, 'og_image_url', None):
+            return obj.og_image_url
         return None
 
 
@@ -374,13 +360,11 @@ class TestimonialSerializer(serializers.ModelSerializer):
         ]
     
     def get_author_image(self, obj):
-        """Return author image URL"""
+        """Return author image URL (file or external URL)"""
         if obj.author_image_file:
             return obj.author_image_file.url
-        if obj.author_image_data:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(f'/api/testimonials/{obj.slug}/photo/')
+        if getattr(obj, 'author_image_url', None):
+            return obj.author_image_url
         return None
 
 

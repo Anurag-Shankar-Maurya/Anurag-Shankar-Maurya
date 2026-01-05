@@ -95,7 +95,7 @@ export interface BlogPost {
   canonical_url?: string;
   og_title?: string;
   og_description?: string;
-  og_image_data?: string;
+  og_image?: string;
   schema_type?: string;
   updated_at?: string;
 }

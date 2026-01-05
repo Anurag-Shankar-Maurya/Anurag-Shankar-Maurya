@@ -194,6 +194,10 @@ STATICFILES_DIRS = [
 # Use WhiteNoise's storage backend to create compressed, cacheable files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Media files (user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # -------------------------
 # Cloudinary / External Media Toggle
 # -------------------------

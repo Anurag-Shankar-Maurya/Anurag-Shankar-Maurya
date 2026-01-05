@@ -57,6 +57,13 @@ class Command(BaseCommand):
                 continue
 
             to_clear = []
+            # Ensure the binary_field actually exists on the model
+            try:
+                null_allowed = Model._meta.get_field(binary_field).null
+            except Exception:
+                self.stdout.write(self.style.WARNING(f"{model_name}: binary field '{binary_field}' not found - skipping"))
+                continue
+
             for obj in Model.objects.all().iterator(chunk_size=batch):
                 f = getattr(obj, file_field, None)
                 fname = getattr(f, 'name', None)
@@ -70,7 +77,7 @@ class Command(BaseCommand):
                         exists = False
                     if not exists:
                         continue
-                val = getattr(obj, binary_field)
+                val = getattr(obj, binary_field, None)
                 if val in (None, b''):
                     continue
                 to_clear.append(obj.pk)
@@ -82,7 +89,6 @@ class Command(BaseCommand):
                 continue
 
             # perform clear in batches
-            null_allowed = Model._meta.get_field(binary_field).null
             clear_val = None if null_allowed else b''
             for i in range(0, len(to_clear), batch):
                 chunk = to_clear[i:i+batch]

@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
-import base64
+
 
 from .models import (
     Image, Profile, SocialLink, Skill, Education,
@@ -49,28 +49,26 @@ class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=True, methods=['get'])
     def resume(self, request, pk=None):
-        """Download resume file"""
-        from django.http import HttpResponse
+        """Download resume file or redirect to external resume URL"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         profile = self.get_object()
-        if profile.resume_data and profile.resume_filename:
-            response = HttpResponse(
-                profile.resume_data,
-                content_type=profile.resume_mime or 'application/pdf'
-            )
-            response['Content-Disposition'] = f'attachment; filename="{profile.resume_filename}"'
-            return response
+        if profile.resume_file:
+            return FileResponse(profile.resume_file.open('rb'), content_type=profile.resume_mime or 'application/pdf')
+        if profile.resume_url:
+            return redirect(profile.resume_url)
         return Response({'error': 'Resume not found'}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=['get'])
     def photo(self, request, pk=None):
-        """Serve profile image"""
-        from django.http import HttpResponse
+        """Serve profile image (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         profile = self.get_object()
-        if profile.profile_image_data:
-            return HttpResponse(
-                profile.profile_image_data,
-                content_type=profile.profile_image_mime or 'image/jpeg'
-            )
+        if profile.profile_image_file:
+            return FileResponse(profile.profile_image_file.open('rb'), content_type=profile.profile_image_mime or 'image/jpeg')
+        if profile.profile_image_url:
+            return redirect(profile.profile_image_url)
         return Response({'error': 'Photo not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -108,14 +106,14 @@ class EducationViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'])
     def logo(self, request, slug=None):
-        """Serve institution logo"""
-        from django.http import HttpResponse
+        """Serve institution logo (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         edu = self.get_object()
-        if edu.logo_data:
-            return HttpResponse(
-                edu.logo_data,
-                content_type=edu.logo_mime or 'image/png'
-            )
+        if edu.logo_file:
+            return FileResponse(edu.logo_file.open('rb'), content_type=edu.logo_mime or 'image/png')
+        if edu.logo_url:
+            return redirect(edu.logo_url)
         return Response({'error': 'Logo not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -131,14 +129,14 @@ class WorkExperienceViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'])
     def logo(self, request, pk=None):
-        """Serve company logo"""
-        from django.http import HttpResponse
+        """Serve company logo (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         work = self.get_object()
-        if work.company_logo_data:
-            return HttpResponse(
-                work.company_logo_data,
-                content_type=work.company_logo_mime or 'image/png'
-            )
+        if work.company_logo_file:
+            return FileResponse(work.company_logo_file.open('rb'), content_type=work.company_logo_mime or 'image/png')
+        if work.company_logo_url:
+            return redirect(work.company_logo_url)
         return Response({'error': 'Logo not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -180,14 +178,14 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'])
     def image(self, request, slug=None):
-        """Serve featured image"""
-        from django.http import HttpResponse
+        """Serve featured image (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         project = self.get_object()
-        if project.featured_image_data:
-            return HttpResponse(
-                project.featured_image_data,
-                content_type=project.featured_image_mime or 'image/jpeg'
-            )
+        if project.featured_image_file:
+            return FileResponse(project.featured_image_file.open('rb'), content_type=project.featured_image_mime or 'image/jpeg')
+        if project.featured_image_url:
+            return redirect(project.featured_image_url)
         return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -208,26 +206,26 @@ class CertificateViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'])
     def org_logo(self, request, slug=None):
-        """Serve organization logo"""
-        from django.http import HttpResponse
+        """Serve organization logo (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         cert = self.get_object()
-        if cert.organization_logo_data:
-            return HttpResponse(
-                cert.organization_logo_data,
-                content_type=cert.organization_logo_mime or 'image/png'
-            )
+        if cert.organization_logo_file:
+            return FileResponse(cert.organization_logo_file.open('rb'), content_type=cert.organization_logo_mime or 'image/png')
+        if cert.organization_logo_url:
+            return redirect(cert.organization_logo_url)
         return Response({'error': 'Logo not found'}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=['get'])
     def cert_image(self, request, slug=None):
-        """Serve certificate image"""
-        from django.http import HttpResponse
+        """Serve certificate image (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         cert = self.get_object()
-        if cert.certificate_image_data:
-            return HttpResponse(
-                cert.certificate_image_data,
-                content_type=cert.certificate_image_mime or 'image/jpeg'
-            )
+        if cert.certificate_image_file:
+            return FileResponse(cert.certificate_image_file.open('rb'), content_type=cert.certificate_image_mime or 'image/jpeg')
+        if cert.certificate_image_url:
+            return redirect(cert.certificate_image_url)
         return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -244,14 +242,14 @@ class AchievementViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'])
     def image(self, request, slug=None):
-        """Serve achievement image"""
-        from django.http import HttpResponse
+        """Serve achievement image (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         achievement = self.get_object()
-        if achievement.image_data:
-            return HttpResponse(
-                achievement.image_data,
-                content_type=achievement.image_mime or 'image/jpeg'
-            )
+        if achievement.image_file:
+            return FileResponse(achievement.image_file.open('rb'), content_type=achievement.image_mime or 'image/jpeg')
+        if achievement.image_url:
+            return redirect(achievement.image_url)
         return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -346,26 +344,26 @@ class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'])
     def image(self, request, slug=None):
-        """Serve featured image"""
-        from django.http import HttpResponse
+        """Serve featured image (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         post = self.get_object()
-        if post.featured_image_data:
-            return HttpResponse(
-                post.featured_image_data,
-                content_type=post.featured_image_mime or 'image/jpeg'
-            )
+        if post.featured_image_file:
+            return FileResponse(post.featured_image_file.open('rb'), content_type=post.featured_image_mime or 'image/jpeg')
+        if post.featured_image_url:
+            return redirect(post.featured_image_url)
         return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=['get'])
     def og_image(self, request, slug=None):
-        """Serve OG image"""
-        from django.http import HttpResponse
+        """Serve OG image (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         post = self.get_object()
-        if post.og_image_data:
-            return HttpResponse(
-                post.og_image_data,
-                content_type=post.og_image_mime or 'image/jpeg'
-            )
+        if post.og_image_file:
+            return FileResponse(post.og_image_file.open('rb'), content_type=post.og_image_mime or 'image/jpeg')
+        if post.og_image_url:
+            return redirect(post.og_image_url)
         return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -392,14 +390,14 @@ class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'])
     def photo(self, request, slug=None):
-        """Serve author image"""
-        from django.http import HttpResponse
+        """Serve author image (redirect to external URL or stream file)"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         testimonial = self.get_object()
-        if testimonial.author_image_data:
-            return HttpResponse(
-                testimonial.author_image_data,
-                content_type=testimonial.author_image_mime or 'image/jpeg'
-            )
+        if testimonial.author_image_file:
+            return FileResponse(testimonial.author_image_file.open('rb'), content_type=testimonial.author_image_mime or 'image/jpeg')
+        if testimonial.author_image_url:
+            return redirect(testimonial.author_image_url)
         return Response({'error': 'Photo not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -446,15 +444,15 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'])
     def data(self, request, uuid=None):
-        """Serve the raw image data from BinaryField using UUID"""
-        from django.http import HttpResponse
+        """Return image (redirect to external URL or stream file) using UUID"""
+        from django.http import FileResponse
+        from django.shortcuts import redirect
         image = self.get_object()
-        if image.image_data:
-            return HttpResponse(
-                image.image_data,
-                content_type=image.mime_type or 'image/jpeg'
-            )
-        return Response({'error': 'Image data not found'}, status=status.HTTP_404_NOT_FOUND)
+        if image.image_file:
+            return FileResponse(image.image_file.open('rb'), content_type=image.mime_type or 'image/jpeg')
+        if image.image_url:
+            return redirect(image.image_url)
+        return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 # ============================================

@@ -675,9 +675,11 @@ class SocialLinkInline(admin.TabularInline):
 
 class SkillAdminForm(forms.ModelForm):
     """Custom form for Skill with selection dropdown and manual entry"""
+    # Add an explicit blank choice so the form doesn't auto-select the first skill
     skill_select = forms.ChoiceField(
-        choices=Skill.SKILL_CHOICES,
+        choices=[('', '--- Select a skill ---')] + list(Skill.SKILL_CHOICES),
         required=False,
+        initial='',
         label="Select Skill",
         help_text="Choose a pre-defined skill to auto-fill the icon automatically, or select 'Other' to enter manually."
     )
@@ -700,6 +702,9 @@ class SkillAdminForm(forms.ModelForm):
             else:
                 self.fields['skill_select'].initial = 'other'
                 self.fields['manual_name'].initial = self.instance.name
+        else:
+            # Ensure no selection is pre-chosen for new instances
+            self.fields['skill_select'].initial = ''
 
     def clean(self):
         cleaned_data = super().clean()
@@ -707,7 +712,12 @@ class SkillAdminForm(forms.ModelForm):
         manual_name = cleaned_data.get('manual_name')
 
         # Determine final name field for saving
-        if skill_select == 'other':
+        # Require either a selected skill or a manual name
+        if not skill_select or skill_select == '':
+            if not manual_name:
+                raise forms.ValidationError({'skill_select': 'Please select a skill or enter a manual name.'})
+            cleaned_data['name'] = manual_name.strip()
+        elif skill_select == 'other':
             if not manual_name:
                 raise forms.ValidationError({'manual_name': 'Please enter a skill name manually.'})
             cleaned_data['name'] = manual_name.strip()

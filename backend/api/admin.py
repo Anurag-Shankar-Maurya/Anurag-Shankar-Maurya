@@ -5,7 +5,6 @@ from django.utils.html import format_html
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django import forms
 from django.core.files.uploadedfile import UploadedFile
-import base64
 
 from .models import (
     Image, Profile, SocialLink, Skill, Education,
@@ -118,40 +117,41 @@ class ImageAdminForm(forms.ModelForm):
     class Meta:
         model = Image
         exclude = ['image_file']  # Exclude model's FileField to avoid conflict
-        widgets = {
-            'image_data': forms.HiddenInput(),
-        }
-    
+
     def save(self, commit=True):
         instance = super().save(commit=False)
         image_file = self.cleaned_data.get('upload_image')
-        
+
         # Handle clear checkbox
         if self.cleaned_data.get('clear_image'):
-            instance.image_data = b''
+            instance.image_url = ''
+            if instance.image_file:
+                try:
+                    instance.image_file.delete(save=False)
+                except Exception:
+                    pass
             instance.filename = ''
             instance.file_size = 0
             instance.width = None
             instance.height = None
-        # Only process newly uploaded files (UploadedFile with non-zero size). Existing ImageFieldFile instances should be left as-is.
+        # Only process newly uploaded files (UploadedFile with non-zero size)
         elif isinstance(image_file, UploadedFile) and getattr(image_file, 'size', 0) > 0:
             from PIL import Image as PILImage
-            import io
-            
-            # Read file data
-            file_data = image_file.read()
-            instance.image_data = file_data
-            instance.filename = image_file.name
-            instance.mime_type = _get_mime_type(image_file, fallback='image/jpeg')
-            instance.file_size = len(file_data)
-            
-            # Get dimensions
+
+            # Try to get dimensions without reading entire file into memory
             try:
-                img = PILImage.open(io.BytesIO(file_data))
+                img = PILImage.open(image_file)
                 instance.width, instance.height = img.size
+                image_file.seek(0)
             except Exception:
-                pass
-        
+                instance.width = None
+                instance.height = None
+            # Save file to model's ImageField
+            instance.filename = getattr(image_file, 'name', '')
+            instance.mime_type = _get_mime_type(image_file, fallback='image/jpeg')
+            instance.file_size = getattr(image_file, 'size', 0)
+            instance.image_file.save(getattr(image_file, 'name', ''), image_file, save=False)
+
         if commit:
             instance.save()
         return instance
@@ -175,48 +175,58 @@ class ProfileAdminForm(forms.ModelForm):
     class Meta:
         model = Profile
         exclude = ['profile_image_file', 'resume_file']  # Exclude model FileFields
-        widgets = {
-            'profile_image_data': forms.HiddenInput(),
-            'resume_data': forms.HiddenInput(),
-        }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Show current file status
         if self.instance and self.instance.pk:
-            if self.instance.profile_image_data:
-                self.fields['upload_profile_image'].help_text = f'✓ Current: Profile image uploaded ({len(self.instance.profile_image_data)} bytes). Upload new file to replace.'
-            if self.instance.resume_data:
-                resume_name = self.instance.resume_filename or 'resume file'
-                self.fields['upload_resume'].help_text = f'✓ Current: {resume_name} ({len(self.instance.resume_data)} bytes). Upload new file to replace.'
-    
+            if self.instance.profile_image_url:
+                self.fields['upload_profile_image'].help_text = f'✓ Current: External image URL set. Upload new file to replace or clear to remove.'
+            elif self.instance.profile_image_file:
+                size = getattr(self.instance.profile_image_file, 'size', 0)
+                self.fields['upload_profile_image'].help_text = f'✓ Current: Profile image file present ({size} bytes). Upload new file to replace.'
+            if self.instance.resume_url:
+                self.fields['upload_resume'].help_text = f'✓ Current: External resume URL set.'
+            elif self.instance.resume_file:
+                size = getattr(self.instance.resume_file, 'size', 0)
+                resume_name = self.instance.resume_filename or getattr(self.instance.resume_file, 'name', 'resume')
+                self.fields['upload_resume'].help_text = f'✓ Current: {resume_name} ({size} bytes). Upload new file to replace.'
+
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
+
         # Handle clear profile image
         if self.cleaned_data.get('clear_profile_image'):
-            instance.profile_image_data = b''
+            instance.profile_image_url = ''
+            if instance.profile_image_file:
+                try:
+                    instance.profile_image_file.delete(save=False)
+                except Exception:
+                    pass
             instance.profile_image_mime = ''
         # Handle profile image upload
         else:
             profile_image = self.cleaned_data.get('upload_profile_image')
             if isinstance(profile_image, UploadedFile) and getattr(profile_image, 'size', 0) > 0:
-                image_data = profile_image.read()
-                instance.profile_image_data = image_data
                 instance.profile_image_mime = _get_mime_type(profile_image, fallback='image/jpeg')
-        
+                instance.profile_image_file.save(getattr(profile_image, 'name', ''), profile_image, save=False)
+
         # Handle clear resume
         if self.cleaned_data.get('clear_resume'):
-            instance.resume_data = b''
+            instance.resume_url = ''
             instance.resume_filename = ''
             instance.resume_mime = ''
+            if instance.resume_file:
+                try:
+                    instance.resume_file.delete(save=False)
+                except Exception:
+                    pass
         # Handle resume upload - accept various file types
         else:
             resume = self.cleaned_data.get('upload_resume')
             if isinstance(resume, UploadedFile) and getattr(resume, 'size', 0) > 0:
-                resume_data = resume.read()
-                instance.resume_data = resume_data
-                instance.resume_filename = resume.name
+                instance.resume_file.save(getattr(resume, 'name', ''), resume, save=False)
+                instance.resume_filename = getattr(resume, 'name', '')
                 # Determine MIME type
                 content_type = getattr(resume, 'content_type', None) or _get_mime_type(resume)
                 if not content_type:
@@ -232,7 +242,7 @@ class ProfileAdminForm(forms.ModelForm):
                     else:
                         content_type = 'application/octet-stream'
                 instance.resume_mime = content_type
-        
+
         if commit:
             instance.save()
         return instance
@@ -246,28 +256,34 @@ class EducationAdminForm(forms.ModelForm):
     class Meta:
         model = Education
         exclude = ['logo_file']  # Exclude model FileField
-        widgets = {
-            'logo_data': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk and self.instance.logo_data:
-            self.fields['upload_logo'].help_text = f'✓ Current: Logo uploaded ({len(self.instance.logo_data)} bytes). Upload new file to replace.'
-    
+        if self.instance and self.instance.pk:
+            if self.instance.logo_url:
+                self.fields['upload_logo'].help_text = f'✓ Current: External logo URL set. Upload new file to replace or clear to remove.'
+            elif self.instance.logo_file:
+                size = getattr(self.instance.logo_file, 'size', 0)
+                self.fields['upload_logo'].help_text = f'✓ Current: Logo file present ({size} bytes). Upload new file to replace.'
+
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
+
         # Handle clear checkbox
         if self.cleaned_data.get('clear_logo'):
-            instance.logo_data = b''
+            instance.logo_url = ''
+            if instance.logo_file:
+                try:
+                    instance.logo_file.delete(save=False)
+                except Exception:
+                    pass
             instance.logo_mime = ''
         else:
             logo = self.cleaned_data.get('upload_logo')
             if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
-                instance.logo_data = logo.read()
+                instance.logo_file.save(getattr(logo, 'name', ''), logo, save=False)
                 instance.logo_mime = _get_mime_type(logo, fallback='image/png')
-        
+
         if commit:
             instance.save()
         return instance
@@ -281,28 +297,34 @@ class WorkExperienceAdminForm(forms.ModelForm):
     class Meta:
         model = WorkExperience
         exclude = ['company_logo_file']  # Exclude model FileField
-        widgets = {
-            'company_logo_data': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk and self.instance.company_logo_data:
-            self.fields['upload_company_logo'].help_text = f'✓ Current: Logo uploaded ({len(self.instance.company_logo_data)} bytes). Upload new file to replace.'
-    
+        if self.instance and self.instance.pk:
+            if self.instance.company_logo_url:
+                self.fields['upload_company_logo'].help_text = f'✓ Current: External logo URL set. Upload new file to replace or clear to remove.'
+            elif self.instance.company_logo_file:
+                size = getattr(self.instance.company_logo_file, 'size', 0)
+                self.fields['upload_company_logo'].help_text = f'✓ Current: Company logo file present ({size} bytes). Upload new file to replace.'
+
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
+
         # Handle clear checkbox
         if self.cleaned_data.get('clear_company_logo'):
-            instance.company_logo_data = b''
+            instance.company_logo_url = ''
+            if instance.company_logo_file:
+                try:
+                    instance.company_logo_file.delete(save=False)
+                except Exception:
+                    pass
             instance.company_logo_mime = ''
         else:
             logo = self.cleaned_data.get('upload_company_logo')
             if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
-                instance.company_logo_data = logo.read()
+                instance.company_logo_file.save(getattr(logo, 'name', ''), logo, save=False)
                 instance.company_logo_mime = _get_mime_type(logo, fallback='image/png')
-        
+
         if commit:
             instance.save()
         return instance
@@ -316,28 +338,34 @@ class ProjectAdminForm(forms.ModelForm):
     class Meta:
         model = Project
         exclude = ['featured_image_file']  # Exclude model FileField
-        widgets = {
-            'featured_image_data': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk and self.instance.featured_image_data:
-            self.fields['upload_featured_image'].help_text = f'✓ Current: Featured image uploaded ({len(self.instance.featured_image_data)} bytes). Upload new file to replace.'
-    
+        if self.instance and self.instance.pk:
+            if self.instance.featured_image_url:
+                self.fields['upload_featured_image'].help_text = f'✓ Current: External featured image URL set. Upload new file to replace or clear to remove.'
+            elif self.instance.featured_image_file:
+                size = getattr(self.instance.featured_image_file, 'size', 0)
+                self.fields['upload_featured_image'].help_text = f'✓ Current: Featured image file present ({size} bytes). Upload new file to replace.'
+
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
+
         # Handle clear checkbox
         if self.cleaned_data.get('clear_featured_image'):
-            instance.featured_image_data = b''
+            instance.featured_image_url = ''
+            if instance.featured_image_file:
+                try:
+                    instance.featured_image_file.delete(save=False)
+                except Exception:
+                    pass
             instance.featured_image_mime = ''
         else:
             image = self.cleaned_data.get('upload_featured_image')
             if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
-                instance.featured_image_data = image.read()
+                instance.featured_image_file.save(getattr(image, 'name', ''), image, save=False)
                 instance.featured_image_mime = _get_mime_type(image, fallback='image/jpeg')
-        
+
         if commit:
             instance.save()
         return instance
@@ -353,42 +381,54 @@ class CertificateAdminForm(forms.ModelForm):
     class Meta:
         model = Certificate
         exclude = ['organization_logo_file', 'certificate_image_file']  # Exclude model FileFields
-        widgets = {
-            'organization_logo_data': forms.HiddenInput(),
-            'certificate_image_data': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-            if self.instance.organization_logo_data:
-                self.fields['upload_organization_logo'].help_text = f'✓ Current: Org logo uploaded ({len(self.instance.organization_logo_data)} bytes). Upload new file to replace.'
-            if self.instance.certificate_image_data:
-                self.fields['upload_certificate_image'].help_text = f'✓ Current: Certificate image uploaded ({len(self.instance.certificate_image_data)} bytes). Upload new file to replace.'
-    
+            if self.instance.organization_logo_url:
+                self.fields['upload_organization_logo'].help_text = f'✓ Current: External org logo URL set. Upload new file to replace or clear to remove.'
+            elif self.instance.organization_logo_file:
+                size = getattr(self.instance.organization_logo_file, 'size', 0)
+                self.fields['upload_organization_logo'].help_text = f'✓ Current: Org logo file present ({size} bytes). Upload new file to replace.'
+            if self.instance.certificate_image_url:
+                self.fields['upload_certificate_image'].help_text = f'✓ Current: External certificate image URL set.'
+            elif self.instance.certificate_image_file:
+                size = getattr(self.instance.certificate_image_file, 'size', 0)
+                self.fields['upload_certificate_image'].help_text = f'✓ Current: Certificate image file present ({size} bytes). Upload new file to replace.'
+
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
+
         # Handle clear org logo
         if self.cleaned_data.get('clear_organization_logo'):
-            instance.organization_logo_data = b''
+            instance.organization_logo_url = ''
+            if instance.organization_logo_file:
+                try:
+                    instance.organization_logo_file.delete(save=False)
+                except Exception:
+                    pass
             instance.organization_logo_mime = ''
         else:
             org_logo = self.cleaned_data.get('upload_organization_logo')
             if isinstance(org_logo, UploadedFile) and getattr(org_logo, 'size', 0) > 0:
-                instance.organization_logo_data = org_logo.read()
+                instance.organization_logo_file.save(getattr(org_logo, 'name', ''), org_logo, save=False)
                 instance.organization_logo_mime = _get_mime_type(org_logo, fallback='image/png')
-        
+
         # Handle clear certificate image
         if self.cleaned_data.get('clear_certificate_image'):
-            instance.certificate_image_data = b''
+            instance.certificate_image_url = ''
+            if instance.certificate_image_file:
+                try:
+                    instance.certificate_image_file.delete(save=False)
+                except Exception:
+                    pass
             instance.certificate_image_mime = ''
         else:
             cert_image = self.cleaned_data.get('upload_certificate_image')
             if isinstance(cert_image, UploadedFile) and getattr(cert_image, 'size', 0) > 0:
-                instance.certificate_image_data = cert_image.read()
+                instance.certificate_image_file.save(getattr(cert_image, 'name', ''), cert_image, save=False)
                 instance.certificate_image_mime = _get_mime_type(cert_image, fallback='image/jpeg')
-        
+
         if commit:
             instance.save()
         return instance
@@ -402,28 +442,34 @@ class AchievementAdminForm(forms.ModelForm):
     class Meta:
         model = Achievement
         exclude = ['image_file']  # Exclude model FileField
-        widgets = {
-            'image_data': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk and self.instance.image_data:
-            self.fields['upload_achievement_image'].help_text = f'✓ Current: Achievement image uploaded ({len(self.instance.image_data)} bytes). Upload new file to replace.'
-    
+        if self.instance and self.instance.pk:
+            if self.instance.image_url:
+                self.fields['upload_achievement_image'].help_text = f'✓ Current: External achievement image URL set. Upload new file to replace or clear to remove.'
+            elif self.instance.image_file:
+                size = getattr(self.instance.image_file, 'size', 0)
+                self.fields['upload_achievement_image'].help_text = f'✓ Current: Achievement image file present ({size} bytes). Upload new file to replace.'
+
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
+
         # Handle clear checkbox
         if self.cleaned_data.get('clear_achievement_image'):
-            instance.image_data = b''
+            instance.image_url = ''
+            if instance.image_file:
+                try:
+                    instance.image_file.delete(save=False)
+                except Exception:
+                    pass
             instance.image_mime = ''
         else:
             image = self.cleaned_data.get('upload_achievement_image')
             if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
-                instance.image_data = image.read()
+                instance.image_file.save(getattr(image, 'name', ''), image, save=False)
                 instance.image_mime = _get_mime_type(image, fallback='image/jpeg')
-        
+
         if commit:
             instance.save()
         return instance
@@ -439,42 +485,54 @@ class BlogPostAdminForm(forms.ModelForm):
     class Meta:
         model = BlogPost
         exclude = ['featured_image_file', 'og_image_file']  # Exclude model FileFields
-        widgets = {
-            'featured_image_data': forms.HiddenInput(),
-            'og_image_data': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-            if self.instance.featured_image_data:
-                self.fields['upload_featured_image'].help_text = f'✓ Current: Featured image uploaded ({len(self.instance.featured_image_data)} bytes). Upload new file to replace.'
-            if self.instance.og_image_data:
-                self.fields['upload_og_image'].help_text = f'✓ Current: OG image uploaded ({len(self.instance.og_image_data)} bytes). Upload new file to replace.'
-    
+            if self.instance.featured_image_url:
+                self.fields['upload_featured_image'].help_text = f'✓ Current: External featured image URL set. Upload new file to replace or clear to remove.'
+            elif self.instance.featured_image_file:
+                size = getattr(self.instance.featured_image_file, 'size', 0)
+                self.fields['upload_featured_image'].help_text = f'✓ Current: Featured image file present ({size} bytes). Upload new file to replace.'
+            if self.instance.og_image_url:
+                self.fields['upload_og_image'].help_text = f'✓ Current: External OG image URL set.'
+            elif self.instance.og_image_file:
+                size = getattr(self.instance.og_image_file, 'size', 0)
+                self.fields['upload_og_image'].help_text = f'✓ Current: OG image file present ({size} bytes). Upload new file to replace.'
+
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
+
         # Handle clear featured image
         if self.cleaned_data.get('clear_featured_image'):
-            instance.featured_image_data = b''
+            instance.featured_image_url = ''
+            if instance.featured_image_file:
+                try:
+                    instance.featured_image_file.delete(save=False)
+                except Exception:
+                    pass
             instance.featured_image_mime = ''
         else:
             featured = self.cleaned_data.get('upload_featured_image')
             if isinstance(featured, UploadedFile) and getattr(featured, 'size', 0) > 0:
-                instance.featured_image_data = featured.read()
+                instance.featured_image_file.save(getattr(featured, 'name', ''), featured, save=False)
                 instance.featured_image_mime = _get_mime_type(featured, fallback='image/jpeg')
-        
+
         # Handle clear OG image
         if self.cleaned_data.get('clear_og_image'):
-            instance.og_image_data = b''
+            instance.og_image_url = ''
+            if instance.og_image_file:
+                try:
+                    instance.og_image_file.delete(save=False)
+                except Exception:
+                    pass
             instance.og_image_mime = ''
         else:
             og_image = self.cleaned_data.get('upload_og_image')
             if isinstance(og_image, UploadedFile) and getattr(og_image, 'size', 0) > 0:
-                instance.og_image_data = og_image.read()
+                instance.og_image_file.save(getattr(og_image, 'name', ''), og_image, save=False)
                 instance.og_image_mime = _get_mime_type(og_image, fallback='image/jpeg')
-        
+
         if commit:
             instance.save()
         return instance
@@ -488,28 +546,34 @@ class TestimonialAdminForm(forms.ModelForm):
     class Meta:
         model = Testimonial
         exclude = ['author_image_file']  # Exclude model FileField
-        widgets = {
-            'author_image_data': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk and self.instance.author_image_data:
-            self.fields['upload_author_image'].help_text = f'✓ Current: Author image uploaded ({len(self.instance.author_image_data)} bytes). Upload new file to replace.'
-    
+        if self.instance and self.instance.pk:
+            if self.instance.author_image_url:
+                self.fields['upload_author_image'].help_text = f'✓ Current: External author image URL set. Upload new file to replace or clear to remove.'
+            elif self.instance.author_image_file:
+                size = getattr(self.instance.author_image_file, 'size', 0)
+                self.fields['upload_author_image'].help_text = f'✓ Current: Author image file present ({size} bytes). Upload new file to replace.'
+
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
+
         # Handle clear checkbox
         if self.cleaned_data.get('clear_author_image'):
-            instance.author_image_data = b''
+            instance.author_image_url = ''
+            if instance.author_image_file:
+                try:
+                    instance.author_image_file.delete(save=False)
+                except Exception:
+                    pass
             instance.author_image_mime = ''
         else:
             image = self.cleaned_data.get('upload_author_image')
             if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
-                instance.author_image_data = image.read()
+                instance.author_image_file.save(getattr(image, 'name', ''), image, save=False)
                 instance.author_image_mime = _get_mime_type(image, fallback='image/jpeg')
-        
+
         if commit:
             instance.save()
         return instance
@@ -519,13 +583,24 @@ class TestimonialAdminForm(forms.ModelForm):
 # HELPER FUNCTIONS
 # ============================================
 
-def get_image_preview(image_data, mime_type, width=50, height=50):
-    """Generate HTML image preview from BLOB data"""
-    if image_data:
-        b64 = base64.b64encode(image_data).decode('utf-8')
+def get_image_preview(image_source, mime_type=None, width=50, height=50):
+    """Generate HTML image preview from external URL or FileField.
+    image_source can be an absolute URL string or a Django FileField (has .url)."""
+    if not image_source:
+        return format_html('<span style="color:#999;">No image</span>')
+
+    url = None
+    # If a string is provided, treat it as a URL
+    if isinstance(image_source, str):
+        url = image_source
+    else:
+        # Try to get .url from FileField
+        url = getattr(image_source, 'url', None)
+
+    if url:
         return format_html(
-            '<img src="data:{};base64,{}" style="width:{}px; height:{}px; object-fit:cover; border-radius:4px;" />',
-            mime_type or 'image/jpeg', b64, width, height
+            '<img src="{}" style="width:{}px; height:{}px; object-fit:cover; border-radius:4px;" />',
+            url, width, height
         )
     return format_html('<span style="color:#999;">No image</span>')
 
@@ -578,7 +653,7 @@ class ImageInline(GenericTabularInline):
 
     def image_preview(self, obj):
         if obj.pk:
-            return get_image_preview(obj.image_data, obj.mime_type, 60, 60)
+            return get_image_preview(obj.image_url or obj.image_file, obj.mime_type, 60, 60)
         return format_html("<span style=\"color:#999;\">Upload to preview</span>")
     image_preview.short_description = 'Preview'
 
@@ -625,11 +700,11 @@ class ImageAdmin(admin.ModelAdmin):
     )
 
     def image_preview(self, obj):
-        return get_image_preview(obj.image_data, obj.mime_type, 50, 50)
+        return get_image_preview(obj.image_url or obj.image_file, obj.mime_type, 50, 50)
     image_preview.short_description = 'Preview'
 
     def image_preview_large(self, obj):
-        return get_image_preview(obj.image_data, obj.mime_type, 200, 200)
+        return get_image_preview(obj.image_url or obj.image_file, obj.mime_type, 200, 200)
     image_preview_large.short_description = 'Preview'
 
     def file_size_display(self, obj):
@@ -783,38 +858,48 @@ class ProfileAdmin(admin.ModelAdmin):
     )
 
     def profile_preview(self, obj):
-        return get_image_preview(obj.profile_image_data, obj.profile_image_mime, 40, 40)
+        return get_image_preview(obj.profile_image_url or obj.profile_image_file, obj.profile_image_mime, 40, 40)
     profile_preview.short_description = 'Photo'
 
     def profile_preview_large(self, obj):
-        return get_image_preview(obj.profile_image_data, obj.profile_image_mime, 150, 150)
+        return get_image_preview(obj.profile_image_url or obj.profile_image_file, obj.profile_image_mime, 150, 150)
     profile_preview_large.short_description = 'Profile Image'
 
     def resume_info(self, obj):
         """Display current resume information"""
-        if obj.resume_data and obj.resume_filename:
-            size_kb = len(obj.resume_data) / 1024
-            download_url = f'/api/profiles/{obj.pk}/resume/' if obj.pk else '#'
+        if obj.resume_file or obj.resume_url:
+            if obj.resume_file:
+                size_kb = (getattr(obj.resume_file, 'size', 0) or 0) / 1024
+                download_url = f'/api/profiles/{obj.pk}/resume/' if obj.pk else '#'
+                filename = obj.resume_filename or getattr(obj.resume_file, 'name', 'resume')
+                mime = obj.resume_mime or 'Unknown'
+            else:
+                size_kb = None
+                download_url = obj.resume_url
+                filename = obj.resume_filename or (obj.resume_url.split('/')[-1] if obj.resume_url else '')
+                mime = obj.resume_mime or 'External'
+
+            size_str = f"{size_kb:.2f} KB" if size_kb is not None else 'External'
             return format_html(
                 '<div style="padding: 10px; background: #e8f5e9; border-radius: 4px;">'
-                '<strong>✓ Resume Uploaded</strong><br>'
+                '<strong>✓ Resume Available</strong><br>'
                 'Filename: {}<br>'
-                'Size: {:.2f} KB<br>'
+                'Size: {}<br>'
                 'Type: {}<br>'
                 '<a href="{}" target="_blank" style="color: #1976d2;">Download Current Resume</a>'
                 '</div>',
-                obj.resume_filename,
-                size_kb,
-                obj.resume_mime or 'Unknown',
+                filename,
+                size_str,
+                mime,
                 download_url
             )
         return format_html(
             '<div style="padding: 10px; background: #fff3e0; border-radius: 4px;">'
             '<strong>⚠ No Resume Uploaded</strong><br>'
-            'Use the "Upload Resume" field below to add a resume file.'
+            'Use the "Upload Resume" field below to add a resume file or set an external resume URL.'
             '</div>'
         )
-    resume_info.short_description = 'Current Resume Status'
+    resume_info.short_description = 'Current Resume Status' 
 
 
 @admin.register(SocialLink, site=portfolio_admin_site)
@@ -869,12 +954,12 @@ class EducationAdmin(admin.ModelAdmin):
     )
 
     def logo_preview(self, obj):
-        return get_image_preview(obj.logo_data, obj.logo_mime, 40, 40)
+        return get_image_preview(obj.logo_url or obj.logo_file, obj.logo_mime, 40, 40)
     logo_preview.short_description = 'Logo'
 
     def logo_preview_large(self, obj):
-        return get_image_preview(obj.logo_data, obj.logo_mime, 100, 100)
-    logo_preview_large.short_description = 'Institution Logo'
+        return get_image_preview(obj.logo_url or obj.logo_file, obj.logo_mime, 100, 100)
+    logo_preview_large.short_description = 'Institution Logo' 
 
 
 # ============================================
@@ -915,12 +1000,12 @@ class WorkExperienceAdmin(admin.ModelAdmin):
     )
 
     def company_logo_preview(self, obj):
-        return get_image_preview(obj.company_logo_data, obj.company_logo_mime, 40, 40)
+        return get_image_preview(obj.company_logo_url or obj.company_logo_file, obj.company_logo_mime, 40, 40)
     company_logo_preview.short_description = 'Logo'
 
     def company_logo_preview_large(self, obj):
-        return get_image_preview(obj.company_logo_data, obj.company_logo_mime, 100, 100)
-    company_logo_preview_large.short_description = 'Company Logo'
+        return get_image_preview(obj.company_logo_url or obj.company_logo_file, obj.company_logo_mime, 100, 100)
+    company_logo_preview_large.short_description = 'Company Logo' 
 
 
 # ============================================
@@ -966,11 +1051,11 @@ class ProjectAdmin(admin.ModelAdmin):
     )
 
     def featured_preview(self, obj):
-        return get_image_preview(obj.featured_image_data, obj.featured_image_mime, 60, 40)
+        return get_image_preview(obj.featured_image_url or obj.featured_image_file, obj.featured_image_mime, 60, 40)
     featured_preview.short_description = 'Image'
 
     def featured_preview_large(self, obj):
-        return get_image_preview(obj.featured_image_data, obj.featured_image_mime, 300, 200)
+        return get_image_preview(obj.featured_image_url or obj.featured_image_file, obj.featured_image_mime, 300, 200)
     featured_preview_large.short_description = 'Featured Image'
 
 
@@ -1014,16 +1099,16 @@ class CertificateAdmin(admin.ModelAdmin):
     )
 
     def org_logo_preview(self, obj):
-        return get_image_preview(obj.organization_logo_data, obj.organization_logo_mime, 40, 40)
+        return get_image_preview(obj.organization_logo_url or obj.organization_logo_file, obj.organization_logo_mime, 40, 40)
     org_logo_preview.short_description = 'Logo'
 
     def org_logo_preview_large(self, obj):
-        return get_image_preview(obj.organization_logo_data, obj.organization_logo_mime, 100, 100)
+        return get_image_preview(obj.organization_logo_url or obj.organization_logo_file, obj.organization_logo_mime, 100, 100)
     org_logo_preview_large.short_description = 'Organization Logo'
 
     def cert_preview_large(self, obj):
-        return get_image_preview(obj.certificate_image_data, obj.certificate_image_mime, 200, 150)
-    cert_preview_large.short_description = 'Certificate Image'
+        return get_image_preview(obj.certificate_image_url or obj.certificate_image_file, obj.certificate_image_mime, 200, 150)
+    cert_preview_large.short_description = 'Certificate Image' 
 
 
 @admin.register(Achievement, site=portfolio_admin_site)
@@ -1051,12 +1136,12 @@ class AchievementAdmin(admin.ModelAdmin):
     )
 
     def image_preview(self, obj):
-        return get_image_preview(obj.image_data, obj.image_mime, 40, 40)
+        return get_image_preview(obj.image_url or obj.image_file, obj.image_mime, 40, 40)
     image_preview.short_description = 'Image'
 
     def image_preview_large(self, obj):
-        return get_image_preview(obj.image_data, obj.image_mime, 150, 150)
-    image_preview_large.short_description = 'Achievement Image'
+        return get_image_preview(obj.image_url or obj.image_file, obj.image_mime, 150, 150)
+    image_preview_large.short_description = 'Achievement Image' 
 
 
 # ============================================
@@ -1140,16 +1225,16 @@ class BlogPostAdmin(admin.ModelAdmin):
     )
 
     def featured_preview(self, obj):
-        return get_image_preview(obj.featured_image_data, obj.featured_image_mime, 60, 40)
+        return get_image_preview(obj.featured_image_url or obj.featured_image_file, obj.featured_image_mime, 60, 40)
     featured_preview.short_description = 'Image'
 
     def featured_preview_large(self, obj):
-        return get_image_preview(obj.featured_image_data, obj.featured_image_mime, 300, 200)
+        return get_image_preview(obj.featured_image_url or obj.featured_image_file, obj.featured_image_mime, 300, 200)
     featured_preview_large.short_description = 'Featured Image'
 
     def og_preview(self, obj):
-        return get_image_preview(obj.og_image_data, obj.og_image_mime, 300, 157)
-    og_preview.short_description = 'OG Image Preview'
+        return get_image_preview(obj.og_image_url or obj.og_image_file, obj.og_image_mime, 300, 157)
+    og_preview.short_description = 'OG Image Preview' 
 
     actions = ['make_published', 'make_draft']
 
@@ -1195,11 +1280,11 @@ class TestimonialAdmin(admin.ModelAdmin):
     )
 
     def author_preview(self, obj):
-        return get_image_preview(obj.author_image_data, obj.author_image_mime, 40, 40)
+        return get_image_preview(obj.author_image_url or obj.author_image_file, obj.author_image_mime, 40, 40)
     author_preview.short_description = 'Photo'
 
     def author_preview_large(self, obj):
-        return get_image_preview(obj.author_image_data, obj.author_image_mime, 100, 100)
+        return get_image_preview(obj.author_image_url or obj.author_image_file, obj.author_image_mime, 100, 100)
     author_preview_large.short_description = 'Author Image'
 
     def rating_display(self, obj):

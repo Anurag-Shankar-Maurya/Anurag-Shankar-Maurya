@@ -110,16 +110,27 @@ portfolio_admin_site.register(Group, GroupAdmin)
 # ============================================
 
 class ImageAdminForm(forms.ModelForm):
-    """Custom form for Image model with file upload"""
+    """Custom form for Image model with file upload and external URL"""
+    external_image_url = forms.URLField(required=False, label='External Image URL', help_text='Optional URL to an externally hosted image (CDN)')
     upload_image = forms.FileField(required=False, label='Upload Image', help_text='Upload an image file')
     clear_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the current image')
-    
+
     class Meta:
         model = Image
         exclude = ['image_file']  # Exclude model's FileField to avoid conflict
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            if getattr(self.instance, 'image_url', None):
+                self.fields['external_image_url'].help_text = f'✓ Current: External URL set ({self.instance.image_url}). Upload file to replace or clear to remove.'
+            elif getattr(self.instance, 'image_file', None):
+                size = getattr(self.instance.image_file, 'size', 0)
+                self.fields['upload_image'].help_text = f'✓ Current: Image file present ({size} bytes). Upload new file to replace.'
+
     def save(self, commit=True):
         instance = super().save(commit=False)
+        external_url = self.cleaned_data.get('external_image_url')
         image_file = self.cleaned_data.get('upload_image')
 
         # Handle clear checkbox
@@ -134,6 +145,14 @@ class ImageAdminForm(forms.ModelForm):
             instance.file_size = 0
             instance.width = None
             instance.height = None
+        # If an external URL is provided, prefer it and remove any stored file
+        elif external_url:
+            instance.image_url = external_url
+            if instance.image_file:
+                try:
+                    instance.image_file.delete(save=False)
+                except Exception:
+                    pass
         # Only process newly uploaded files (UploadedFile with non-zero size)
         elif isinstance(image_file, UploadedFile) and getattr(image_file, 'size', 0) > 0:
             from PIL import Image as PILImage
@@ -158,35 +177,37 @@ class ImageAdminForm(forms.ModelForm):
 
 
 class ProfileAdminForm(forms.ModelForm):
-    """Custom form for Profile model with file uploads"""
+    """Custom form for Profile model with file uploads and external URLs"""
+    profile_image_url = forms.URLField(required=False, label='Profile Image URL', help_text='External profile image URL (CDN)')
     upload_profile_image = forms.ImageField(
-        required=False, 
+        required=False,
         label='Upload Profile Image',
         help_text='Current profile image will be replaced if new file is uploaded'
     )
     clear_profile_image = forms.BooleanField(required=False, label='Clear Profile Image', help_text='Check to remove the profile image')
+    resume_url = forms.URLField(required=False, label='Resume URL', help_text='External resume URL (PDF)')
     upload_resume = forms.FileField(
-        required=False, 
+        required=False,
         label='Upload Resume',
         help_text='Upload PDF, DOC, DOCX or TXT file. Current resume will be replaced if new file is uploaded'
     )
     clear_resume = forms.BooleanField(required=False, label='Clear Resume', help_text='Check to remove the resume')
-    
+
     class Meta:
         model = Profile
         exclude = ['profile_image_file', 'resume_file']  # Exclude model FileFields
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Show current file status
+        # Show current file/URL status
         if self.instance and self.instance.pk:
-            if self.instance.profile_image_url:
-                self.fields['upload_profile_image'].help_text = f'✓ Current: External image URL set. Upload new file to replace or clear to remove.'
+            if getattr(self.instance, 'profile_image_url', None):
+                self.fields['profile_image_url'].help_text = f'✓ Current: External image URL set ({self.instance.profile_image_url}). Upload file to replace or clear to remove.'
             elif self.instance.profile_image_file:
                 size = getattr(self.instance.profile_image_file, 'size', 0)
                 self.fields['upload_profile_image'].help_text = f'✓ Current: Profile image file present ({size} bytes). Upload new file to replace.'
-            if self.instance.resume_url:
-                self.fields['upload_resume'].help_text = f'✓ Current: External resume URL set.'
+            if getattr(self.instance, 'resume_url', None):
+                self.fields['resume_url'].help_text = f'✓ Current: External resume URL set.'
             elif self.instance.resume_file:
                 size = getattr(self.instance.resume_file, 'size', 0)
                 resume_name = self.instance.resume_filename or getattr(self.instance.resume_file, 'name', 'resume')
@@ -204,6 +225,14 @@ class ProfileAdminForm(forms.ModelForm):
                 except Exception:
                     pass
             instance.profile_image_mime = ''
+        # If an external URL is provided, prefer it and remove any stored file
+        elif self.cleaned_data.get('profile_image_url'):
+            instance.profile_image_url = self.cleaned_data.get('profile_image_url')
+            if instance.profile_image_file:
+                try:
+                    instance.profile_image_file.delete(save=False)
+                except Exception:
+                    pass
         # Handle profile image upload
         else:
             profile_image = self.cleaned_data.get('upload_profile_image')
@@ -221,6 +250,9 @@ class ProfileAdminForm(forms.ModelForm):
                     instance.resume_file.delete(save=False)
                 except Exception:
                     pass
+        # If an external resume URL is provided, prefer it
+        elif self.cleaned_data.get('resume_url'):
+            instance.resume_url = self.cleaned_data.get('resume_url')
         # Handle resume upload - accept various file types
         else:
             resume = self.cleaned_data.get('upload_resume')
@@ -249,10 +281,11 @@ class ProfileAdminForm(forms.ModelForm):
 
 
 class EducationAdminForm(forms.ModelForm):
-    """Custom form for Education model with logo upload"""
+    """Custom form for Education model with logo upload or external URL"""
+    logo_url = forms.URLField(required=False, label='Logo URL', help_text='External institution logo URL')
     upload_logo = forms.ImageField(required=False, label='Upload Institution Logo')
     clear_logo = forms.BooleanField(required=False, label='Clear Logo', help_text='Check to remove the logo')
-    
+
     class Meta:
         model = Education
         exclude = ['logo_file']  # Exclude model FileField
@@ -260,8 +293,8 @@ class EducationAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-            if self.instance.logo_url:
-                self.fields['upload_logo'].help_text = f'✓ Current: External logo URL set. Upload new file to replace or clear to remove.'
+            if getattr(self.instance, 'logo_url', None):
+                self.fields['logo_url'].help_text = f'✓ Current: External logo URL set ({self.instance.logo_url}). Upload file to replace or clear to remove.'
             elif self.instance.logo_file:
                 size = getattr(self.instance.logo_file, 'size', 0)
                 self.fields['upload_logo'].help_text = f'✓ Current: Logo file present ({size} bytes). Upload new file to replace.'
@@ -278,6 +311,13 @@ class EducationAdminForm(forms.ModelForm):
                 except Exception:
                     pass
             instance.logo_mime = ''
+        elif self.cleaned_data.get('logo_url'):
+            instance.logo_url = self.cleaned_data.get('logo_url')
+            if instance.logo_file:
+                try:
+                    instance.logo_file.delete(save=False)
+                except Exception:
+                    pass
         else:
             logo = self.cleaned_data.get('upload_logo')
             if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
@@ -290,10 +330,11 @@ class EducationAdminForm(forms.ModelForm):
 
 
 class WorkExperienceAdminForm(forms.ModelForm):
-    """Custom form for WorkExperience model with logo upload"""
+    """Custom form for WorkExperience model with logo upload or external URL"""
+    company_logo_url = forms.URLField(required=False, label='Company Logo URL', help_text='External company logo URL')
     upload_company_logo = forms.ImageField(required=False, label='Upload Company Logo')
     clear_company_logo = forms.BooleanField(required=False, label='Clear Logo', help_text='Check to remove the company logo')
-    
+
     class Meta:
         model = WorkExperience
         exclude = ['company_logo_file']  # Exclude model FileField
@@ -301,8 +342,8 @@ class WorkExperienceAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-            if self.instance.company_logo_url:
-                self.fields['upload_company_logo'].help_text = f'✓ Current: External logo URL set. Upload new file to replace or clear to remove.'
+            if getattr(self.instance, 'company_logo_url', None):
+                self.fields['company_logo_url'].help_text = f'✓ Current: External logo URL set ({self.instance.company_logo_url}). Upload file to replace or clear to remove.'
             elif self.instance.company_logo_file:
                 size = getattr(self.instance.company_logo_file, 'size', 0)
                 self.fields['upload_company_logo'].help_text = f'✓ Current: Company logo file present ({size} bytes). Upload new file to replace.'
@@ -319,6 +360,13 @@ class WorkExperienceAdminForm(forms.ModelForm):
                 except Exception:
                     pass
             instance.company_logo_mime = ''
+        elif self.cleaned_data.get('company_logo_url'):
+            instance.company_logo_url = self.cleaned_data.get('company_logo_url')
+            if instance.company_logo_file:
+                try:
+                    instance.company_logo_file.delete(save=False)
+                except Exception:
+                    pass
         else:
             logo = self.cleaned_data.get('upload_company_logo')
             if isinstance(logo, UploadedFile) and getattr(logo, 'size', 0) > 0:
@@ -331,10 +379,11 @@ class WorkExperienceAdminForm(forms.ModelForm):
 
 
 class ProjectAdminForm(forms.ModelForm):
-    """Custom form for Project model with featured image upload"""
+    """Custom form for Project model with featured image upload or external URL"""
+    featured_image_url = forms.URLField(required=False, label='Featured Image URL', help_text='External featured image URL (CDN)')
     upload_featured_image = forms.ImageField(required=False, label='Upload Featured Image')
     clear_featured_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the featured image')
-    
+
     class Meta:
         model = Project
         exclude = ['featured_image_file']  # Exclude model FileField
@@ -342,8 +391,8 @@ class ProjectAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-            if self.instance.featured_image_url:
-                self.fields['upload_featured_image'].help_text = f'✓ Current: External featured image URL set. Upload new file to replace or clear to remove.'
+            if getattr(self.instance, 'featured_image_url', None):
+                self.fields['featured_image_url'].help_text = f'✓ Current: External featured image URL set ({self.instance.featured_image_url}). Upload file to replace or clear to remove.'
             elif self.instance.featured_image_file:
                 size = getattr(self.instance.featured_image_file, 'size', 0)
                 self.fields['upload_featured_image'].help_text = f'✓ Current: Featured image file present ({size} bytes). Upload new file to replace.'
@@ -360,6 +409,13 @@ class ProjectAdminForm(forms.ModelForm):
                 except Exception:
                     pass
             instance.featured_image_mime = ''
+        elif self.cleaned_data.get('featured_image_url'):
+            instance.featured_image_url = self.cleaned_data.get('featured_image_url')
+            if instance.featured_image_file:
+                try:
+                    instance.featured_image_file.delete(save=False)
+                except Exception:
+                    pass
         else:
             image = self.cleaned_data.get('upload_featured_image')
             if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
@@ -372,12 +428,14 @@ class ProjectAdminForm(forms.ModelForm):
 
 
 class CertificateAdminForm(forms.ModelForm):
-    """Custom form for Certificate model with image uploads"""
+    """Custom form for Certificate model with image uploads or external URLs"""
+    organization_logo_url = forms.URLField(required=False, label='Organization Logo URL', help_text='External organization logo URL')
     upload_organization_logo = forms.ImageField(required=False, label='Upload Organization Logo')
     clear_organization_logo = forms.BooleanField(required=False, label='Clear Org Logo', help_text='Check to remove the organization logo')
+    certificate_image_url = forms.URLField(required=False, label='Certificate Image URL', help_text='External certificate image URL')
     upload_certificate_image = forms.ImageField(required=False, label='Upload Certificate Image')
     clear_certificate_image = forms.BooleanField(required=False, label='Clear Certificate Image', help_text='Check to remove the certificate image')
-    
+
     class Meta:
         model = Certificate
         exclude = ['organization_logo_file', 'certificate_image_file']  # Exclude model FileFields
@@ -385,13 +443,13 @@ class CertificateAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-            if self.instance.organization_logo_url:
-                self.fields['upload_organization_logo'].help_text = f'✓ Current: External org logo URL set. Upload new file to replace or clear to remove.'
+            if getattr(self.instance, 'organization_logo_url', None):
+                self.fields['organization_logo_url'].help_text = f'✓ Current: External org logo URL set ({self.instance.organization_logo_url}). Upload file to replace or clear to remove.'
             elif self.instance.organization_logo_file:
                 size = getattr(self.instance.organization_logo_file, 'size', 0)
                 self.fields['upload_organization_logo'].help_text = f'✓ Current: Org logo file present ({size} bytes). Upload new file to replace.'
-            if self.instance.certificate_image_url:
-                self.fields['upload_certificate_image'].help_text = f'✓ Current: External certificate image URL set.'
+            if getattr(self.instance, 'certificate_image_url', None):
+                self.fields['certificate_image_url'].help_text = f'✓ Current: External certificate image URL set ({self.instance.certificate_image_url}).'
             elif self.instance.certificate_image_file:
                 size = getattr(self.instance.certificate_image_file, 'size', 0)
                 self.fields['upload_certificate_image'].help_text = f'✓ Current: Certificate image file present ({size} bytes). Upload new file to replace.'
@@ -408,6 +466,13 @@ class CertificateAdminForm(forms.ModelForm):
                 except Exception:
                     pass
             instance.organization_logo_mime = ''
+        elif self.cleaned_data.get('organization_logo_url'):
+            instance.organization_logo_url = self.cleaned_data.get('organization_logo_url')
+            if instance.organization_logo_file:
+                try:
+                    instance.organization_logo_file.delete(save=False)
+                except Exception:
+                    pass
         else:
             org_logo = self.cleaned_data.get('upload_organization_logo')
             if isinstance(org_logo, UploadedFile) and getattr(org_logo, 'size', 0) > 0:
@@ -423,6 +488,13 @@ class CertificateAdminForm(forms.ModelForm):
                 except Exception:
                     pass
             instance.certificate_image_mime = ''
+        elif self.cleaned_data.get('certificate_image_url'):
+            instance.certificate_image_url = self.cleaned_data.get('certificate_image_url')
+            if instance.certificate_image_file:
+                try:
+                    instance.certificate_image_file.delete(save=False)
+                except Exception:
+                    pass
         else:
             cert_image = self.cleaned_data.get('upload_certificate_image')
             if isinstance(cert_image, UploadedFile) and getattr(cert_image, 'size', 0) > 0:
@@ -435,10 +507,11 @@ class CertificateAdminForm(forms.ModelForm):
 
 
 class AchievementAdminForm(forms.ModelForm):
-    """Custom form for Achievement model with image upload"""
+    """Custom form for Achievement model with image upload or external URL"""
+    image_url = forms.URLField(required=False, label='Achievement Image URL', help_text='External achievement image URL')
     upload_achievement_image = forms.ImageField(required=False, label='Upload Achievement Image')
     clear_achievement_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the achievement image')
-    
+
     class Meta:
         model = Achievement
         exclude = ['image_file']  # Exclude model FileField
@@ -446,8 +519,8 @@ class AchievementAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-            if self.instance.image_url:
-                self.fields['upload_achievement_image'].help_text = f'✓ Current: External achievement image URL set. Upload new file to replace or clear to remove.'
+            if getattr(self.instance, 'image_url', None):
+                self.fields['image_url'].help_text = f'✓ Current: External achievement image URL set ({self.instance.image_url}). Upload file to replace or clear to remove.'
             elif self.instance.image_file:
                 size = getattr(self.instance.image_file, 'size', 0)
                 self.fields['upload_achievement_image'].help_text = f'✓ Current: Achievement image file present ({size} bytes). Upload new file to replace.'
@@ -464,6 +537,13 @@ class AchievementAdminForm(forms.ModelForm):
                 except Exception:
                     pass
             instance.image_mime = ''
+        elif self.cleaned_data.get('image_url'):
+            instance.image_url = self.cleaned_data.get('image_url')
+            if instance.image_file:
+                try:
+                    instance.image_file.delete(save=False)
+                except Exception:
+                    pass
         else:
             image = self.cleaned_data.get('upload_achievement_image')
             if isinstance(image, UploadedFile) and getattr(image, 'size', 0) > 0:
@@ -476,12 +556,14 @@ class AchievementAdminForm(forms.ModelForm):
 
 
 class BlogPostAdminForm(forms.ModelForm):
-    """Custom form for BlogPost model with image uploads"""
+    """Custom form for BlogPost model with image uploads or external URLs"""
+    featured_image_url = forms.URLField(required=False, label='Featured Image URL', help_text='External featured image URL (CDN)')
     upload_featured_image = forms.ImageField(required=False, label='Upload Featured Image')
     clear_featured_image = forms.BooleanField(required=False, label='Clear Featured Image', help_text='Check to remove the featured image')
+    og_image_url = forms.URLField(required=False, label='OG Image URL', help_text='External OG image URL')
     upload_og_image = forms.ImageField(required=False, label='Upload OG Image')
     clear_og_image = forms.BooleanField(required=False, label='Clear OG Image', help_text='Check to remove the OG image')
-    
+
     class Meta:
         model = BlogPost
         exclude = ['featured_image_file', 'og_image_file']  # Exclude model FileFields
@@ -489,13 +571,13 @@ class BlogPostAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-            if self.instance.featured_image_url:
-                self.fields['upload_featured_image'].help_text = f'✓ Current: External featured image URL set. Upload new file to replace or clear to remove.'
+            if getattr(self.instance, 'featured_image_url', None):
+                self.fields['featured_image_url'].help_text = f'✓ Current: External featured image URL set ({self.instance.featured_image_url}). Upload file to replace or clear to remove.'
             elif self.instance.featured_image_file:
                 size = getattr(self.instance.featured_image_file, 'size', 0)
                 self.fields['upload_featured_image'].help_text = f'✓ Current: Featured image file present ({size} bytes). Upload new file to replace.'
-            if self.instance.og_image_url:
-                self.fields['upload_og_image'].help_text = f'✓ Current: External OG image URL set.'
+            if getattr(self.instance, 'og_image_url', None):
+                self.fields['og_image_url'].help_text = f'✓ Current: External OG image URL set ({self.instance.og_image_url}).'
             elif self.instance.og_image_file:
                 size = getattr(self.instance.og_image_file, 'size', 0)
                 self.fields['upload_og_image'].help_text = f'✓ Current: OG image file present ({size} bytes). Upload new file to replace.'
@@ -512,6 +594,13 @@ class BlogPostAdminForm(forms.ModelForm):
                 except Exception:
                     pass
             instance.featured_image_mime = ''
+        elif self.cleaned_data.get('featured_image_url'):
+            instance.featured_image_url = self.cleaned_data.get('featured_image_url')
+            if instance.featured_image_file:
+                try:
+                    instance.featured_image_file.delete(save=False)
+                except Exception:
+                    pass
         else:
             featured = self.cleaned_data.get('upload_featured_image')
             if isinstance(featured, UploadedFile) and getattr(featured, 'size', 0) > 0:
@@ -527,7 +616,13 @@ class BlogPostAdminForm(forms.ModelForm):
                 except Exception:
                     pass
             instance.og_image_mime = ''
-        else:
+        elif self.cleaned_data.get('og_image_url'):
+            instance.og_image_url = self.cleaned_data.get('og_image_url')
+            if instance.og_image_file:
+                try:
+                    instance.og_image_file.delete(save=False)
+                except Exception:
+                    pass
             og_image = self.cleaned_data.get('upload_og_image')
             if isinstance(og_image, UploadedFile) and getattr(og_image, 'size', 0) > 0:
                 instance.og_image_file.save(getattr(og_image, 'name', ''), og_image, save=False)
@@ -678,7 +773,7 @@ class ImageAdmin(admin.ModelAdmin):
             'fields': ('image_preview_large',)
         }),
         ('Upload Image', {
-            'fields': ('upload_image', 'clear_image')
+            'fields': ('external_image_url', 'upload_image', 'clear_image')
         }),
         ('Image Data', {
             'fields': ('filename', 'mime_type'),
@@ -836,7 +931,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Profile Image', {
-            'fields': ('profile_preview_large', 'upload_profile_image', 'clear_profile_image')
+            'fields': ('profile_preview_large', 'profile_image_url', 'upload_profile_image', 'clear_profile_image')
         }),
         ('Basic Information', {
             'fields': ('full_name', 'headline', 'bio')
@@ -848,8 +943,8 @@ class ProfileAdmin(admin.ModelAdmin):
             'fields': ('current_role', 'current_company', 'years_of_experience', 'available_for_hire')
         }),
         ('Resume', {
-            'fields': ('resume_info', 'upload_resume', 'clear_resume', 'resume_filename'),
-            'description': 'Upload PDF, DOC, DOCX, or TXT files. The resume filename will be auto-filled from uploaded file.'
+            'fields': ('resume_info', 'resume_url', 'upload_resume', 'clear_resume', 'resume_filename'),
+            'description': 'Upload PDF, DOC, DOCX, or TXT files or set an external resume URL. The resume filename will be auto-filled from uploaded file.'
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
@@ -939,7 +1034,7 @@ class EducationAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Institution Logo', {
-            'fields': ('logo_preview_large', 'upload_logo', 'clear_logo')
+            'fields': ('logo_preview_large', 'logo_url', 'upload_logo', 'clear_logo')
         }),
         ('Education Details', {
             'fields': ('profile', 'institution', 'degree', 'field_of_study', 'grade')
@@ -980,7 +1075,7 @@ class WorkExperienceAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Company Logo', {
-            'fields': ('company_logo_preview_large', 'upload_company_logo', 'clear_company_logo')
+            'fields': ('company_logo_preview_large', 'company_logo_url', 'upload_company_logo', 'clear_company_logo')
         }),
         ('Company Information', {
             'fields': ('profile', 'company_name', 'company_url', 'location')
@@ -1082,7 +1177,7 @@ class CertificateAdmin(admin.ModelAdmin):
             )
         }),
         ('Upload Images', {
-            'fields': ('upload_organization_logo', 'clear_organization_logo', 'upload_certificate_image', 'clear_certificate_image')
+            'fields': ('organization_logo_url', 'upload_organization_logo', 'clear_organization_logo', 'certificate_image_url', 'upload_certificate_image', 'clear_certificate_image')
         }),
         ('Certificate Details', {
             'fields': ('profile', 'title', 'issuing_organization', 'description')
@@ -1125,7 +1220,7 @@ class AchievementAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Achievement Image', {
-            'fields': ('image_preview_large', 'upload_achievement_image', 'clear_achievement_image')
+            'fields': ('image_preview_large', 'image_url', 'upload_achievement_image', 'clear_achievement_image')
         }),
         ('Details', {
             'fields': ('profile', 'title', 'achievement_type', 'issuer', 'date')
@@ -1211,7 +1306,7 @@ class BlogPostAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('SEO - Open Graph', {
-            'fields': ('og_preview', 'og_title', 'og_description', 'upload_og_image', 'clear_og_image'),
+            'fields': ('og_preview', 'og_title', 'og_description', 'og_image_url', 'upload_og_image', 'clear_og_image'),
             'classes': ('collapse',)
         }),
         ('Schema.org', {
@@ -1266,7 +1361,7 @@ class TestimonialAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Author Image', {
-            'fields': ('author_preview_large', 'upload_author_image', 'clear_author_image')
+            'fields': ('author_preview_large', 'author_image_url', 'upload_author_image', 'clear_author_image')
         }),
         ('Author Info', {
             'fields': ('profile', 'author_name', 'author_title', 'author_company', 'linkedin_url')

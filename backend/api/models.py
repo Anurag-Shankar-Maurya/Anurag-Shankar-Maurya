@@ -4,7 +4,6 @@ from django.utils.text import slugify
 from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
-import base64
 from django.db.models import F, Max
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
@@ -41,9 +40,8 @@ class Image(models.Model):
         ('other', 'Other'),
     ]
     
-    # Image data stored as BLOB
-    image_data = models.BinaryField(editable=True, help_text="Image stored as binary data")
-    # FileField for external storage (Cloudinary/S3). Use this to migrate away from BinaryField.
+# External image URL (preferred) and optional file upload for local storage
+    image_url = models.URLField(blank=True, help_text="External image URL (CDN/S3/Cloudinary)")
     image_file = models.ImageField(upload_to='images/', null=True, blank=True)
     
     # Image metadata
@@ -81,42 +79,20 @@ class Image(models.Model):
     def __str__(self):
         return f"{self.filename} ({self.image_type})"
 
-    def get_base64(self):
-        """Return image as base64 encoded string for frontend use"""
-        if self.image_data:
-            return base64.b64encode(self.image_data).decode('utf-8')
-        return None
-
-    def get_data_uri(self):
-        """Return image as data URI for direct embedding in HTML"""
-        if self.image_data:
-            b64 = self.get_base64()
-            return f"data:{self.mime_type};base64,{b64}"
-        return None
-
     @classmethod
-    def create_from_file(cls, file, content_object, image_type='gallery', alt_text='', caption='', order=0):
-        """Helper method to create Image from uploaded file"""
-        from PIL import Image as PILImage
-        import io
-        
-        file_data = file.read()
-        
-        # Get image dimensions
-        width, height = None, None
-        try:
-            img = PILImage.open(io.BytesIO(file_data))
-            width, height = img.size
-        except Exception:
-            pass
-        
+    def create_from_upload_or_url(cls, file=None, url=None, content_object=None, image_type='gallery', alt_text='', caption='', order=0, filename=None, mime_type=None, width=None, height=None, file_size=None):
+        """
+        Create Image from uploaded file or external URL. For file uploads, the file will be saved in `image_file`.
+        For external URLs, `image_url` will be stored. Width/height/file_size may be provided or left blank.
+        """
+        if content_object is None:
+            raise ValueError("content_object is required")
+
         content_type = ContentType.objects.get_for_model(content_object)
-        
-        return cls.objects.create(
-            image_data=file_data,
-            filename=file.name,
-            mime_type=file.content_type or 'image/jpeg',
-            file_size=len(file_data),
+        kwargs = dict(
+            filename=(filename or (getattr(file, 'name', None) if file else None) or (url.split('/')[-1] if url else '') or ''),
+            mime_type=(mime_type or (getattr(file, 'content_type', '') if file else '')),
+            file_size=(file_size or (getattr(file, 'size', 0) if file else 0)),
             width=width,
             height=height,
             image_type=image_type,
@@ -126,6 +102,16 @@ class Image(models.Model):
             object_id=content_object.pk,
             order=order
         )
+
+        if url:
+            kwargs['image_url'] = url
+            return cls.objects.create(**kwargs)
+        elif file:
+            instance = cls.objects.create(**kwargs)
+            instance.image_file.save(getattr(file, 'name', ''), file, save=True)
+            return instance
+        else:
+            raise ValueError("Either file or url must be provided")
 
 
 # ============================================
@@ -138,17 +124,15 @@ class Profile(models.Model):
     headline = models.CharField(max_length=200, help_text="Short professional headline")
     bio = models.TextField(help_text="About me section content")
     
-    # Cover image stored as BLOB
-    profile_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Profile image as binary")
+    # Profile image URL (external) and optional file field
+    profile_image_url = models.URLField(blank=True, help_text="External profile image URL (CDN/S3/Cloudinary)")
     profile_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
-    # File-based profile image (for external storage)
     profile_image_file = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     
-    # Resume as BLOB
-    resume_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Resume file as binary")
+    # Resume URL (external) and optional file field
+    resume_url = models.URLField(blank=True, help_text="External resume URL (PDF)")
     resume_filename = models.CharField(max_length=255, blank=True)
     resume_mime = models.CharField(max_length=100, blank=True)
-    # File-based resume
     resume_file = models.FileField(upload_to='resumes/', null=True, blank=True)
     
     # Related images (gallery)
@@ -547,10 +531,9 @@ class Education(models.Model):
     description = models.TextField(blank=True)
     location = models.CharField(max_length=100, blank=True)
     
-    # Logo stored as BLOB
-    logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Institution logo as binary")
+    # Logo URL (external) and optional file-based logo
+    logo_url = models.URLField(blank=True, help_text="External institution logo URL")
     logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
-    # File-based logo
     logo_file = models.ImageField(upload_to='education_logos/', null=True, blank=True)
     
     # Display on homepage
@@ -607,10 +590,9 @@ class WorkExperience(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='work_experiences')
     company_name = models.CharField(max_length=200)
     
-    # Company logo stored as BLOB
-    company_logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Company logo as binary")
+    # Company logo URL (external) and optional file
+    company_logo_url = models.URLField(blank=True, help_text="External company logo URL")
     company_logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
-    # File-based company logo
     company_logo_file = models.ImageField(upload_to='company_logos/', null=True, blank=True)
     
     company_url = models.URLField(blank=True)
@@ -660,10 +642,9 @@ class Project(models.Model):
     short_description = models.CharField(max_length=300, help_text="Brief description for cards")
     description = models.TextField(help_text="Detailed project description")
     
-    # Featured/Cover image stored as BLOB
-    featured_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Featured image as binary")
+    # Featured/Cover image URL (external) and optional file
+    featured_image_url = models.URLField(blank=True, help_text="External featured image URL (CDN/S3/Cloudinary)")
     featured_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
-    # File-based featured image
     featured_image_file = models.ImageField(upload_to='project_images/', null=True, blank=True)
     featured_image_alt = models.CharField(max_length=255, blank=True, help_text="Alt text for SEO")
     
@@ -741,10 +722,9 @@ class Certificate(models.Model):
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     issuing_organization = models.CharField(max_length=200)
     
-    # Organization logo stored as BLOB
-    organization_logo_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Organization logo as binary")
+    # Organization logo URL (external) and optional file
+    organization_logo_url = models.URLField(blank=True, help_text="External organization logo URL")
     organization_logo_mime = models.CharField(max_length=50, blank=True, default='image/png')
-    # File-based organization logo
     organization_logo_file = models.ImageField(upload_to='certificate_org_logos/', null=True, blank=True)
     
     issue_date = models.DateField()
@@ -753,10 +733,9 @@ class Certificate(models.Model):
     credential_id = models.CharField(max_length=100, blank=True)
     credential_url = models.URLField(blank=True, help_text="URL to verify certificate")
     
-    # Certificate image stored as BLOB
-    certificate_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Certificate image as binary")
+    # Certificate image URL (external) and optional file
+    certificate_image_url = models.URLField(blank=True, help_text="External certificate image URL")
     certificate_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
-    # File-based certificate image
     certificate_image_file = models.ImageField(upload_to='certificate_images/', null=True, blank=True)
     
     description = models.TextField(blank=True)
@@ -826,10 +805,9 @@ class Achievement(models.Model):
     description = models.TextField(blank=True)
     url = models.URLField(blank=True, help_text="Link to achievement or proof")
     
-    # Achievement image stored as BLOB
-    image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Achievement image as binary")
+    # Achievement image URL (external) and optional file
+    image_url = models.URLField(blank=True, help_text="External achievement image URL")
     image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
-    # File-based achievement image
     image_file = models.ImageField(upload_to='achievements/', null=True, blank=True)
     
     order = models.PositiveIntegerField(default=0)
@@ -971,10 +949,9 @@ class BlogPost(models.Model):
     excerpt = models.TextField(max_length=500, help_text="Short summary for previews")
     content = models.TextField(help_text="Full blog post content (supports Markdown)")
     
-    # Featured image stored as BLOB
-    featured_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Featured image as binary")
+    # Featured image URL (external) and optional file
+    featured_image_url = models.URLField(blank=True, help_text="External featured image URL (CDN/S3/Cloudinary)")
     featured_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
-    # File-based featured image
     featured_image_file = models.ImageField(upload_to='blog_featured/', null=True, blank=True)
     featured_image_alt = models.CharField(max_length=200, blank=True, help_text="Alt text for SEO")
     
@@ -1006,10 +983,9 @@ class BlogPost(models.Model):
     og_title = models.CharField(max_length=100, blank=True, help_text="Open Graph title for social sharing")
     og_description = models.CharField(max_length=200, blank=True, help_text="Open Graph description")
     
-    # OG image stored as BLOB
-    og_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Social sharing image as binary (1200x630)")
+    # OG image URL (external) and optional file
+    og_image_url = models.URLField(blank=True, help_text="External social sharing image URL (1200x630)")
     og_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
-    # File-based OG image
     og_image_file = models.ImageField(upload_to='blog_og/', null=True, blank=True)
     
     # Schema.org structured data
@@ -1068,10 +1044,9 @@ class Testimonial(models.Model):
     author_title = models.CharField(max_length=100, help_text="Job title")
     author_company = models.CharField(max_length=100, blank=True)
     
-    # Author image stored as BLOB
-    author_image_data = models.BinaryField(blank=True, null=True, editable=True, help_text="Author image as binary")
+    # Author image URL (external) and optional file
+    author_image_url = models.URLField(blank=True, help_text="External author image URL")
     author_image_mime = models.CharField(max_length=50, blank=True, default='image/jpeg')
-    # File-based author image
     author_image_file = models.ImageField(upload_to='testimonial_authors/', null=True, blank=True)
     
     content = models.TextField()

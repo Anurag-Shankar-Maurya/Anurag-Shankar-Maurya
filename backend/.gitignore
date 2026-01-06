@@ -131,8 +131,7 @@ dmypy.json
 # Project specific
 # Note: media/ directory not needed - images stored as blobs in database
 media/
-gda/staticfiles/
-gda/static/
+portfolio_media/
 *.sqlite3
 *.sqlite3-journal
 

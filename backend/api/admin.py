@@ -952,6 +952,14 @@ class ProfileAdmin(admin.ModelAdmin):
         }),
     )
 
+    def has_add_permission(self, request):
+        """Allow adding only if no Profile exists (singleton enforcement in admin)."""
+        return not Profile.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        """Prevent deleting the singleton Profile via admin."""
+        return False
+
     def profile_preview(self, obj):
         return get_image_preview(obj.profile_image_url or obj.profile_image_file, obj.profile_image_mime, 40, 40)
     profile_preview.short_description = 'Photo'
@@ -1000,20 +1008,22 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(SocialLink, site=portfolio_admin_site)
 class SocialLinkAdmin(admin.ModelAdmin):
     form = SocialLinkAdminForm
-    list_display = ['platform', 'profile', 'url', 'order', 'show_on_home']
+    exclude = ('profile',)
+    list_display = ['platform', 'url', 'order', 'show_on_home']
     list_filter = ['platform', 'show_on_home']
-    search_fields = ['profile__full_name', 'url']
-    ordering = ['profile', 'order']
+    search_fields = ['url']
+    ordering = ['order']
     list_editable = ['show_on_home']
 
 
 @admin.register(Skill, site=portfolio_admin_site)
 class SkillAdmin(admin.ModelAdmin):
     form = SkillAdminForm
-    list_display = ['name', 'profile', 'skill_type', 'proficiency', 'order', 'show_on_home']
+    exclude = ('profile',)
+    list_display = ['name', 'skill_type', 'proficiency', 'order', 'show_on_home']
     list_filter = ['skill_type', 'proficiency', 'show_on_home']
-    search_fields = ['name', 'profile__full_name']
-    ordering = ['profile', 'order', 'name']
+    search_fields = ['name']
+    ordering = ['order', 'name']
 
 
 # ============================================
@@ -1023,6 +1033,7 @@ class SkillAdmin(admin.ModelAdmin):
 @admin.register(Education, site=portfolio_admin_site)
 class EducationAdmin(admin.ModelAdmin):
     form = EducationAdminForm
+    exclude = ('profile',)
     list_display = ['logo_preview', 'degree', 'institution', 'field_of_study', 'start_date', 'end_date', 'is_current', 'show_on_home']
     list_display_links = ['degree']
     list_filter = ['is_current', 'show_on_home', 'start_date']
@@ -1037,7 +1048,7 @@ class EducationAdmin(admin.ModelAdmin):
             'fields': ('logo_preview_large', 'logo_url', 'upload_logo', 'clear_logo')
         }),
         ('Education Details', {
-            'fields': ('profile', 'institution', 'degree', 'field_of_study', 'grade')
+            'fields': ('institution', 'degree', 'field_of_study', 'grade')
         }),
         ('Duration', {
             'fields': ('start_date', 'end_date', 'is_current')
@@ -1064,6 +1075,7 @@ class EducationAdmin(admin.ModelAdmin):
 @admin.register(WorkExperience, site=portfolio_admin_site)
 class WorkExperienceAdmin(admin.ModelAdmin):
     form = WorkExperienceAdminForm
+    exclude = ('profile',)
     list_display = ['company_logo_preview', 'job_title', 'company_name', 'employment_type', 'work_mode', 'start_date', 'is_current', 'show_on_home']
     list_display_links = ['job_title']
     list_filter = ['is_current', 'employment_type', 'work_mode', 'show_on_home', 'start_date']
@@ -1078,7 +1090,7 @@ class WorkExperienceAdmin(admin.ModelAdmin):
             'fields': ('company_logo_preview_large', 'company_logo_url', 'upload_company_logo', 'clear_company_logo')
         }),
         ('Company Information', {
-            'fields': ('profile', 'company_name', 'company_url', 'location')
+            'fields': ('company_name', 'company_url', 'location')
         }),
         ('Position Details', {
             'fields': ('job_title', 'employment_type', 'work_mode')
@@ -1110,6 +1122,7 @@ class WorkExperienceAdmin(admin.ModelAdmin):
 @admin.register(Project, site=portfolio_admin_site)
 class ProjectAdmin(admin.ModelAdmin):
     form = ProjectAdminForm
+    exclude = ('profile',)
     list_display = ['featured_preview', 'title', 'status', 'is_featured', 'is_visible', 'show_on_home', 'order', 'created_at']
     list_display_links = ['title']
     list_filter = ['status', 'is_featured', 'is_visible', 'show_on_home', 'created_at']
@@ -1125,7 +1138,7 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('featured_preview_large', 'upload_featured_image', 'clear_featured_image', 'featured_image_alt')
         }),
         ('Basic Information', {
-            'fields': ('profile', 'title', 'slug', 'short_description', 'description')
+            'fields': ('title', 'slug', 'short_description', 'description')
         }),
         ('Links', {
             'fields': ('live_url', 'github_url', 'demo_url')
@@ -1161,6 +1174,7 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Certificate, site=portfolio_admin_site)
 class CertificateAdmin(admin.ModelAdmin):
     form = CertificateAdminForm
+    exclude = ('profile',)
     list_display = ['org_logo_preview', 'title', 'issuing_organization', 'issue_date', 'does_not_expire', 'show_on_home', 'order']
     list_display_links = ['title']
     list_filter = ['does_not_expire', 'show_on_home', 'issue_date']
@@ -1180,7 +1194,7 @@ class CertificateAdmin(admin.ModelAdmin):
             'fields': ('organization_logo_url', 'upload_organization_logo', 'clear_organization_logo', 'certificate_image_url', 'upload_certificate_image', 'clear_certificate_image')
         }),
         ('Certificate Details', {
-            'fields': ('profile', 'title', 'issuing_organization', 'description')
+            'fields': ('title', 'issuing_organization', 'description')
         }),
         ('Validity', {
             'fields': ('issue_date', 'expiry_date', 'does_not_expire')
@@ -1209,6 +1223,7 @@ class CertificateAdmin(admin.ModelAdmin):
 @admin.register(Achievement, site=portfolio_admin_site)
 class AchievementAdmin(admin.ModelAdmin):
     form = AchievementAdminForm
+    exclude = ('profile',)
     list_display = ['image_preview', 'title', 'achievement_type', 'issuer', 'date', 'order', 'show_on_home']
     list_display_links = ['title']
     list_filter = ['achievement_type', 'show_on_home', 'date']
@@ -1223,7 +1238,7 @@ class AchievementAdmin(admin.ModelAdmin):
             'fields': ('image_preview_large', 'image_url', 'upload_achievement_image', 'clear_achievement_image')
         }),
         ('Details', {
-            'fields': ('profile', 'title', 'achievement_type', 'issuer', 'date')
+            'fields': ('title', 'achievement_type', 'issuer', 'date')
         }),
         ('Additional Info', {
             'fields': ('description', 'url', 'order', 'show_on_home')
@@ -1272,6 +1287,7 @@ class BlogTagAdmin(admin.ModelAdmin):
 @admin.register(BlogPost, site=portfolio_admin_site)
 class BlogPostAdmin(admin.ModelAdmin):
     form = BlogPostAdminForm
+    exclude = ('profile',)
     list_display = ['featured_preview', 'title', 'category', 'status', 'is_featured', 'show_on_home', 'views_count', 'published_at']
     list_display_links = ['title']
     list_filter = ['status', 'is_featured', 'show_on_home', 'category', 'published_at', 'allow_comments']
@@ -1289,7 +1305,7 @@ class BlogPostAdmin(admin.ModelAdmin):
             'fields': ('featured_preview_large', 'upload_featured_image', 'clear_featured_image', 'featured_image_alt')
         }),
         ('Content', {
-            'fields': ('profile', 'title', 'slug', 'excerpt', 'content')
+            'fields': ('title', 'slug', 'excerpt', 'content')
         }),
         ('Categorization', {
             'fields': ('category', 'tags')
@@ -1350,6 +1366,7 @@ class BlogPostAdmin(admin.ModelAdmin):
 @admin.register(Testimonial, site=portfolio_admin_site)
 class TestimonialAdmin(admin.ModelAdmin):
     form = TestimonialAdminForm
+    exclude = ('profile',)
     list_display = ['author_preview', 'author_name', 'author_title', 'author_company', 'rating_display', 'is_featured', 'is_visible', 'show_on_home', 'order']
     list_display_links = ['author_name']
     list_filter = ['is_featured', 'is_visible', 'show_on_home', 'rating', 'date']
@@ -1364,7 +1381,7 @@ class TestimonialAdmin(admin.ModelAdmin):
             'fields': ('author_preview_large', 'author_image_url', 'upload_author_image', 'clear_author_image')
         }),
         ('Author Info', {
-            'fields': ('profile', 'author_name', 'author_title', 'author_company', 'linkedin_url')
+            'fields': ('author_name', 'author_title', 'author_company', 'linkedin_url')
         }),
         ('Testimonial', {
             'fields': ('content', 'rating', 'relationship', 'date')

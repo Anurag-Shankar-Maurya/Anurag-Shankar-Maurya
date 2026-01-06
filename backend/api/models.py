@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import F, Max
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError
 
 
 def reorder_model_items(model_class, filter_kwargs, order_field='order'):
@@ -152,6 +153,25 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @classmethod
+    def get_profile(cls):
+        """Return (and create if needed) the single Profile instance (singleton with pk=1)."""
+        profile, created = cls.objects.get_or_create(pk=1, defaults={
+            'full_name': 'Your Name',
+            'headline': '',
+            'bio': ''
+        })
+        return profile
+
+    def save(self, *args, **kwargs):
+        # Enforce single Profile instance (singleton pattern)
+        if not self.pk and Profile.objects.exists():
+            raise ValidationError("Only one Profile instance is allowed. Use Profile.get_profile() to retrieve it.")
+        if not self.pk:
+            # Ensure the single profile has a stable PK (1) so it can be referenced easily
+            self.pk = 1
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = "Profile"
         verbose_name_plural = "Profile"
@@ -209,7 +229,7 @@ class SocialLink(models.Model):
         'other': 'other',
     }
     
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='social_links')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='social_links', null=True, blank=True)
     platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES)
     url = models.URLField()
     icon = models.CharField(max_length=50, blank=True, help_text="Icon class or name (leave blank for default)")
@@ -222,6 +242,10 @@ class SocialLink(models.Model):
         ordering = ['order']
 
     def save(self, *args, **kwargs):
+        # Ensure profile defaults to singleton profile when not set
+        if not getattr(self, 'profile_id', None):
+            self.profile = Profile.get_profile()
+
         # Auto-fill icon based on platform if not provided
         if not self.icon and self.platform in self.ICON_MAPPING:
             self.icon = self.ICON_MAPPING[self.platform]
@@ -272,7 +296,7 @@ class Skill(models.Model):
         ('expert', 'Expert'),
     ]
     
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='skills')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='skills', null=True, blank=True)
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=120, unique=True, blank=True)
     skill_type = models.CharField(max_length=25, choices=SKILL_TYPE_CHOICES, default='language')
@@ -477,6 +501,10 @@ class Skill(models.Model):
         ordering = ['order', 'name']
 
     def save(self, *args, **kwargs):
+        # Ensure profile defaults to singleton profile when not set
+        if not getattr(self, 'profile_id', None):
+            self.profile = Profile.get_profile()
+
         if not self.slug:
             self.slug = slugify(self.name)
             
@@ -519,7 +547,7 @@ class Skill(models.Model):
 
 class Education(models.Model):
     """Educational qualifications"""
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='education')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='education', null=True, blank=True)
     institution = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     degree = models.CharField(max_length=200)
@@ -550,6 +578,10 @@ class Education(models.Model):
         return f"{self.degree} - {self.institution}"
 
     def save(self, *args, **kwargs):
+        # Ensure profile defaults to singleton profile when not set
+        if not getattr(self, 'profile_id', None):
+            self.profile = Profile.get_profile()
+
         if not self.slug:
             self.slug = slugify(f"{self.institution}-{self.degree}")
             
@@ -587,7 +619,7 @@ class WorkExperience(models.Model):
         ('hybrid', 'Hybrid'),
     ]
     
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='work_experiences')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='work_experiences', null=True, blank=True)
     company_name = models.CharField(max_length=200)
     
     # Company logo URL (external) and optional file
@@ -619,6 +651,12 @@ class WorkExperience(models.Model):
         verbose_name = "Work Experience"
         verbose_name_plural = "Work Experiences"
 
+    def save(self, *args, **kwargs):
+        # Ensure profile defaults to singleton profile when not set
+        if not getattr(self, 'profile_id', None):
+            self.profile = Profile.get_profile()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.job_title} at {self.company_name}"
 
@@ -636,7 +674,7 @@ class Project(models.Model):
         ('archived', 'Archived'),
     ]
     
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='projects')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='projects', null=True, blank=True)
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     short_description = models.CharField(max_length=300, help_text="Brief description for cards")
@@ -679,6 +717,10 @@ class Project(models.Model):
         ordering = ['-is_featured', 'order', '-created_at']
 
     def save(self, *args, **kwargs):
+        # Ensure profile defaults to singleton profile when not set
+        if not getattr(self, 'profile_id', None):
+            self.profile = Profile.get_profile()
+
         if not self.slug:
             self.slug = slugify(self.title)
             
@@ -717,7 +759,7 @@ class Project(models.Model):
 
 class Certificate(models.Model):
     """Professional certifications"""
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='certificates')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='certificates', null=True, blank=True)
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     issuing_organization = models.CharField(max_length=200)
@@ -752,6 +794,10 @@ class Certificate(models.Model):
         ordering = ['order', '-issue_date']
 
     def save(self, *args, **kwargs):
+        # Ensure profile defaults to singleton profile when not set
+        if not getattr(self, 'profile_id', None):
+            self.profile = Profile.get_profile()
+
         if not self.slug:
             self.slug = slugify(self.title)
             
@@ -796,7 +842,7 @@ class Achievement(models.Model):
         ('other', 'Other'),
     ]
     
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='achievements')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='achievements', null=True, blank=True)
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     achievement_type = models.CharField(max_length=20, choices=ACHIEVEMENT_TYPE_CHOICES, default='award')
@@ -822,6 +868,10 @@ class Achievement(models.Model):
         ordering = ['order', '-date']
 
     def save(self, *args, **kwargs):
+        # Ensure profile defaults to singleton profile when not set
+        if not getattr(self, 'profile_id', None):
+            self.profile = Profile.get_profile()
+
         if not self.slug:
             self.slug = slugify(self.title)
             
@@ -941,7 +991,7 @@ class BlogPost(models.Model):
         ('archived', 'Archived'),
     ]
     
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='blog_posts')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='blog_posts', null=True, blank=True)
     
     # Content
     title = models.CharField(max_length=200)
@@ -998,6 +1048,10 @@ class BlogPost(models.Model):
         ordering = ['-published_at', '-created_at']
 
     def save(self, *args, **kwargs):
+        # Ensure profile defaults to singleton profile when not set
+        if not getattr(self, 'profile_id', None):
+            self.profile = Profile.get_profile()
+
         if not self.slug:
             self.slug = slugify(self.title)
             
@@ -1038,7 +1092,7 @@ class BlogPost(models.Model):
 
 class Testimonial(models.Model):
     """Client/colleague testimonials"""
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='testimonials')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='testimonials', null=True, blank=True)
     author_name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=120, unique=True, blank=True)
     author_title = models.CharField(max_length=100, help_text="Job title")
@@ -1066,6 +1120,10 @@ class Testimonial(models.Model):
         ordering = ['-is_featured', 'order', '-date']
 
     def save(self, *args, **kwargs):
+        # Ensure profile defaults to singleton profile when not set
+        if not getattr(self, 'profile_id', None):
+            self.profile = Profile.get_profile()
+
         if not self.slug:
             self.slug = slugify(f"{self.author_name}-{self.date.isoformat()}")
             

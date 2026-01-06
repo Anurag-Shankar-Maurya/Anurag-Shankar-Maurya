@@ -195,8 +195,8 @@ STATICFILES_DIRS = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (user uploads)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/portfolio_media/'
+MEDIA_ROOT = BASE_DIR / 'portfolio_media'
 
 # -------------------------
 # Cloudinary / External Media Toggle

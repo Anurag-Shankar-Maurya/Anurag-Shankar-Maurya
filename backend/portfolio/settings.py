@@ -210,8 +210,9 @@ if USE_CLOUDINARY:
         "default": {
             "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
         },
+        # Keep static files local in development, only use Cloudinary for media
         "staticfiles": {
-            "BACKEND": "cloudinary_storage.storage.StaticHashedCloudinaryStorage",
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
         },
     }
     CLOUDINARY_STORAGE = {
@@ -224,7 +225,7 @@ else:
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
         "staticfiles": {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
         },
     }
 

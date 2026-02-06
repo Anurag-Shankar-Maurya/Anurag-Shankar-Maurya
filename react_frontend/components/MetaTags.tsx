@@ -30,8 +30,24 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
   author,
   schemaData
 }) => {
-  const currentTitle = title || "Anurag Shankar Maurya";
-  const currentDescription = description || "Professional Portfolio of Anurag Shankar Maurya";
+  const ownerName = "Anurag Shankar Maurya";
+  const defaultSkills = ["Django", "Python", "AI", "Generative AI", "React", "Django REST Framework"];
+  const currentTitle = title || ownerName;
+  const currentDescription = description || `${ownerName} — ${defaultSkills.join(', ')}. Professional portfolio showcasing projects, projects, and expertise.`;
+
+  const defaultSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": ownerName,
+    "jobTitle": author || undefined,
+    "description": currentDescription,
+    "skills": defaultSkills,
+    "url": canonical || (typeof window !== 'undefined' ? window.location.origin : undefined),
+    "sameAs": []
+  };
+
+  // Merge any provided schemaData (e.g., pages can pass sameAs/social links)
+  const finalSchema = { ...defaultSchema, ...(schemaData || {}) };
 
   return (
     <Helmet>
@@ -62,11 +78,9 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
       {canonical && <link rel="canonical" href={canonical} />}
 
       {/* Structured Data */}
-      {schemaData && (
-        <script type="application/ld+json">
-          {JSON.stringify(schemaData)}
-        </script>
-      )}
+      <script type="application/ld+json">
+        {JSON.stringify(finalSchema)}
+      </script> 
     </Helmet>
   );
 };

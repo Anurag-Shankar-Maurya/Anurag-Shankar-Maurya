@@ -22,7 +22,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, view, onNavigate, prof
       </div>
 
       <Header view={view} onNavigate={onNavigate} profile={profile} />
-      
+      {/* Hidden site-wide H1 with your full name for SEO (visually hidden but accessible) */}
+      <h1 className="sr-only">{profile?.full_name || 'Anurag Shankar Maurya'}</h1>
+
       <div className="relative z-10 animate-fade-in flex-grow">
         {children}
       </div>

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://anurag-shankar-maurya.vercel.app/sitemap.xml
+Sitemap: https://0.0.0.0:3000/sitemap.xml

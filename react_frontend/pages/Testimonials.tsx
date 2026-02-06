@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Star, Loader2, ArrowLeft, Quote, Linkedin, Calendar, Building, User, Briefcase } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
+import { MetaTags } from '../components/MetaTags';
 import { Button } from '../components/Button';
 import { Testimonial, ViewState } from '../types';
 import { api } from '../services/api';
@@ -31,6 +32,7 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+      <MetaTags title="Testimonials | Anurag Shankar Maurya" description="What colleagues and clients say about working with me." />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.2)]">
           <Quote className="w-8 h-8"/>
@@ -110,6 +112,7 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+      <MetaTags title={test?.author_name ? `${test.author_name} • Testimonial | Anurag Shankar Maurya` : 'Testimonials | Anurag Shankar Maurya'} description={test?.content} ogImage={test?.author_image} />
       <Button variant="ghost" onClick={() => onNavigate({ type: 'TESTIMONIALS' })} className="mb-8 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Testimonials
       </Button>

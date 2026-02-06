@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { GraduationCap, ArrowRight, ArrowLeft, Calendar, Loader2 } from 'lucide-react';
+import { MetaTags } from '../components/MetaTags';
 import { Button } from '../components/Button';
 import Gallery from '../components/Gallery';
 import { Education, ViewState } from '../types';
@@ -8,6 +9,7 @@ import { api } from '../services/api';
 
 export const EducationView: React.FC<{ education: Education[], onNavigate: (view: ViewState) => void }> = ({ education, onNavigate }) => (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+    <MetaTags title="Education | Anurag Shankar Maurya" description="Academic background and qualifications." />
     <div className="flex items-center gap-4 mb-12">
       <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.2)]"><GraduationCap className="w-8 h-8"/></div>
       <div>
@@ -62,6 +64,7 @@ export const EducationDetailView: React.FC<{ slug: string, onNavigate: (view: Vi
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
+      <MetaTags title={education?.institution ? `${education.institution} | Education | Anurag Shankar Maurya` : 'Education | Anurag Shankar Maurya'} description={education?.description} />
       <Button variant="ghost" onClick={() => onNavigate({ type: 'EDUCATION' })} className="mb-8 pl-0 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Education
       </Button>

@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { Briefcase, Loader2, ArrowLeft, MapPin } from 'lucide-react';
 import { Button } from '../components/Button';
+import { MetaTags } from '../components/MetaTags';
 import Gallery from '../components/Gallery';
 import { WorkExperience, ViewState } from '../types';
 import { api } from '../services/api';
 
 export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate: (view: ViewState) => void }> = ({ experience, onNavigate }) => (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+    <MetaTags title="Work Experience | Anurag Shankar Maurya" description="My professional journey and career milestones." />
     <div className="flex items-center gap-4 mb-12">
       <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)]"><Briefcase className="w-8 h-8"/></div>
       <div>
@@ -69,6 +71,7 @@ export const ExperienceDetailView: React.FC<{ id: number, onNavigate: (view: Vie
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
+      <MetaTags title={experience?.job_title ? `${experience.job_title} at ${experience.company_name} | Experience | Anurag Shankar Maurya` : 'Work Experience | Anurag Shankar Maurya'} description={experience?.description} />
       <Button variant="ghost" onClick={() => onNavigate({ type: 'EXPERIENCE' })} className="mb-8 pl-0 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Experience
       </Button>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ImageIcon, Loader2, RefreshCw, Filter, Layers, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import Gallery from '../components/Gallery';
+import { MetaTags } from '../components/MetaTags';
 import { api } from '../services/api';
 import { Image } from '../types';
 import { Button } from '../components/Button';
@@ -85,6 +86,7 @@ export const GalleryView: React.FC = () => {
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+      <MetaTags title="Visual Gallery | Anurag Shankar Maurya" description="Explore the visual narrative of my journey." />
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
         <div className="flex items-center gap-5">
           <div className="p-4 bg-pink-500/10 rounded-2xl text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.15)] ring-1 ring-pink-500/20">

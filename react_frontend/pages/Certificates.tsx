@@ -4,6 +4,7 @@ import { Award, ArrowRight, ArrowLeft, ExternalLink, Loader2 } from 'lucide-reac
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
+import { MetaTags } from '../components/MetaTags';
 import { Certificate, ViewState } from '../types';
 import { api } from '../services/api';
 
@@ -20,6 +21,7 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigat
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto animate-fade-in-up">
+       <MetaTags title="Certificates | Anurag Shankar Maurya" description="Recognitions and professional validations." />
        <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-yellow-500/10 rounded-xl text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.2)]"><Award className="w-8 h-8"/></div>
         <div>
@@ -78,6 +80,7 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+      <MetaTags title={cert?.title ? `${cert.title} | Certificate | Anurag Shankar Maurya` : 'Certificates | Anurag Shankar Maurya'} description={cert?.description} ogImage={cert?.certificate_image} />
       <Button variant="ghost" onClick={() => onNavigate({ type: 'CERTIFICATES' })} className="mb-8 pl-0 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to List
       </Button>

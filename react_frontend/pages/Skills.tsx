@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Zap, Loader2, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/Button';
+import { MetaTags } from '../components/MetaTags';
 import { Skill, ViewState } from '../types';
 import { api } from '../services/api';
 import { Icons, IconName } from '../components/Icons';
@@ -18,6 +19,7 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+      <MetaTags title="Skills & Expertise | Anurag Shankar Maurya" description="A comprehensive list of my technical capabilities." />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-green-500/10 rounded-xl text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]"><Zap className="w-8 h-8"/></div>
         <div>
@@ -73,6 +75,7 @@ export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSt
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto text-center animate-fade-in-up">
+      <MetaTags title={skill?.name ? `${skill.name} | Skills | Anurag Shankar Maurya` : 'Skills | Anurag Shankar Maurya'} description={skill?.description || `Details about ${skill?.name || 'this skill'}.`} />
       <Button variant="ghost" onClick={() => onNavigate({ type: 'SKILLS' })} className="mb-12 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Skills
       </Button>

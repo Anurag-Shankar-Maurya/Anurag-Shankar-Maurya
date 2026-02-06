@@ -52,6 +52,13 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
     return tag;
   }).filter(Boolean);
 
+  // Compute a dynamic page title so filters show in the browser tab
+  const pageTitle = selectedCategory
+    ? `${categories.find(c => c?.slug === selectedCategory)?.name || selectedCategory} | Blog | Anurag Shankar Maurya`
+    : selectedTag
+    ? `${allTags.find(t => t?.slug === selectedTag)?.name || selectedTag} | Blog | Anurag Shankar Maurya`
+    : 'Blog & Insights | Anurag Shankar Maurya';
+
   const openSingle = (src: string, alt?: string) => {
     setLbImages([{ src, alt }]);
     setLbOpen(true);
@@ -59,6 +66,7 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+      <MetaTags title={pageTitle} description="Thoughts on software engineering, product design, and the tech industry." />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]"><BookOpen className="w-8 h-8"/></div>
         <div>

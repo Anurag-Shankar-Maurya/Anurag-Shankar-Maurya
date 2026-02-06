@@ -12,6 +12,17 @@ interface AboutProps {
 }
 
 export const About: React.FC<AboutProps> = ({ profile, experience, onNavigate }) => {
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": profile?.full_name || "Anurag Shankar Maurya",
+    "jobTitle": profile?.headline,
+    "description": profile?.bio,
+    "image": profile?.profile_image,
+    "url": typeof window !== 'undefined' ? window.location.origin : undefined,
+    "sameAs": profile?.social_links?.map(l => l.url) || []
+  };
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-32 animate-fade-in-up">
       <MetaTags 
@@ -19,6 +30,7 @@ export const About: React.FC<AboutProps> = ({ profile, experience, onNavigate })
         description={`Learn more about ${profile?.full_name}, ${profile?.headline}. Experience, background, and career path.`}
         keywords={`about, biography, experience, ${profile?.full_name}`}
         ogImage={profile?.profile_image}
+        schemaData={schemaData}
       />
       {/* Hero Section */}
       <section className="relative group">

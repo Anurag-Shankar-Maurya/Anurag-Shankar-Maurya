@@ -87,14 +87,14 @@ export const Home: React.FC<HomeProps> = ({
           </div>
         )}
         
-        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-[1.1] animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          {profile?.headline.split(' ').map((word, i) => (
-            <span key={i} className={`inline-block mr-3 ${i > 2 ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400" : ""}`}>
-              {word} 
-            </span>
-          ))}
+        <h1 className="text-5xl md:text-7xl font-bold text-white mb-2 tracking-tight leading-[1.1] animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          {profile?.full_name || "Anurag Shankar Maurya"}
         </h1>
-        
+
+        <h2 className="text-3xl md:text-4xl font-semibold text-gray-200 mb-6 tracking-tight animate-fade-in-up" style={{ animationDelay: '0.25s' }}>
+          {profile?.headline}
+        </h2>
+
         <div className="prose prose-invert max-w-2xl mb-8 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           <p className="text-xl text-gray-400 leading-relaxed font-light">
             {profile?.bio}

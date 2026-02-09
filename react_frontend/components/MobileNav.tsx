@@ -45,7 +45,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
                 <button
                   key={item.label}
                   onClick={() => handleNavigate({ type: item.view })}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors text-left"
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70"
                 >
                   <div className={`p-2 rounded-lg ${item.bg} ${item.color}`}>
                     <item.icon className="w-5 h-5" />
@@ -71,7 +71,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
                 onClick={() => { setIsMenuOpen(false); onNavigate({ type: item.view }); }}
                 className={`relative p-3 rounded-full transition-all duration-300 ${
                   isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
+                } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70`}
+                aria-current={isActive ? 'page' : undefined}
               >
                 <item.icon className="w-5 h-5" />
                 <span className="sr-only">{item.label}</span>
@@ -84,7 +85,9 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`relative p-3 rounded-full transition-all duration-300 ${
               isMenuOpen ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'
-            }`}
+            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70`}
+            aria-expanded={isMenuOpen}
+            aria-label="Toggle mobile menu"
           >
             <ArrowUp className="w-5 h-5" />
             <span className="sr-only">Menu</span>

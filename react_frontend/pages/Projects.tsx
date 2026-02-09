@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ArrowLeft, Loader2, Search, X } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2, Search, X, LayoutGrid, List } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
@@ -15,6 +15,8 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
   const [lbIndex, setLbIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedTechnology, setSelectedTechnology] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [paginatedData, setPaginatedData] = useState<PaginatedResponse<Project> | null>(null);
   const [loading, setLoading] = useState(false);
@@ -43,6 +45,22 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
 
   // Extract unique statuses from initial projects
   const statuses = Array.from(new Set(projects.map(p => p.status)));
+  const technologies = Array.from(
+    new Set(
+      projects
+        .flatMap((p) => p.technologies.split(','))
+        .map((t) => t.trim())
+        .filter(Boolean)
+    )
+  ).slice(0, 20);
+
+  const displayedProjects = (paginatedData?.results || []).filter((project) => {
+    if (!selectedTechnology) return true;
+    return project.technologies
+      .split(',')
+      .map((tech) => tech.trim().toLowerCase())
+      .includes(selectedTechnology.toLowerCase());
+  });
 
   const handleOpenGallery = (project: Project, index = 0) => {
     const imgs = [
@@ -65,7 +83,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
       <p className="text-gray-400 max-w-2xl mb-12">A complete archive of my open source contributions, client work, and side projects.</p>
       
       {/* Search Bar */}
-      <div className="mb-8 relative">
+      <div className="mb-6 relative">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input 
@@ -73,13 +91,33 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
             placeholder="Search projects by title, description, or technology..." 
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus-visible:ring-2 focus-visible:ring-blue-400/70 transition-colors"
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">
+            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 rounded-md">
               <X className="w-4 h-4" />
             </button>
           )}
+        </div>
+      </div>
+
+      {/* View Toggle */}
+      <div className="mb-8 flex items-center justify-end">
+        <div className="inline-flex items-center p-1 rounded-lg bg-white/5 border border-white/10">
+          <button
+            onClick={() => setViewMode('grid')}
+            className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${viewMode === 'grid' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-white/5'}`}
+            aria-pressed={viewMode === 'grid'}
+          >
+            <LayoutGrid className="w-4 h-4" /> Grid
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-white/5'}`}
+            aria-pressed={viewMode === 'list'}
+          >
+            <List className="w-4 h-4" /> List
+          </button>
         </div>
       </div>
 
@@ -90,7 +128,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
           <div className="flex flex-wrap gap-2">
             <button 
               onClick={() => { setSelectedStatus(null); setCurrentPage(1); }}
-              className={`px-4 py-2 rounded-lg transition-colors capitalize ${!selectedStatus ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+              className={`px-4 py-2 rounded-lg transition-colors capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${!selectedStatus ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
             >
               All
             </button>
@@ -98,7 +136,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
               <button 
                 key={status}
                 onClick={() => { setSelectedStatus(status); setCurrentPage(1); }}
-                className={`px-4 py-2 rounded-lg transition-colors capitalize ${selectedStatus === status ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                className={`px-4 py-2 rounded-lg transition-colors capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${selectedStatus === status ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
               >
                 {status}
               </button>
@@ -107,23 +145,62 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
         </div>
       )}
 
+      {/* Technology Filter */}
+      {technologies.length > 0 && (
+        <div className="mb-10">
+          <h3 className="text-sm font-semibold text-gray-400 mb-3">Tech Stack</h3>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedTechnology(null)}
+              className={`px-3 py-1.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${!selectedTechnology ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+            >
+              All Tech
+            </button>
+            {technologies.map((tech) => (
+              <button
+                key={tech}
+                onClick={() => setSelectedTechnology(tech)}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${selectedTechnology === tech ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+              >
+                {tech}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Projects Grid */}
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-blue-400" /></div>
-      ) : paginatedData && paginatedData.results.length > 0 ? (
+        <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6 mb-8`}>
+          {Array.from({ length: viewMode === 'grid' ? 6 : 4 }).map((_, idx) => (
+            <div key={idx} className={`glass-card rounded-2xl overflow-hidden animate-pulse ${viewMode === 'list' ? 'flex gap-4 p-4 items-start' : ''}`}>
+              <div className={`${viewMode === 'list' ? 'w-56 h-36 rounded-xl' : 'w-full aspect-video'} bg-white/5`} />
+              <div className={`${viewMode === 'list' ? 'flex-1' : 'p-6'} ${viewMode === 'list' ? '' : ''}`}>
+                <div className={`${viewMode === 'list' ? 'mt-0' : ''} h-5 w-3/4 bg-white/10 rounded mb-3`} />
+                <div className="h-4 w-full bg-white/5 rounded mb-2" />
+                <div className="h-4 w-2/3 bg-white/5 rounded mb-4" />
+                <div className="flex gap-2">
+                  <div className="h-6 w-16 bg-white/5 rounded" />
+                  <div className="h-6 w-20 bg-white/5 rounded" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : paginatedData && displayedProjects.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {paginatedData.results.map((project, index) => (
+          <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6 mb-8`}>
+            {displayedProjects.map((project, index) => (
               <div 
                 key={project.id} 
-                className="group flex flex-col glass-card rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+                className={`group glass-card rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 cursor-pointer ${viewMode === 'list' ? 'flex flex-col md:flex-row' : 'flex flex-col'}`}
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter') onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug }); }}
               >
-                <div className="aspect-video bg-black/50 overflow-hidden relative">
+                <div className={`${viewMode === 'list' ? 'md:w-[320px] md:min-w-[320px]' : ''} aspect-video bg-black/50 overflow-hidden relative`}>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                   <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -222,7 +299,19 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
         </>
       ) : (
         <div className="text-center py-12">
-          <p className="text-gray-400">No projects found matching your filters.</p>
+          <p className="text-gray-300 text-lg font-medium mb-2">No projects match these filters yet.</p>
+          <p className="text-gray-500 mb-5">Try clearing status, tech stack, or search to view more projects.</p>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setSearchQuery('');
+              setSelectedStatus(null);
+              setSelectedTechnology(null);
+              setCurrentPage(1);
+            }}
+          >
+            Reset Filters
+          </Button>
         </div>
       )}
 

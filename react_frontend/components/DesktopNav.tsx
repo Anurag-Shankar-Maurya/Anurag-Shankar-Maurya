@@ -12,8 +12,20 @@ interface DesktopNavProps {
 export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate, scrolled }) => {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
 
+  const isViewActive = (type: ViewState['type']) => {
+    if (type === 'PROJECTS') return currentView.type === 'PROJECTS' || currentView.type === 'PROJECT_DETAIL';
+    if (type === 'BLOG') return currentView.type === 'BLOG' || currentView.type === 'BLOG_DETAIL';
+    if (type === 'EXPERIENCE') return currentView.type === 'EXPERIENCE' || currentView.type === 'EXPERIENCE_DETAIL';
+    if (type === 'EDUCATION') return currentView.type === 'EDUCATION' || currentView.type === 'EDUCATION_DETAIL';
+    if (type === 'SKILLS') return currentView.type === 'SKILLS' || currentView.type === 'SKILL_DETAIL';
+    if (type === 'CERTIFICATES') return currentView.type === 'CERTIFICATES' || currentView.type === 'CERTIFICATE_DETAIL';
+    if (type === 'ACHIEVEMENTS') return currentView.type === 'ACHIEVEMENTS' || currentView.type === 'ACHIEVEMENT_DETAIL';
+    if (type === 'TESTIMONIALS') return currentView.type === 'TESTIMONIALS' || currentView.type === 'TESTIMONIAL_DETAIL';
+    return currentView.type === type;
+  };
+
   const navItemClass = (isActive: boolean) => 
-    `text-sm font-medium transition-colors cursor-pointer ${isActive ? 'text-white' : 'text-gray-400 hover:text-white'}`;
+    `relative text-sm font-medium transition-colors cursor-pointer px-1 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-md ${isActive ? 'text-white' : 'text-gray-400 hover:text-white'}`;
 
   const handleMegaMenuClick = (view: ViewState) => {
     onNavigate(view);
@@ -24,27 +36,35 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
     <nav className="hidden md:flex items-center gap-6 relative">
       <button 
         onClick={() => onNavigate({ type: 'HOME' })}
-        className={navItemClass(currentView.type === 'HOME')}
+        className={navItemClass(isViewActive('HOME'))}
+        aria-current={isViewActive('HOME') ? 'page' : undefined}
       >
         Home
+        {isViewActive('HOME') && <span className="absolute left-1 right-1 -bottom-0.5 h-0.5 rounded-full bg-blue-400" />}
       </button>
       <button 
         onClick={() => onNavigate({ type: 'PROJECTS' })}
-        className={navItemClass(currentView.type === 'PROJECTS')}
+        className={navItemClass(isViewActive('PROJECTS'))}
+        aria-current={isViewActive('PROJECTS') ? 'page' : undefined}
       >
         Projects
+        {isViewActive('PROJECTS') && <span className="absolute left-1 right-1 -bottom-0.5 h-0.5 rounded-full bg-blue-400" />}
       </button>
       <button 
         onClick={() => onNavigate({ type: 'BLOG' })}
-        className={navItemClass(currentView.type === 'BLOG')}
+        className={navItemClass(isViewActive('BLOG'))}
+        aria-current={isViewActive('BLOG') ? 'page' : undefined}
       >
         Blog
+        {isViewActive('BLOG') && <span className="absolute left-1 right-1 -bottom-0.5 h-0.5 rounded-full bg-blue-400" />}
       </button>
       <button 
         onClick={() => onNavigate({ type: 'GALLERY' })}
-        className={navItemClass(currentView.type === 'GALLERY')}
+        className={navItemClass(isViewActive('GALLERY'))}
+        aria-current={isViewActive('GALLERY') ? 'page' : undefined}
       >
         Gallery
+        {isViewActive('GALLERY') && <span className="absolute left-1 right-1 -bottom-0.5 h-0.5 rounded-full bg-blue-400" />}
       </button>
       
       {/* Split Profile / Mega Menu Trigger */}
@@ -53,13 +73,15 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
         onMouseLeave={() => setIsMegaMenuOpen(false)}
       >
         <button 
-          className={navItemClass(currentView.type === 'ABOUT')}
+          className={navItemClass(isViewActive('ABOUT'))}
           onClick={() => onNavigate({ type: 'ABOUT' })}
+          aria-current={isViewActive('ABOUT') ? 'page' : undefined}
         >
           Profile
+          {isViewActive('ABOUT') && <span className="absolute left-1 right-1 -bottom-0.5 h-0.5 rounded-full bg-blue-400" />}
         </button>
         <button
-          className={`p-1 rounded hover:bg-white/10 transition-colors ${isMegaMenuOpen ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white'}`}
+          className={`p-1 rounded hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${isMegaMenuOpen ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white'}`}
           onClick={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
           onMouseEnter={() => setIsMegaMenuOpen(true)}
           aria-label="Open profile menu"
@@ -139,7 +161,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
 
       <button 
         onClick={() => onNavigate({ type: 'CONTACT' })}
-        className="px-4 py-2 text-sm font-medium bg-white/10 hover:bg-white/20 text-white rounded-full transition-all border border-white/5"
+        className="px-4 py-2 text-sm font-medium bg-white/10 hover:bg-white/20 text-white rounded-full transition-all border border-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70"
       >
         Contact Me
       </button>

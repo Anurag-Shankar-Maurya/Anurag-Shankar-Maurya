@@ -16,6 +16,8 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [selectedTechnology, setSelectedTechnology] = useState<string | null>(null);
+  const [techSearchQuery, setTechSearchQuery] = useState('');
+  const [showAllTechnologies, setShowAllTechnologies] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [paginatedData, setPaginatedData] = useState<PaginatedResponse<Project> | null>(null);
@@ -45,14 +47,24 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
 
   // Extract unique statuses from initial projects
   const statuses = Array.from(new Set(projects.map(p => p.status)));
-  const technologies = Array.from(
-    new Set(
-      projects
-        .flatMap((p) => p.technologies.split(','))
-        .map((t) => t.trim())
-        .filter(Boolean)
-    )
-  ).slice(0, 20);
+  const technologyCountMap = projects
+    .flatMap((p) => p.technologies.split(','))
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .reduce((acc, tech) => {
+      acc[tech] = (acc[tech] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+  const technologies = (Object.entries(technologyCountMap) as Array<[string, number]>)
+    .sort((a, b) => b[1] - a[1])
+    .map(([tech]) => tech);
+
+  const filteredTechnologies = technologies.filter((tech) =>
+    tech.toLowerCase().includes(techSearchQuery.toLowerCase())
+  );
+
+  const visibleTechnologies = showAllTechnologies ? filteredTechnologies : filteredTechnologies.slice(0, 8);
 
   const displayedProjects = (paginatedData?.results || []).filter((project) => {
     if (!selectedTechnology) return true;
@@ -148,7 +160,30 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
       {/* Technology Filter */}
       {technologies.length > 0 && (
         <div className="mb-10">
-          <h3 className="text-sm font-semibold text-gray-400 mb-3">Tech Stack</h3>
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <h3 className="text-sm font-semibold text-gray-400">Tech Stack</h3>
+            {technologies.length > 8 && (
+              <button
+                onClick={() => setShowAllTechnologies((prev) => !prev)}
+                className="text-xs px-2.5 py-1 rounded-md bg-white/5 text-gray-300 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70"
+              >
+                {showAllTechnologies ? 'Show less' : `Show all (${technologies.length})`}
+              </button>
+            )}
+          </div>
+
+          {technologies.length > 8 && (
+            <div className="mb-3">
+              <input
+                type="text"
+                value={techSearchQuery}
+                onChange={(e) => setTechSearchQuery(e.target.value)}
+                placeholder="Find a technology tag..."
+                className="w-full md:max-w-sm px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus-visible:ring-2 focus-visible:ring-blue-400/70"
+              />
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setSelectedTechnology(null)}
@@ -156,7 +191,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
             >
               All Tech
             </button>
-            {technologies.map((tech) => (
+            {visibleTechnologies.map((tech) => (
               <button
                 key={tech}
                 onClick={() => setSelectedTechnology(tech)}
@@ -166,6 +201,9 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
               </button>
             ))}
           </div>
+          {techSearchQuery && filteredTechnologies.length === 0 && (
+            <p className="text-xs text-gray-500 mt-2">No technology tags found for “{techSearchQuery}”.</p>
+          )}
         </div>
       )}
 

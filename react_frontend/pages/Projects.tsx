@@ -298,6 +298,11 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
                     {project.technologies.split(',').slice(0, 3).map(t => (
                       <span key={t} className="px-2 py-1 text-xs bg-white/5 rounded-md text-gray-300 border border-white/5">{t.trim()}</span>
                     ))}
+                    {project.technologies.split(',').length > 3 && (
+                      <span className="px-2 py-1 text-xs text-gray-400 bg-white/5 rounded-md border border-dashed border-white/20">
+                        +{project.technologies.split(',').length - 3} more
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

@@ -5,6 +5,7 @@ import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
+import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { BlogPost, ViewState, PaginatedResponse } from '../types';
 import { api } from '../services/api';
 
@@ -367,9 +368,10 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
         author={authorName}
         schemaData={schemaData}
       />
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'BLOG' })} className="mb-8 pl-0 hover:pl-2 transition-all">
-        <ArrowLeft className="w-4 h-4 mr-2"/> Back to Blog
-      </Button>
+      <Breadcrumb 
+        items={generateBreadcrumbs({ type: 'BLOG_DETAIL', slug }, post.title)} 
+        onNavigate={onNavigate} 
+      />
 
       <div className="mb-10 text-center">
          <div className="inline-block px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-bold uppercase tracking-widest mb-6">

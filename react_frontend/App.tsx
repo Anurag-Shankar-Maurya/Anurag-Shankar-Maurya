@@ -6,6 +6,7 @@ import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 're
 
 // Components
 import { Layout } from './components/Layout';
+import { ReducedMotionWrapper } from './components/PageTransition';
 
 // Lazy Loaded Pages
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
@@ -122,31 +123,33 @@ const App: React.FC = () => {
 
   return (
     <Layout view={view} onNavigate={navigateTo} profile={profile}>
-      <Suspense fallback={<LoadingFallback />}>
-        <Routes>
-          <Route path="/" element={<Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} experience={experience} education={education} certificates={certificates} achievements={achievements} testimonials={testimonials} galleryImages={images} onNavigate={navigateTo} />} />
-          <Route path="/projects" element={<ProjectsView projects={projects} onNavigate={navigateTo} />} />
-          <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
-          <Route path="/blog" element={<BlogView posts={blogPosts} onNavigate={navigateTo} />} />
-          <Route path="/blog/:slug" element={<BlogDetailRoute />} />
-          <Route path="/about" element={<About profile={profile} experience={experience} onNavigate={navigateTo} />} />
-          <Route path="/contact" element={<Contact profile={profile} />} />
-          <Route path="/experience" element={<ExperienceView experience={experience} onNavigate={navigateTo} />} />
-          <Route path="/experience/:id" element={<ExperienceDetailRoute />} />
-          <Route path="/education" element={<EducationView education={education} onNavigate={navigateTo} />} />
-          <Route path="/education/:slug" element={<EducationDetailRoute />} />
-          <Route path="/skills" element={<SkillsView skills={skills} onNavigate={navigateTo} />} />
-          <Route path="/skills/:slug" element={<SkillDetailRoute />} />
-          <Route path="/certificates" element={<CertificatesView certificates={certificates} onNavigate={navigateTo} />} />
-          <Route path="/certificates/:slug" element={<CertificateDetailRoute />} />
-          <Route path="/achievements" element={<AchievementsView achievements={achievements} onNavigate={navigateTo} />} />
-          <Route path="/achievements/:slug" element={<AchievementDetailRoute />} />
-          <Route path="/testimonials" element={<TestimonialsView testimonials={testimonials} onNavigate={navigateTo} />} />
-          <Route path="/testimonials/:slug" element={<TestimonialDetailRoute />} />
-          <Route path="/gallery" element={<GalleryView />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+      <ReducedMotionWrapper>
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} experience={experience} education={education} certificates={certificates} achievements={achievements} testimonials={testimonials} galleryImages={images} onNavigate={navigateTo} />} />
+            <Route path="/projects" element={<ProjectsView projects={projects} onNavigate={navigateTo} />} />
+            <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
+            <Route path="/blog" element={<BlogView posts={blogPosts} onNavigate={navigateTo} />} />
+            <Route path="/blog/:slug" element={<BlogDetailRoute />} />
+            <Route path="/about" element={<About profile={profile} experience={experience} onNavigate={navigateTo} />} />
+            <Route path="/contact" element={<Contact profile={profile} />} />
+            <Route path="/experience" element={<ExperienceView experience={experience} onNavigate={navigateTo} />} />
+            <Route path="/experience/:id" element={<ExperienceDetailRoute />} />
+            <Route path="/education" element={<EducationView education={education} onNavigate={navigateTo} />} />
+            <Route path="/education/:slug" element={<EducationDetailRoute />} />
+            <Route path="/skills" element={<SkillsView skills={skills} onNavigate={navigateTo} />} />
+            <Route path="/skills/:slug" element={<SkillDetailRoute />} />
+            <Route path="/certificates" element={<CertificatesView certificates={certificates} onNavigate={navigateTo} />} />
+            <Route path="/certificates/:slug" element={<CertificateDetailRoute />} />
+            <Route path="/achievements" element={<AchievementsView achievements={achievements} onNavigate={navigateTo} />} />
+            <Route path="/achievements/:slug" element={<AchievementDetailRoute />} />
+            <Route path="/testimonials" element={<TestimonialsView testimonials={testimonials} onNavigate={navigateTo} />} />
+            <Route path="/testimonials/:slug" element={<TestimonialDetailRoute />} />
+            <Route path="/gallery" element={<GalleryView />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </ReducedMotionWrapper>
     </Layout>
   );
 };

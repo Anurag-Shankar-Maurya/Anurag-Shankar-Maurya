@@ -5,6 +5,7 @@ import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
+import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { Project, ViewState, PaginatedResponse } from '../types';
 import { api } from '../services/api';
 import { Icons, SocialIcons } from '../components/Icons';
@@ -431,9 +432,10 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
         ogImage={project.featured_image}
         schemaData={schemaData}
       />
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'PROJECTS' })} className="mb-8 pl-0 hover:pl-2 transition-all">
-        <ArrowLeft className="w-4 h-4 mr-2"/> Back to Projects
-      </Button>
+      <Breadcrumb 
+        items={generateBreadcrumbs({ type: 'PROJECT_DETAIL', slug }, project.title)} 
+        onNavigate={onNavigate} 
+      />
       
       <div className="glass-card p-2 rounded-3xl mb-12">
         <button onClick={() => openGallery(0)} className="w-full block">

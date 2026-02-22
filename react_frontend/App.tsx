@@ -14,7 +14,6 @@ const ProjectsView = lazy(() => import('./pages/Projects').then(m => ({ default:
 const ProjectDetailView = lazy(() => import('./pages/Projects').then(m => ({ default: m.ProjectDetailView })));
 const BlogView = lazy(() => import('./pages/Blog').then(m => ({ default: m.BlogView })));
 const BlogDetailView = lazy(() => import('./pages/Blog').then(m => ({ default: m.BlogDetailView })));
-const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })));
 const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
 const ExperienceView = lazy(() => import('./pages/Experience').then(m => ({ default: m.ExperienceView })));
 const ExperienceDetailView = lazy(() => import('./pages/Experience').then(m => ({ default: m.ExperienceDetailView })));
@@ -53,7 +52,6 @@ const App: React.FC = () => {
       case 'PROJECT_DETAIL': return `/projects/${v.slug}`;
       case 'BLOG': return '/blog';
       case 'BLOG_DETAIL': return `/blog/${v.slug}`;
-      case 'ABOUT': return '/about';
       case 'EXPERIENCE': return '/experience';
       case 'EXPERIENCE_DETAIL': return `/experience/${v.id}`;
       case 'EDUCATION': return '/education';
@@ -78,7 +76,6 @@ const App: React.FC = () => {
     if (pathname.startsWith('/projects/')) return { type: 'PROJECT_DETAIL', slug: pathname.split('/')[2] };
     if (pathname === '/blog') return { type: 'BLOG' };
     if (pathname.startsWith('/blog/')) return { type: 'BLOG_DETAIL', slug: pathname.split('/')[2] };
-    if (pathname === '/about') return { type: 'ABOUT' };
     if (pathname === '/contact') return { type: 'CONTACT' };
     if (pathname === '/experience') return { type: 'EXPERIENCE' };
     if (pathname.startsWith('/experience/')) return { type: 'EXPERIENCE_DETAIL', id: Number(pathname.split('/')[2]) };
@@ -131,7 +128,6 @@ const App: React.FC = () => {
             <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
             <Route path="/blog" element={<BlogView posts={blogPosts} onNavigate={navigateTo} />} />
             <Route path="/blog/:slug" element={<BlogDetailRoute />} />
-            <Route path="/about" element={<About profile={profile} experience={experience} onNavigate={navigateTo} />} />
             <Route path="/contact" element={<Contact profile={profile} />} />
             <Route path="/experience" element={<ExperienceView experience={experience} onNavigate={navigateTo} />} />
             <Route path="/experience/:id" element={<ExperienceDetailRoute />} />

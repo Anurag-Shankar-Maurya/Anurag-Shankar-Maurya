@@ -184,7 +184,6 @@ export type ViewState =
   | { type: 'PROJECT_DETAIL'; slug: string }
   | { type: 'BLOG' }
   | { type: 'BLOG_DETAIL'; slug: string }
-  | { type: 'ABOUT' }
   | { type: 'CONTACT' }
   | { type: 'EXPERIENCE' }
   | { type: 'EXPERIENCE_DETAIL'; id: number }

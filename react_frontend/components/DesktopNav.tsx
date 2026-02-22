@@ -72,14 +72,14 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
         className="relative flex items-center gap-1 group"
         onMouseLeave={() => setIsMegaMenuOpen(false)}
       >
-        <button 
+        {/* <button 
           className={navItemClass(isViewActive('ABOUT'))}
           onClick={() => onNavigate({ type: 'ABOUT' })}
           aria-current={isViewActive('ABOUT') ? 'page' : undefined}
         >
           Profile
           {isViewActive('ABOUT') && <span className="absolute left-1 right-1 -bottom-0.5 h-0.5 rounded-full bg-blue-400" />}
-        </button>
+        </button> */}
         <button
           className={`p-1 rounded hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${isMegaMenuOpen ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white'}`}
           onClick={() => setIsMegaMenuOpen(!isMegaMenuOpen)}

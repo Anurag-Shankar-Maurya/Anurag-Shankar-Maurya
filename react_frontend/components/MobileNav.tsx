@@ -15,7 +15,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
     { icon: Home, label: 'Home', view: 'HOME' as const },
     { icon: File, label: 'Projects', view: 'PROJECTS' as const },
     { icon: BookOpen, label: 'Blog', view: 'BLOG' as const },
-    { icon: User, label: 'Profile', view: 'ABOUT' as const },
+    // { icon: User, label: 'Profile', view: 'ABOUT' as const },
+    { icon: Mail, label: 'Contact', view: 'CONTACT' as const },
   ];
 
   const menuItems = [

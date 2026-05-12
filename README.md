@@ -67,7 +67,7 @@ Innovative developer with expertise in **Android development, AI integration, an
 
 ## 💼 Professional Experience
 
-### Software Developer Intern
+### Software Developer
 **TechOTD Solutions Pvt. Ltd.** (March 2025 - Present)  
 - Developed AI-powered compliance tools with RAG systems (MongoDB & Pinecone)
 - Implemented LangChain for context-aware chatbots

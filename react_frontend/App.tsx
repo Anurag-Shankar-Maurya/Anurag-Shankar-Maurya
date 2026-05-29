@@ -30,8 +30,40 @@ const TestimonialDetailView = lazy(() => import('./pages/Testimonials').then(m =
 const GalleryView = lazy(() => import('./pages/Gallery').then(m => ({ default: m.GalleryView })));
 
 const LoadingFallback = () => (
-  <div className="min-h-screen bg-background flex items-center justify-center">
-    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+  <div className="min-h-screen bg-background text-slate-100 flex flex-col justify-center pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16 animate-pulse">
+    {/* Header / Hero skeleton */}
+    <div className="space-y-6">
+      <div className="h-6 w-44 bg-white/5 rounded-full" />
+      <div className="h-16 w-3/4 sm:w-1/2 bg-white/10 rounded-2xl" />
+      <div className="h-8 w-2/3 sm:w-1/3 bg-white/5 rounded-xl" />
+      <div className="space-y-3 pt-2">
+        <div className="h-4 w-full sm:w-2/3 bg-white/5 rounded-lg" />
+        <div className="h-4 w-5/6 sm:w-1/2 bg-white/5 rounded-lg" />
+      </div>
+      <div className="flex gap-4 pt-4">
+        <div className="h-12 w-36 bg-white/10 rounded-xl" />
+        <div className="h-12 w-36 bg-white/5 rounded-xl" />
+      </div>
+    </div>
+
+    {/* Section grid skeleton */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-8">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="glass-card rounded-2xl overflow-hidden border border-white/5 flex flex-col space-y-4">
+          <div className="aspect-video w-full bg-white/5" />
+          <div className="p-6 space-y-3">
+            <div className="h-6 w-3/4 bg-white/10 rounded-lg" />
+            <div className="h-4 w-full bg-white/5 rounded-md" />
+            <div className="h-4 w-2/3 bg-white/5 rounded-md" />
+            <div className="flex gap-2 pt-2">
+              <div className="h-6 w-12 bg-white/5 rounded-md" />
+              <div className="h-6 w-16 bg-white/5 rounded-md" />
+              <div className="h-6 w-14 bg-white/5 rounded-md" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   </div>
 );
 

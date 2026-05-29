@@ -397,7 +397,30 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
     }
   }, [project]);
 
-  if (loading) return <div className="pt-32 text-center text-white"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return (
+    <div className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8 animate-pulse">
+      {/* Banner Skeleton */}
+      <div className="w-full aspect-video rounded-3xl bg-white/5 border border-white/5" />
+      {/* Grid Layout Skeleton */}
+      <div className="flex flex-col md:flex-row gap-12">
+        <div className="flex-1 space-y-4">
+          <div className="h-10 w-2/3 bg-white/10 rounded-xl" />
+          <div className="space-y-2">
+            <div className="h-4 w-full bg-white/5 rounded-md" />
+            <div className="h-4 w-full bg-white/5 rounded-md" />
+            <div className="h-4 w-5/6 bg-white/5 rounded-md" />
+          </div>
+        </div>
+        <div className="w-full md:w-80 space-y-6">
+          <div className="p-6 glass-card rounded-2xl space-y-3">
+            <div className="h-4 w-2/3 bg-white/10 rounded" />
+            <div className="h-4 w-full bg-white/5 rounded" />
+            <div className="h-4 w-full bg-white/5 rounded" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
   if (!project) return <div>Project not found</div>;
 
   const schemaData = {

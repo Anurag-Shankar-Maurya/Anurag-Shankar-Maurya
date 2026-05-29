@@ -8,6 +8,8 @@ import { MetaTags } from '../components/MetaTags';
 import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { BlogPost, ViewState, PaginatedResponse } from '../types';
 import { api } from '../services/api';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewState) => void }> = ({ posts, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
@@ -392,16 +394,18 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
          </div>
       </div>
 
-      <div className="w-full aspect-[21/9] rounded-2xl overflow-hidden glass-card p-1 mb-12">
-         <button onClick={() => { setLbImages([{ src: post.featured_image, alt: post.title }]); setLbOpen(true); }} className="w-full block">
-           <img src={post.featured_image} alt={post.title} className="w-full h-full object-cover rounded-xl cursor-pointer"/>
-         </button>
-      </div>
+      {post.featured_image && post.featured_image.trim() !== '' && (
+        <div className="w-full rounded-2xl overflow-hidden glass-card p-1 mb-12">
+           <button onClick={() => { setLbImages([{ src: post.featured_image, alt: post.title }]); setLbOpen(true); }} className="w-full block">
+             <img src={post.featured_image} alt={post.title} className="w-full h-auto max-h-[550px] object-contain rounded-xl cursor-pointer mx-auto" />
+           </button>
+        </div>
+      )}
 
       <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
 
       <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
-         <p className="whitespace-pre-wrap">{post.content}</p>
+         <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
       </div>
 
       {needsTruncate && (

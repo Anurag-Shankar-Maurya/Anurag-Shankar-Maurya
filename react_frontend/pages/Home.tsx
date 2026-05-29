@@ -247,8 +247,8 @@ export const Home: React.FC<HomeProps> = ({
                  <h2 className="text-3xl font-bold text-white tracking-tight">Featured Work</h2>
                  <p className="text-slate-400 text-sm mt-1">A curated showcase of engineering excellence and product design.</p>
               </div>
-              <Button variant="ghost" onClick={() => onNavigate({ type: 'PROJECTS' })} rightIcon={<ArrowRight className="w-4 h-4"/>}>
-                Explore All Projects
+              <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'PROJECTS' })}>
+                View All
               </Button>
             </div>
             
@@ -344,8 +344,8 @@ export const Home: React.FC<HomeProps> = ({
                   <h2 className="text-3xl font-bold text-white tracking-tight">Technical Arsenal</h2>
                   <p className="text-slate-400 text-sm mt-1">A dynamic directory of tools, frameworks, and programming paradigms.</p>
                </div>
-               <Button variant="ghost" onClick={() => onNavigate({ type: 'SKILLS' })} rightIcon={<ArrowRight className="w-4 h-4"/>}>
-                View Detailed Skills
+               <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'SKILLS' })}>
+                View All
               </Button>
             </div>
 
@@ -398,9 +398,12 @@ export const Home: React.FC<HomeProps> = ({
               <div className="lg:col-span-6 space-y-8">
                 {homeExperience.length > 0 && (
                   <div className="space-y-6">
-                    <div className="flex items-center gap-3 border-b border-white/5 pb-4">
-                      <div className="p-2 bg-blue-500/10 rounded-xl text-blue-400"><Briefcase className="w-5 h-5"/></div>
-                      <h3 className="text-xl font-bold text-white">Experience</h3>
+                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/10 rounded-xl text-blue-400"><Briefcase className="w-5 h-5"/></div>
+                        <h3 className="text-xl font-bold text-white">Experience</h3>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'EXPERIENCE' })}>View All</Button>
                     </div>
                     
                     <div className="space-y-4">
@@ -434,9 +437,12 @@ export const Home: React.FC<HomeProps> = ({
               <div className="lg:col-span-6 space-y-8">
                 {homeEducation.length > 0 && (
                   <div className="space-y-6">
-                    <div className="flex items-center gap-3 border-b border-white/5 pb-4">
-                      <div className="p-2 bg-purple-500/10 rounded-xl text-purple-400"><GraduationCap className="w-5 h-5"/></div>
-                      <h3 className="text-xl font-bold text-white">Education</h3>
+                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-purple-500/10 rounded-xl text-purple-400"><GraduationCap className="w-5 h-5"/></div>
+                        <h3 className="text-xl font-bold text-white">Education</h3>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'EDUCATION' })}>View All</Button>
                     </div>
                     
                     <div className="space-y-4">
@@ -578,7 +584,7 @@ export const Home: React.FC<HomeProps> = ({
                         <div className="p-2 bg-pink-500/10 rounded-xl text-pink-400"><ImageIcon className="w-5 h-5"/></div>
                         <h2 className="text-xl font-bold text-white">Visual Log</h2>
                       </div>
-                      <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'GALLERY' })}>Explore Gallery</Button>
+                      <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'GALLERY' })}>View All</Button>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -613,8 +619,8 @@ export const Home: React.FC<HomeProps> = ({
                 <h2 className="text-3xl font-bold text-white tracking-tight">Latest Insights</h2>
                 <p className="text-slate-400 text-sm mt-1">Articles, deep dives, and technical investigations.</p>
               </div>
-              <Button variant="ghost" onClick={() => onNavigate({ type: 'BLOG' })} rightIcon={<ArrowRight className="w-4 h-4"/>}>
-                Explore All Articles
+              <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'BLOG' })}>
+                View All
               </Button>
             </div>
             

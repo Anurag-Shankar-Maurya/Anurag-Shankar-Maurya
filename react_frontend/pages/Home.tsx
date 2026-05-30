@@ -202,6 +202,7 @@ export const Home: React.FC<HomeProps> = ({
                       src={profile?.profile_image || 'https://placehold.co/400x400/18181b/FFF?text=Avatar'} 
                       alt={profile?.full_name} 
                       className="w-full h-full object-cover group-hover/photo:scale-105 transition-transform duration-500" 
+                      fetchPriority="high"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-end justify-center pb-3">
                       <span className="text-xs font-semibold text-white/90 flex items-center gap-1.5">
@@ -266,7 +267,7 @@ export const Home: React.FC<HomeProps> = ({
                   <div className="aspect-video bg-black/50 overflow-hidden relative">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                    <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
 
                     {/* Overlay icons: Live, Source, Demo, Gallery */}
                     <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
@@ -414,7 +415,7 @@ export const Home: React.FC<HomeProps> = ({
                           onClick={() => onNavigate({ type: 'EXPERIENCE_DETAIL', id: exp.id })}
                         >
                            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 shadow-lg">
-                              {exp.company_logo ? <img src={exp.company_logo} alt={exp.company_name} className="w-8 h-8 object-contain" /> : <Briefcase className="w-6 h-6 text-slate-500"/>}
+                              {exp.company_logo ? <img src={exp.company_logo} alt={exp.company_name} className="w-8 h-8 object-contain" loading="lazy" /> : <Briefcase className="w-6 h-6 text-slate-500"/>}
                            </div>
                            <div className="min-w-0 flex-1">
                               <div className="flex items-start justify-between gap-2">
@@ -453,7 +454,7 @@ export const Home: React.FC<HomeProps> = ({
                           onClick={() => onNavigate({ type: 'EDUCATION_DETAIL', slug: edu.slug })}
                         >
                            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 shadow-lg">
-                              {edu.logo ? <img src={edu.logo} alt={edu.institution} className="w-8 h-8 object-contain" /> : <GraduationCap className="w-6 h-6 text-slate-500"/>}
+                              {edu.logo ? <img src={edu.logo} alt={edu.institution} className="w-8 h-8 object-contain" loading="lazy" /> : <GraduationCap className="w-6 h-6 text-slate-500"/>}
                            </div>
                            <div className="min-w-0 flex-1">
                               <div className="flex items-start justify-between gap-2">
@@ -558,6 +559,7 @@ export const Home: React.FC<HomeProps> = ({
                                 src={testimonial.author_image} 
                                 alt={testimonial.author_name} 
                                 className="w-8 h-8 rounded-full object-cover bg-white/10 ring-2 ring-white/5"
+                                loading="lazy"
                               />
                               <div className="flex-1 min-w-0">
                                  <div className="flex items-center justify-between">
@@ -598,6 +600,7 @@ export const Home: React.FC<HomeProps> = ({
                               src={img.image_url} 
                               alt={img.alt_text} 
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                              loading="lazy"
                             />
                          </div>
                        ))}
@@ -641,6 +644,7 @@ export const Home: React.FC<HomeProps> = ({
                          src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} 
                          alt={post.title} 
                          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 cursor-pointer" 
+                         loading="lazy"
                        />
                      </button>
                   </div>

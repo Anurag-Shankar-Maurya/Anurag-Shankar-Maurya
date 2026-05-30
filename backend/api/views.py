@@ -481,3 +481,79 @@ class SiteConfigurationViewSet(viewsets.ReadOnlyModelViewSet):
         config = SiteConfiguration.get_config()
         serializer = self.get_serializer(config)
         return Response(serializer.data)
+
+
+# ============================================
+# UNIFIED PORTFOLIO DATA VIEW
+# ============================================
+
+from rest_framework.views import APIView
+
+class PortfolioDataView(APIView):
+    """
+    Unified API endpoint for fetching all portfolio datasets in a single request.
+    GET /api/portfolio-data/
+    """
+    permission_classes = [AllowAny]
+    
+    def get(self, request, *args, **kwargs):
+        # 1. Profile Detail
+        profile_obj = Profile.objects.first()
+        profile_data = None
+        if profile_obj:
+            profile_data = ProfileDetailSerializer(profile_obj, context={'request': request}).data
+            
+        # 2. Projects (all visible)
+        projects = Project.objects.filter(is_visible=True).order_by('order', '-created_at')
+        projects_data = ProjectSerializer(projects, many=True, context={'request': request}).data
+        
+        # 3. Featured & Show on Home Projects
+        featured_projects = Project.objects.filter(is_visible=True, is_featured=True, show_on_home=True).order_by('order', '-created_at')
+        featured_projects_data = ProjectSerializer(featured_projects, many=True, context={'request': request}).data
+        
+        # 4. Blog posts shown on home
+        blog_posts = BlogPost.objects.filter(status='published', show_on_home=True).select_related('category', 'profile').prefetch_related('tags').order_by('-published_at')
+        blog_posts_data = BlogPostListSerializer(blog_posts, many=True, context={'request': request}).data
+        
+        # 5. Work Experience
+        experience = WorkExperience.objects.all().order_by('-start_date')
+        experience_data = WorkExperienceSerializer(experience, many=True, context={'request': request}).data
+        
+        # 6. Education
+        education = Education.objects.all().order_by('-start_date')
+        education_data = EducationSerializer(education, many=True, context={'request': request}).data
+        
+        # 7. Certificates
+        certificates = Certificate.objects.all().order_by('-issue_date')
+        certificates_data = CertificateSerializer(certificates, many=True, context={'request': request}).data
+        
+        # 8. Achievements
+        achievements = Achievement.objects.all().order_by('-date')
+        achievements_data = AchievementSerializer(achievements, many=True, context={'request': request}).data
+        
+        # 9. Testimonials
+        testimonials = Testimonial.objects.filter(is_visible=True, is_featured=True).order_by('order', '-date')
+        testimonials_data = TestimonialSerializer(testimonials, many=True, context={'request': request}).data
+        
+        # 10. Skills (limit 1000 like getSkills did)
+        skills = Skill.objects.all().order_by('order')[:1000]
+        skills_data = SkillSerializer(skills, many=True, context={'request': request}).data
+        
+        # 11. Images (show_on_home=True)
+        images = Image.objects.filter(show_on_home=True).order_by('order')[:100]
+        images_data = ImageSerializer(images, many=True, context={'request': request}).data
+        
+        return Response({
+            'profile': profile_data,
+            'projects': projects_data,
+            'featuredProjects': featured_projects_data,
+            'blogPosts': blog_posts_data,
+            'experience': experience_data,
+            'education': education_data,
+            'certificates': certificates_data,
+            'achievements': achievements_data,
+            'testimonials': testimonials_data,
+            'skills': skills_data,
+            'images': images_data
+        })
+

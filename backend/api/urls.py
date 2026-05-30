@@ -3,6 +3,9 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
+    # Unified Portfolio Data
+    path('portfolio-data/', views.PortfolioDataView.as_view(), name='portfolio-data'),
+
     # Profiles
     path('profiles/', views.ProfileViewSet.as_view({'get': 'list'}), name='profile-list'),
     path('profiles/<int:pk>/', views.ProfileViewSet.as_view({'get': 'retrieve'}), name='profile-detail'),

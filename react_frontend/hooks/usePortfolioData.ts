@@ -1,10 +1,11 @@
-
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { 
   ProfileDetail, Project, BlogPost, WorkExperience, Education, 
   Certificate, Achievement, Testimonial, Skill, Image 
 } from '../types';
+
+const CACHE_KEY = 'portfolio_homepage_data';
 
 export const usePortfolioData = () => {
   const [loading, setLoading] = useState(true);
@@ -21,47 +22,61 @@ export const usePortfolioData = () => {
   const [images, setImages] = useState<Image[]>([]);
 
   useEffect(() => {
-    const initData = async () => {
+    // 1. Synchronously try to load cached data from localStorage to ensure 0ms render
+    const cachedDataStr = localStorage.getItem(CACHE_KEY);
+
+    if (cachedDataStr) {
       try {
-        setLoading(true);
-        const profiles = await api.getProfiles();
-        if (profiles.results.length > 0) {
-          const profileData = await api.getProfileDetail(profiles.results[0].id);
-          setProfile(profileData);
+        const cached = JSON.parse(cachedDataStr);
+        if (cached && typeof cached === 'object') {
+          setProfile(cached.profile ?? null);
+          setProjects(cached.projects ?? []);
+          setFeaturedProjects(cached.featuredProjects ?? []);
+          setBlogPosts(cached.blogPosts ?? []);
+          setExperience(cached.experience ?? []);
+          setEducation(cached.education ?? []);
+          setCertificates(cached.certificates ?? []);
+          setAchievements(cached.achievements ?? []);
+          setTestimonials(cached.testimonials ?? []);
+          setSkills(cached.skills ?? []);
+          setImages(cached.images ?? []);
+          setLoading(false);
         }
+      } catch (err) {
+        console.warn("Failed to parse cached portfolio data", err);
+      }
+    }
 
-        const [projRes, featProjRes, blogRes, expRes, eduRes, certRes, achRes, testRes, skillRes, imgRes] = await Promise.all([
-          api.getProjects(),
-          api.getProjects({ featured: true, show_on_home: true }),
-          api.getBlogPosts({ show_on_home: true }),
-          api.getExperience(),
-          api.getEducation(),
-          api.getCertificates(),
-          api.getAchievements(),
-          api.getTestimonials(),
-          api.getSkills(),
-          api.getImages({ show_on_home: true })
-        ]);
+    // 2. Fetch fresh data in the background (Stale-While-Revalidate)
+    const fetchFreshData = async () => {
+      try {
+        const data = await api.getPortfolioData();
+        const freshDataStr = JSON.stringify(data);
 
-        setProjects(projRes.results);
-        setFeaturedProjects(featProjRes.results);
-        setBlogPosts(blogRes.results);
-        setExperience(expRes.results);
-        setEducation(eduRes.results);
-        setCertificates(certRes.results);
-        setAchievements(achRes.results);
-        setTestimonials(testRes.results);
-        setSkills(skillRes.results);
-        setImages(imgRes.results);
-
+        // Update state and cache only if data has changed
+        if (freshDataStr !== cachedDataStr) {
+          setProfile(data.profile);
+          setProjects(data.projects);
+          setFeaturedProjects(data.featuredProjects);
+          setBlogPosts(data.blogPosts);
+          setExperience(data.experience);
+          setEducation(data.education);
+          setCertificates(data.certificates);
+          setAchievements(data.achievements);
+          setTestimonials(data.testimonials);
+          setSkills(data.skills);
+          setImages(data.images);
+          
+          localStorage.setItem(CACHE_KEY, freshDataStr);
+        }
       } catch (error) {
-        console.error("Failed to fetch initial data", error);
+        console.error("Failed to fetch fresh portfolio data in background", error);
       } finally {
         setLoading(false);
       }
     };
 
-    initData();
+    fetchFreshData();
   }, []);
 
   return {
@@ -77,6 +92,6 @@ export const usePortfolioData = () => {
     testimonials,
     skills,
     images,
-    setLoading // Exporting setLoading for detail fetchers if needed elsewhere, though usually handled locally or in specific hooks
+    setLoading
   };
 };

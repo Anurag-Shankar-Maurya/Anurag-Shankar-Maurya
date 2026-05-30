@@ -13,6 +13,20 @@ import {
   Image
 } from '../types';
 
+export interface PortfolioDataResponse {
+  profile: ProfileDetail | null;
+  projects: Project[];
+  featuredProjects: Project[];
+  blogPosts: BlogPost[];
+  experience: WorkExperience[];
+  education: Education[];
+  certificates: Certificate[];
+  achievements: Achievement[];
+  testimonials: Testimonial[];
+  skills: Skill[];
+  images: Image[];
+}
+
 // Use Vite environment variables when available (set in `.env.local`).
 // - VITE_API_URL (e.g. http://127.0.0.1:8000)
 // - VITE_API_BASE_PATH (e.g. /api)
@@ -37,6 +51,7 @@ async function fetchJson<T>(endpoint: string, params: Record<string, any> = {}):
 }
 
 export const api = {
+  getPortfolioData: () => fetchJson<PortfolioDataResponse>('/portfolio-data/'),
   getProfiles: () => fetchJson<PaginatedResponse<{id: number}>>('/profiles/'),
   getProfileDetail: (id: number) => fetchJson<ProfileDetail>(`/profiles/${id}/`),
   

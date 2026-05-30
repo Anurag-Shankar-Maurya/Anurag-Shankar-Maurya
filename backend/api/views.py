@@ -488,6 +488,15 @@ class SiteConfigurationViewSet(viewsets.ReadOnlyModelViewSet):
 # ============================================
 
 from rest_framework.views import APIView
+import time
+import logging
+from django.core.cache import cache
+from django.db.models.signals import post_save, post_delete
+
+logger = logging.getLogger('django')
+
+# Cache configuration key
+CACHE_KEY = 'portfolio_homepage_data_payload'
 
 class PortfolioDataView(APIView):
     """
@@ -497,53 +506,99 @@ class PortfolioDataView(APIView):
     permission_classes = [AllowAny]
     
     def get(self, request, *args, **kwargs):
+        # 1. Try to fetch from Django's shared cache first (e.g. locmem, redis, file, db)
+        cached_data = cache.get(CACHE_KEY)
+        if cached_data is not None:
+            # Styled console log for immediate local dev visibility
+            print("\n>>> [PORTFOLIO-DATA-CACHE] Serving home page dataset from cache (0.0ms)!\n")
+            return Response(cached_data)
+            
+        # 2. Cache miss -> Fetch and build the payload
+        start_time = time.time()
+        timings = {}
+        from django.db.models import Prefetch
+        
+        # Define prefetch rules for generic images with content_type pre-fetched
+        image_prefetch = Prefetch(
+            'images',
+            queryset=Image.objects.select_related('content_type')
+        )
+        
         # 1. Profile Detail
-        profile_obj = Profile.objects.first()
+        t_start = time.time()
+        profile_obj = Profile.objects.prefetch_related(
+            Prefetch('social_links', queryset=SocialLink.objects.all()),
+            Prefetch('skills', queryset=Skill.objects.all()),
+            image_prefetch
+        ).first()
         profile_data = None
         if profile_obj:
             profile_data = ProfileDetailSerializer(profile_obj, context={'request': request}).data
+        timings['1_profile'] = (time.time() - t_start) * 1000
             
         # 2. Projects (all visible)
+        t_start = time.time()
         projects = Project.objects.filter(is_visible=True).order_by('order', '-created_at')
         projects_data = ProjectSerializer(projects, many=True, context={'request': request}).data
+        timings['2_projects'] = (time.time() - t_start) * 1000
         
         # 3. Featured & Show on Home Projects
+        t_start = time.time()
         featured_projects = Project.objects.filter(is_visible=True, is_featured=True, show_on_home=True).order_by('order', '-created_at')
         featured_projects_data = ProjectSerializer(featured_projects, many=True, context={'request': request}).data
+        timings['3_featured_projects'] = (time.time() - t_start) * 1000
         
         # 4. Blog posts shown on home
+        t_start = time.time()
         blog_posts = BlogPost.objects.filter(status='published', show_on_home=True).select_related('category', 'profile').prefetch_related('tags').order_by('-published_at')
         blog_posts_data = BlogPostListSerializer(blog_posts, many=True, context={'request': request}).data
+        timings['4_blog_posts'] = (time.time() - t_start) * 1000
         
         # 5. Work Experience
-        experience = WorkExperience.objects.all().order_by('-start_date')
+        t_start = time.time()
+        experience = WorkExperience.objects.prefetch_related(image_prefetch).all().order_by('-start_date')
         experience_data = WorkExperienceSerializer(experience, many=True, context={'request': request}).data
+        timings['5_experience'] = (time.time() - t_start) * 1000
         
         # 6. Education
-        education = Education.objects.all().order_by('-start_date')
+        t_start = time.time()
+        education = Education.objects.prefetch_related(image_prefetch).all().order_by('-start_date')
         education_data = EducationSerializer(education, many=True, context={'request': request}).data
+        timings['6_education'] = (time.time() - t_start) * 1000
         
         # 7. Certificates
-        certificates = Certificate.objects.all().order_by('-issue_date')
+        t_start = time.time()
+        certificates = Certificate.objects.prefetch_related(image_prefetch).all().order_by('-issue_date')
         certificates_data = CertificateSerializer(certificates, many=True, context={'request': request}).data
+        timings['7_certificates'] = (time.time() - t_start) * 1000
         
         # 8. Achievements
-        achievements = Achievement.objects.all().order_by('-date')
+        t_start = time.time()
+        achievements = Achievement.objects.prefetch_related(image_prefetch).all().order_by('-date')
         achievements_data = AchievementSerializer(achievements, many=True, context={'request': request}).data
+        timings['8_achievements'] = (time.time() - t_start) * 1000
         
         # 9. Testimonials
-        testimonials = Testimonial.objects.filter(is_visible=True, is_featured=True).order_by('order', '-date')
+        t_start = time.time()
+        testimonials = Testimonial.objects.prefetch_related(image_prefetch).filter(is_visible=True, is_featured=True).order_by('order', '-date')
         testimonials_data = TestimonialSerializer(testimonials, many=True, context={'request': request}).data
+        timings['9_testimonials'] = (time.time() - t_start) * 1000
         
         # 10. Skills (limit 1000 like getSkills did)
+        t_start = time.time()
         skills = Skill.objects.all().order_by('order')[:1000]
         skills_data = SkillSerializer(skills, many=True, context={'request': request}).data
+        timings['10_skills'] = (time.time() - t_start) * 1000
         
         # 11. Images (show_on_home=True)
-        images = Image.objects.filter(show_on_home=True).order_by('order')[:100]
+        t_start = time.time()
+        images = Image.objects.select_related('content_type').filter(show_on_home=True).order_by('order')[:100]
         images_data = ImageSerializer(images, many=True, context={'request': request}).data
+        timings['11_images'] = (time.time() - t_start) * 1000
         
-        return Response({
+        duration = time.time() - start_time
+        
+        response_payload = {
             'profile': profile_data,
             'projects': projects_data,
             'featuredProjects': featured_projects_data,
@@ -555,5 +610,37 @@ class PortfolioDataView(APIView):
             'testimonials': testimonials_data,
             'skills': skills_data,
             'images': images_data
-        })
+        }
+        
+        # Cache the payload infinitely (timeout=None) until explicitly invalidated by signals
+        cache.set(CACHE_KEY, response_payload, timeout=None)
+        
+        # Write to logger (production/syslog)
+        logger.info(
+            f"[PORTFOLIO-DATA] Unified request processed and cached. "
+            f"Execution time: {duration:.4f} seconds."
+        )
+        
+        # Print to stdout/terminal for immediate local dev visibility
+        print(f"\n>>> [PORTFOLIO-DATA-LOG] Unified homepage cache built successfully in {duration * 1000:.2f}ms")
+        print(">>> [PORTFOLIO-DATA-BREAKDOWN] Timing Breakdown by Section:")
+        for section, ms in sorted(timings.items()):
+            print(f"    - {section:25} : {ms:9.2f}ms")
+        print()
+        
+        return Response(response_payload)
+
+
+# ============================================
+# CACHE INVALIDATION SIGNALS
+# ============================================
+
+def clear_portfolio_cache(sender, **kwargs):
+    cache.delete(CACHE_KEY)
+    print(f"\n>>> [PORTFOLIO-DATA-CACHE] Cache invalidated due to model update: {sender.__name__}\n")
+
+# Auto-clear cache when any model that constructs the homepage payload is edited/deleted
+for model in [Profile, SocialLink, Skill, Education, WorkExperience, Project, Certificate, Achievement, BlogCategory, BlogTag, BlogPost, Testimonial, Image]:
+    post_save.connect(clear_portfolio_cache, sender=model)
+    post_delete.connect(clear_portfolio_cache, sender=model)
 

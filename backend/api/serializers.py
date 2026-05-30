@@ -269,6 +269,13 @@ class BlogCategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'slug', 'description', 'order', 'post_count', 'show_on_home']
     
     def get_post_count(self, obj):
+        request = self.context.get('request')
+        if request:
+            if not hasattr(request, '_category_post_counts'):
+                request._category_post_counts = {}
+            if obj.id not in request._category_post_counts:
+                request._category_post_counts[obj.id] = obj.posts.filter(status='published').count()
+            return request._category_post_counts[obj.id]
         return obj.posts.filter(status='published').count()
 
 
@@ -280,6 +287,13 @@ class BlogTagSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'slug', 'post_count', 'show_on_home']
     
     def get_post_count(self, obj):
+        request = self.context.get('request')
+        if request:
+            if not hasattr(request, '_tag_post_counts'):
+                request._tag_post_counts = {}
+            if obj.id not in request._tag_post_counts:
+                request._tag_post_counts[obj.id] = obj.posts.filter(status='published').count()
+            return request._tag_post_counts[obj.id]
         return obj.posts.filter(status='published').count()
 
 

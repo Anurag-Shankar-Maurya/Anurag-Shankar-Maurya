@@ -23,37 +23,37 @@ export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigat
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto animate-fade-in-up">
        <MetaTags title="Honors & Achievements | Anurag Shankar Maurya" description="Recognitions, awards, and professional milestones." />
        <div className="flex items-center gap-4 mb-12">
-        <div className="p-3 bg-yellow-500/10 rounded-xl text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.2)]"><Trophy className="w-8 h-8"/></div>
+        <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Trophy className="w-8 h-8"/></div>
         <div>
-           <h1 className="text-4xl font-bold text-white">Honors & Achievements</h1>
-           <p className="text-gray-400 mt-2">Recognitions, awards, and professional milestones.</p>
+           <h1 className="text-4xl font-extrabold text-black">Honors & Achievements</h1>
+           <p className="text-[#4c4546] mt-2">Recognitions, awards, and professional milestones.</p>
         </div>
       </div>
 
       <div className="space-y-6">
          {achievements.map((ach, index) => (
-           <div 
-             key={ach.id} 
-             className="glass-card flex flex-col md:flex-row md:items-center gap-8 rounded-2xl p-6 hover:border-yellow-500/30 transition-all cursor-pointer group hover:bg-white/5" 
-             onClick={() => onNavigate({ type: 'ACHIEVEMENT_DETAIL', slug: ach.slug || String(ach.id) })}
-             style={{ animationDelay: `${index * 0.1}s` }}
-           >
-             <div className="w-full md:w-56 h-36 md:h-32 rounded-xl bg-gray-900 overflow-hidden flex-shrink-0 relative shadow-lg">
-                {ach.image ? <img onClick={(e) => { e.stopPropagation(); openSingle(ach.image); }} src={ach.image} alt={ach.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer"/> : <div className="w-full h-full flex items-center justify-center text-yellow-500 bg-yellow-500/10"><Trophy className="w-10 h-10"/></div>}
-             </div>
-             <div className="flex-1">
-                <div className="flex justify-between items-start mb-2">
-                   <h3 className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors">{ach.title}</h3>
-                   <span className="text-xs font-bold bg-yellow-500/10 text-yellow-500 px-2.5 py-1 rounded border border-yellow-500/20 uppercase tracking-wide">{ach.achievement_type}</span>
-                </div>
-                <div className="text-sm text-gray-400 mb-3 font-medium flex items-center gap-2">
-                  <span className="text-white">{ach.issuer}</span> 
-                  <span className="w-1 h-1 rounded-full bg-gray-600"></span> 
-                  <span>{new Date(ach.date).toLocaleDateString()}</span>
-                </div>
-                <p className="text-gray-300 line-clamp-2 text-sm leading-relaxed">{ach.description}</p>
-             </div>
-           </div>
+            <div 
+              key={ach.id} 
+              className="bg-white border border-[#E5E5E5] flex flex-col md:flex-row md:items-center gap-8 rounded-[3rem] p-10 hover:border-black transition-all cursor-pointer group shadow-none" 
+              onClick={() => onNavigate({ type: 'ACHIEVEMENT_DETAIL', slug: ach.slug || String(ach.id) })}
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="w-full md:w-56 h-36 md:h-32 rounded-[2rem] bg-[#F2F2F2] border border-[#E5E5E5] overflow-hidden flex-shrink-0 relative shadow-none">
+                 {ach.image ? <img onClick={(e) => { e.stopPropagation(); openSingle(ach.image); }} src={ach.image} alt={ach.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"/> : <div className="w-full h-full flex items-center justify-center text-black bg-[#F2F2F2]"><Trophy className="w-10 h-10"/></div>}
+              </div>
+              <div className="flex-1">
+                 <div className="flex justify-between items-start mb-2 gap-4">
+                    <h3 className="text-xl font-bold text-black group-hover:text-black transition-colors">{ach.title}</h3>
+                    <span className="text-xs font-semibold bg-[#F2F2F2] text-black px-3 py-1.5 rounded-full border border-[#E5E5E5] uppercase tracking-wide shrink-0">{ach.achievement_type}</span>
+                 </div>
+                 <div className="text-sm font-semibold text-[#4c4546] mb-3 flex items-center gap-2">
+                   <span className="text-black font-bold">{ach.issuer}</span> 
+                   <span className="w-1.5 h-1.5 rounded-full bg-[#cfc4c5]"></span> 
+                   <span>{new Date(ach.date).toLocaleDateString()}</span>
+                 </div>
+                 <p className="text-[#4c4546] line-clamp-2 text-sm leading-relaxed">{ach.description}</p>
+              </div>
+            </div>
          ))}
       </div>
 
@@ -71,7 +71,7 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
     api.getAchievementDetail(slug).then(setAch).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div className="pt-32 text-center text-white"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
   if (!ach) return <div>Achievement not found</div>;
 
   return (
@@ -81,31 +81,29 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Achievements
       </Button>
       
-      <div className="glass-card rounded-3xl overflow-hidden mb-10">
-         <div className="w-full h-80 relative">
+      <div className="bg-white border border-[#E5E5E5] rounded-[3rem] overflow-hidden mb-10 shadow-none">
+         <div className="w-full h-80 bg-[#F2F2F2] border-b border-[#E5E5E5] relative overflow-hidden">
             <button onClick={() => setLbOpen(true)} className="w-full h-full block">
-              <img src={ach.image} alt={ach.title} className="w-full h-full object-cover cursor-pointer"/>
+              <img src={ach.image} alt={ach.title} className="w-full h-full object-cover cursor-pointer opacity-90 hover:opacity-100 transition-opacity"/>
             </button>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#18181b] via-[#18181b]/50 to-transparent"></div>
-            <div className="absolute bottom-8 left-8">
-               <span className="px-3 py-1 bg-yellow-500 text-black font-bold text-xs rounded uppercase mb-4 inline-block shadow-lg">{ach.achievement_type}</span>
-               <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">{ach.title}</h1>
-               <div className="flex items-center gap-3 text-gray-300 font-medium">
-                  <span className="text-yellow-400">{ach.issuer}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-600"></span>
-                  <span>{new Date(ach.date).toLocaleDateString()}</span>
-               </div>
-            </div>
          </div>
          
-         <div className="p-8 md:p-12">
-            <div className="prose prose-invert max-w-none text-gray-300 text-lg leading-relaxed">
+         <div className="p-10 md:p-12">
+            <span className="px-3 py-1.5 bg-[#F2F2F2] border border-[#E5E5E5] text-black font-semibold text-xs rounded-full uppercase mb-4 inline-block">{ach.achievement_type}</span>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-black mb-4 leading-tight">{ach.title}</h1>
+            <div className="flex items-center gap-3 text-[#4c4546] font-semibold text-sm mb-8">
+               <span className="text-black font-bold">{ach.issuer}</span>
+               <span className="w-1.5 h-1.5 rounded-full bg-[#cfc4c5]"></span>
+               <span>{new Date(ach.date).toLocaleDateString()}</span>
+            </div>
+
+            <div className="prose prose-neutral max-w-none text-[#4c4546] text-lg leading-relaxed">
                <p className="whitespace-pre-wrap">{ach.description}</p>
             </div>
             
             {ach.url && (
-               <div className="mt-10 pt-8 border-t border-white/10">
-                  <a href={ach.url} target="_blank" rel="noreferrer" className="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-2 group w-fit">
+               <div className="mt-10 pt-8 border-t border-[#E5E5E5]">
+                  <a href={ach.url} target="_blank" rel="noreferrer" className="text-black hover:text-black font-bold flex items-center gap-2 group w-fit">
                      View Official Announcement <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform"/>
                   </a>
                </div>
@@ -115,7 +113,7 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
 
       {ach.images && ach.images.length > 0 && (
         <div className="mt-8">
-          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+          <h3 className="text-lg font-bold text-black mb-4">Gallery</h3>
           <Gallery images={ach.images} />
         </div>
       )}

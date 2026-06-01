@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, BookOpen, Calendar, Loader2, Search, X, List, LayoutGrid } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
@@ -76,26 +75,26 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
       <MetaTags title={pageTitle} description="Thoughts on software engineering, product design, and the tech industry." />
       <div className="flex items-center gap-4 mb-12">
-        <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]"><BookOpen className="w-8 h-8"/></div>
+        <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><BookOpen className="w-8 h-8"/></div>
         <div>
-          <h1 className="text-4xl font-bold text-white">Blog & Insights</h1>
-          <p className="text-gray-400 mt-2">Thoughts on software engineering, product design, and the tech industry.</p>
+          <h1 className="text-4xl font-extrabold text-black">Blog & Insights</h1>
+          <p className="text-[#4c4546] mt-2">Thoughts on software engineering, product design, and the tech industry.</p>
         </div>
       </div>
 
       {/* Search Bar */}
       <div className="mb-8 relative">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7e7576]" />
           <input 
             type="text" 
             placeholder="Search posts..." 
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus-visible:ring-2 focus-visible:ring-purple-400/70 transition-colors"
+            className="w-full pl-12 pr-12 py-3 bg-white border border-[#cfc4c5] rounded-full text-black placeholder-[#7e7576] focus:outline-none focus:border-black focus:border-[2px] transition-all"
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/70 rounded-md">
+            <button onClick={() => setSearchQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7e7576] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-full">
               <X className="w-4 h-4" />
             </button>
           )}
@@ -107,12 +106,12 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
         {categories.length > 0 && (
           <div>
             <div className="flex items-center justify-between gap-3 mb-3">
-              <h3 className="text-sm font-semibold text-gray-400">Category</h3>
+              <h3 className="text-xs font-bold text-[#7e7576] uppercase tracking-widest">Category</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               <button 
                 onClick={() => { setSelectedCategory(null); setCurrentPage(1); }}
-                className={`px-4 py-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/70 ${!selectedCategory ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                className={`px-4 py-2 text-sm rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${!selectedCategory ? 'bg-black text-white font-semibold' : 'bg-[#F2F2F2] text-[#4c4546] hover:bg-[#eeeeee] border border-transparent hover:border-[#cfc4c5]'}`}
               >
                 All
               </button>
@@ -120,7 +119,7 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
                 <button 
                   key={cat?.slug}
                   onClick={() => { setSelectedCategory(cat?.slug || null); setCurrentPage(1); }}
-                  className={`px-4 py-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/70 ${selectedCategory === cat?.slug ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                  className={`px-4 py-2 text-sm rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${selectedCategory === cat?.slug ? 'bg-black text-white font-semibold' : 'bg-[#F2F2F2] text-[#4c4546] hover:bg-[#eeeeee] border border-transparent hover:border-[#cfc4c5]'}`}
                 >
                   {cat?.name}
                 </button>
@@ -132,11 +131,11 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
         {allTags.length > 0 && (
           <div>
             <div className="flex items-center justify-between gap-3 mb-3">
-              <h3 className="text-sm font-semibold text-gray-400">Tags</h3>
+              <h3 className="text-xs font-bold text-[#7e7576] uppercase tracking-widest">Tags</h3>
               {allTags.length > 10 && (
                 <button
                   onClick={() => setShowAllTags((prev) => !prev)}
-                  className="text-xs px-2.5 py-1 rounded-md bg-white/5 text-gray-300 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/70"
+                  className="text-xs px-3 py-1 rounded-full bg-[#eeeeee] border border-[#cfc4c5] text-black hover:bg-[#e2e2e2] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
                 >
                   {showAllTags ? 'Show less' : `Show all (${allTags.length})`}
                 </button>
@@ -149,14 +148,14 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
                   value={tagSearchQuery}
                   onChange={(e) => setTagSearchQuery(e.target.value)}
                   placeholder="Search tags..."
-                  className="w-full md:max-w-sm px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus-visible:ring-2 focus-visible:ring-purple-400/70"
+                  className="w-full md:max-w-sm px-4 py-2 text-sm bg-white border border-[#cfc4c5] rounded-full text-black placeholder-[#7e7576] focus:outline-none focus:border-black"
                 />
               </div>
             )}
             <div className="flex flex-wrap gap-2">
               <button 
                 onClick={() => { setSelectedTag(null); setCurrentPage(1); }}
-                className={`px-3 py-1.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/70 ${!selectedTag ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                className={`px-3 py-1.5 text-sm rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${!selectedTag ? 'bg-black text-white font-semibold shadow-none' : 'bg-[#F2F2F2] text-[#4c4546] hover:bg-[#eeeeee] border border-transparent hover:border-[#cfc4c5]'}`}
               >
                 All
               </button>
@@ -164,31 +163,31 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
                 <button 
                   key={tag?.slug}
                   onClick={() => { setSelectedTag(tag?.slug || null); setCurrentPage(1); }}
-                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/70 ${selectedTag === tag?.slug ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                  className={`px-3 py-1.5 text-sm rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${selectedTag === tag?.slug ? 'bg-black text-white font-semibold shadow-none' : 'bg-[#F2F2F2] text-[#4c4546] hover:bg-[#eeeeee] border border-transparent hover:border-[#cfc4c5]'}`}
                 >
                   {tag?.name}
                 </button>
               ))}
             </div>
             {tagSearchQuery && filteredTags.length === 0 && (
-              <p className="text-xs text-gray-500 mt-2">No tags found for “{tagSearchQuery}”.</p>
+              <p className="text-xs text-[#7e7576] mt-2">No tags found for “{tagSearchQuery}”.</p>
             )}
           </div>
         )}
       </div>
 
       <div className="mb-8 flex items-center justify-end">
-        <div className="inline-flex items-center p-1 rounded-lg bg-white/5 border border-white/10">
+        <div className="inline-flex items-center p-1 rounded-full bg-[#f9f9f9] border border-[#E5E5E5]">
           <button
             onClick={() => setViewMode('grid')}
-            className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/70 ${viewMode === 'grid' ? 'bg-purple-500 text-white' : 'text-gray-300 hover:bg-white/5'}`}
+            className={`px-4 py-1.5 rounded-full text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${viewMode === 'grid' ? 'bg-black text-white font-bold' : 'text-[#4c4546] hover:bg-[#F2F2F2] hover:text-black'}`}
             aria-pressed={viewMode === 'grid'}
           >
             <LayoutGrid className="w-4 h-4" /> Grid
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/70 ${viewMode === 'list' ? 'bg-purple-500 text-white' : 'text-gray-300 hover:bg-white/5'}`}
+            className={`px-4 py-1.5 rounded-full text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${viewMode === 'list' ? 'bg-black text-white font-bold' : 'text-[#4c4546] hover:bg-[#F2F2F2] hover:text-black'}`}
             aria-pressed={viewMode === 'list'}
           >
             <List className="w-4 h-4" /> List
@@ -200,15 +199,15 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
       {loading ? (
         <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid grid-cols-1'} gap-6 mb-8`}>
           {Array.from({ length: viewMode === 'grid' ? 6 : 4 }).map((_, idx) => (
-            <div key={idx} className={`glass-card rounded-2xl overflow-hidden animate-pulse ${viewMode === 'list' ? 'flex gap-4 p-4 items-start' : ''}`}>
-              <div className={`${viewMode === 'list' ? 'w-56 h-36 rounded-xl' : 'w-full aspect-video'} bg-white/5`} />
-              <div className={`${viewMode === 'list' ? 'flex-1' : 'p-6'}`}>
-                <div className="h-5 w-3/4 bg-white/10 rounded mb-3" />
-                <div className="h-4 w-full bg-white/5 rounded mb-2" />
-                <div className="h-4 w-2/3 bg-white/5 rounded mb-4" />
+            <div key={idx} className={`bg-white border border-[#E5E5E5] rounded-[3rem] p-10 animate-pulse ${viewMode === 'list' ? 'flex flex-col md:flex-row gap-6' : 'flex flex-col'}`}>
+              <div className={`${viewMode === 'list' ? 'w-full md:w-72 rounded-[2rem]' : 'w-full aspect-video rounded-[2rem]'} bg-[#eeeeee]`} />
+              <div className="flex-grow pt-4">
+                <div className="h-6 w-3/4 bg-[#eeeeee] rounded mb-3" />
+                <div className="h-4 w-full bg-[#eeeeee] rounded mb-2" />
+                <div className="h-4 w-2/3 bg-[#eeeeee] rounded mb-4" />
                 <div className="flex gap-2">
-                  <div className="h-6 w-16 bg-white/5 rounded" />
-                  <div className="h-6 w-20 bg-white/5 rounded" />
+                  <div className="h-6 w-16 bg-[#eeeeee] rounded-full" />
+                  <div className="h-6 w-20 bg-[#eeeeee] rounded-full" />
                 </div>
               </div>
             </div>
@@ -216,40 +215,39 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
         </div>
       ) : paginatedData && paginatedData.results.length > 0 ? (
         <>
-          <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-6'} mb-8`}>
+          <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-8'} mb-8`}>
             {paginatedData.results.map((post, index) => (
               <div 
                 key={post.id} 
-                className={`group cursor-pointer glass-card rounded-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 ${viewMode === 'grid' ? 'flex flex-col p-4' : 'flex flex-col md:flex-row gap-4 p-4 items-start'}`}
+                className={`group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black transition-all duration-300 cursor-pointer shadow-none ${viewMode === 'grid' ? 'flex flex-col' : 'flex flex-col md:flex-row gap-6'}`}
                 onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className={`${viewMode === 'list' ? 'md:w-72 md:min-w-72 mb-0' : 'mb-6'} aspect-video w-full rounded-xl overflow-hidden relative`}>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>
+                <div className={`${viewMode === 'list' ? 'md:w-72 md:min-w-72 mb-0' : 'mb-6'} aspect-video w-full rounded-[2rem] overflow-hidden relative bg-[#F2F2F2] border border-[#E5E5E5]`}>
                   <button onClick={(e) => { e.stopPropagation(); openSingle(post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog', post.title); }} className="w-full h-full block">
                     <img src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-pointer" />
                   </button>
-                  <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-black/60 backdrop-blur rounded-full text-xs font-medium text-white border border-white/10 shadow-lg">
+                  <div className="absolute top-4 left-4 z-20 px-3 py-1.5 bg-white border border-[#E5E5E5] rounded-full text-xs font-bold text-black capitalize">
                     {post.category.name}
                   </div>
                 </div>
-                <div className={`${viewMode === 'list' ? 'pt-1 px-2 pb-1' : 'px-2 pb-2'} flex flex-col flex-grow`}>
-                  <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-purple-400"/> {new Date(post.published_at).toLocaleDateString()}</span>
+                <div className="flex flex-col flex-grow">
+                  <div className="flex items-center gap-3 text-xs text-[#7e7576] mb-3">
+                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-[#4c4546]"/> {new Date(post.published_at).toLocaleDateString()}</span>
                     <span>•</span>
                     <span>{post.reading_time} min read</span>
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors leading-tight">{post.title}</h3>
-                  <p className="text-gray-400 line-clamp-2 text-sm leading-relaxed mb-4">{post.excerpt}</p>
+                  <h3 className="text-xl font-extrabold text-black mb-3 leading-tight">{post.title}</h3>
+                  <p className="text-[#4c4546] text-sm leading-[1.6] mb-4 line-clamp-2">{post.excerpt}</p>
                   
                   {/* Tags */}
                   {post.tags && post.tags.length > 0 && (
                     <div className="mt-auto flex flex-wrap gap-2">
                       {post.tags.slice(0, 3).map(tag => (
-                        <span key={tag.slug} className="px-2 py-1 text-xs bg-white/5 rounded-md text-gray-300 border border-white/5 hover:bg-white/10 transition-colors cursor-default">{tag.name}</span>
+                        <span key={tag.slug} className="px-3.5 py-1.5 text-xs bg-[#F2F2F2] border border-[#E5E5E5] rounded-full text-black font-semibold hover:border-black transition-colors cursor-default">{tag.name}</span>
                       ))}
                       {post.tags.length > 3 && (
-                        <span className="px-2 py-1 text-xs text-gray-500">+{post.tags.length - 3}</span>
+                        <span className="px-2 py-1 text-xs text-[#7e7576]">+{post.tags.length - 3}</span>
                       )}
                     </div>
                   )}
@@ -260,20 +258,20 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
 
           {/* Pagination */}
           {paginatedData.count > ITEMS_PER_PAGE && (
-            <div className="flex items-center justify-center gap-2 mt-12">
+            <div className="flex items-center justify-center gap-4 mt-12">
               <button 
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={!paginatedData.previous}
-                className="px-4 py-2 rounded-lg bg-white/5 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+                className="px-5 py-2.5 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] text-[#4c4546] font-bold disabled:opacity-30 hover:border-black hover:text-black transition-all"
               >
                 Previous
               </button>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 {Array.from({ length: Math.ceil(paginatedData.count / ITEMS_PER_PAGE) }, (_, i) => i + 1).map(page => (
                   <button 
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-2 rounded-lg transition-colors ${currentPage === page ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                    className={`w-10 h-10 rounded-full text-sm font-bold transition-all border shadow-none ${currentPage === page ? 'bg-black border-black text-white' : 'bg-[#f9f9f9] border-[#E5E5E5] text-[#4c4546] hover:border-black hover:text-black'}`}
                   >
                     {page}
                   </button>
@@ -282,7 +280,7 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
               <button 
                 onClick={() => setCurrentPage(p => p + 1)}
                 disabled={!paginatedData.next}
-                className="px-4 py-2 rounded-lg bg-white/5 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+                className="px-5 py-2.5 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] text-[#4c4546] font-bold disabled:opacity-30 hover:border-black hover:text-black transition-all"
               >
                 Next
               </button>
@@ -291,7 +289,7 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
         </>
       ) : (
         <div className="text-center py-12">
-          <p className="text-gray-400">No posts found matching your filters.</p>
+          <p className="text-[#7e7576]">No posts found matching your filters.</p>
         </div>
       )}
     </main>
@@ -330,7 +328,7 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
     }
   }, [post]);
 
-  if (loading) return <div className="pt-32 text-center text-white"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
   if (!post) return <div>Post not found</div>;
 
   const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name || "Anurag Shankar Maurya";
@@ -376,47 +374,47 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
       />
 
       <div className="mb-10 text-center">
-         <div className="inline-block px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-bold uppercase tracking-widest mb-6">
+         <div className="inline-block px-4 py-1.5 rounded-full bg-[#F2F2F2] border border-[#E5E5E5] text-black text-xs font-bold uppercase tracking-widest mb-6">
            {post.category.name}
          </div>
-         <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">{post.title}</h1>
+         <h1 className="text-4xl md:text-5xl font-extrabold text-black mb-6 leading-tight">{post.title}</h1>
          {post.tags && post.tags.length > 0 && (
            <div className="flex items-center justify-center gap-2 flex-wrap mb-4">
              {post.tags.map(tag => (
-               <span key={tag.slug} className="px-3 py-1 rounded-full bg-white/5 text-gray-400 text-xs hover:text-white hover:bg-white/10 transition-colors cursor-default">{tag.name}</span>
+               <span key={tag.slug} className="px-3.5 py-1.5 bg-[#F2F2F2] border border-[#E5E5E5] rounded-full text-black text-xs font-semibold hover:border-black transition-all cursor-default">{tag.name}</span>
              ))}
            </div>
          )}
-         <div className="flex items-center justify-center gap-6 text-gray-400 text-sm">
-            <span className="flex items-center gap-2"><Calendar className="w-4 h-4"/> {new Date(post.published_at).toLocaleDateString()}</span>
-            <span className="w-1 h-1 rounded-full bg-gray-600"></span>
+         <div className="flex items-center justify-center gap-6 text-[#7e7576] text-sm font-semibold">
+            <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-black"/> {new Date(post.published_at).toLocaleDateString()}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#cfc4c5]"></span>
             <span>{post.reading_time} min read</span>
          </div>
       </div>
 
       {post.featured_image && post.featured_image.trim() !== '' && (
-        <div className="w-full rounded-2xl overflow-hidden glass-card p-1 mb-12">
+        <div className="w-full rounded-[3rem] overflow-hidden bg-white border border-[#E5E5E5] p-4 mb-12 shadow-none">
            <button onClick={() => { setLbImages([{ src: post.featured_image, alt: post.title }]); setLbOpen(true); }} className="w-full block">
-             <img src={post.featured_image} alt={post.title} className="w-full h-auto max-h-[550px] object-contain rounded-xl cursor-pointer mx-auto" />
+             <img src={post.featured_image} alt={post.title} className="w-full h-auto max-h-[550px] object-contain rounded-[2rem] cursor-pointer mx-auto" />
            </button>
         </div>
       )}
 
       <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
 
-      <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
+      <div ref={contentRef} className="prose prose-lg max-w-none text-[#4c4546] leading-[1.6]" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
       </div>
 
       {needsTruncate && (
         <div className="mt-6">
-          <Button variant="ghost" onClick={() => setExpanded(prev => !prev)}>{expanded ? 'Read less' : 'Read more'}</Button>
+          <Button variant="ghost" onClick={() => setExpanded(prev => !prev)} className="text-[#7e7576]">{expanded ? 'Read less' : 'Read more'}</Button>
         </div>
       )}
 
       {post.images && post.images.length > 0 && (
-        <div className="mb-8 mt-8">
-          <h3 className="text-lg font-bold text-white mb-4">Gallery</h3>
+        <div className="mb-8 mt-12 border-t border-[#E5E5E5] pt-12">
+          <h3 className="text-2xl font-extrabold text-black mb-6">Gallery</h3>
           <Gallery images={post.images} />
         </div>
       )}

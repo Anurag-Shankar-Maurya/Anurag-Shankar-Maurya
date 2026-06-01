@@ -21,37 +21,37 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
       <MetaTags title="Skills & Expertise | Anurag Shankar Maurya" description="A comprehensive list of my technical capabilities." />
       <div className="flex items-center gap-4 mb-12">
-        <div className="p-3 bg-green-500/10 rounded-xl text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]"><Zap className="w-8 h-8"/></div>
+        <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Zap className="w-8 h-8"/></div>
         <div>
-           <h1 className="text-4xl font-bold text-white">Skills & Expertise</h1>
-           <p className="text-gray-400 mt-2">A comprehensive list of my technical capabilities.</p>
+           <h1 className="text-4xl font-extrabold text-black">Skills & Expertise</h1>
+           <p className="text-[#4c4546] mt-2">A comprehensive list of my technical capabilities.</p>
         </div>
       </div>
 
       {groupKeys.map((type) => (
-        <section key={type} className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold text-white">{type}</h2>
-            <div className="text-sm text-gray-400">{grouped[type].length} skills</div>
+        <section key={type} className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-black">{type}</h2>
+            <div className="text-sm font-semibold text-[#7e7576]">{grouped[type].length} skills</div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {grouped[type].map((skill, index) => (
               <div 
                 key={skill.id} 
-                className="glass-card p-4 rounded-2xl hover:border-green-500/40 hover:bg-green-500/5 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-3 aspect-square group hover:-translate-y-2 hover:shadow-xl hover:shadow-green-500/10"
+                className="bg-white border border-[#E5E5E5] p-6 rounded-[2.5rem] hover:border-black transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-3 aspect-square group shadow-none"
                 onClick={() => onNavigate({ type: 'SKILL_DETAIL', slug: skill.slug })}
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                 <div className="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 group-hover:bg-green-500/10 group-hover:scale-110 transition-all duration-300">
+                 <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#f9f9f9] border border-[#E5E5E5] group-hover:scale-110 transition-all duration-300">
                    {(() => {
                      const IconComponent = Icons[skill.name.toLowerCase().replace(/[\s\.\-\+]/g, '') as IconName] || Zap;
-                     return <IconComponent className="w-8 h-8 text-gray-400 group-hover:text-green-400" />;
+                     return <IconComponent className="w-8 h-8 text-black" />;
                    })()}
                  </div>
                  <div>
-                   <div className="font-bold text-white mb-1 group-hover:text-green-400 transition-colors">{skill.name}</div>
-                   <div className="text-xs text-gray-500 capitalize px-2 py-0.5 rounded-full border border-white/5 bg-black/20">{skill.proficiency}</div>
+                   <div className="font-bold text-black mb-1 group-hover:text-black transition-colors">{skill.name}</div>
+                   <div className="text-xs font-semibold text-[#4c4546] capitalize px-3 py-1 rounded-full border border-[#E5E5E5] bg-[#f9f9f9]">{skill.proficiency}</div>
                  </div>
               </div>
             ))}
@@ -70,7 +70,7 @@ export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSt
     api.getSkillDetail(slug).then(setSkill).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div className="pt-32 text-center text-white"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
   if (!skill) return <div>Skill not found</div>;
 
   return (
@@ -80,22 +80,20 @@ export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSt
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Skills
       </Button>
       
-      <div className="glass-card rounded-3xl p-12 relative overflow-hidden group">
-         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-green-400 to-blue-500"></div>
-         <div className="absolute inset-0 bg-green-500/5 blur-3xl rounded-full opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none"></div>
+      <div className="bg-white border border-[#E5E5E5] rounded-[3rem] p-12 relative overflow-hidden group shadow-none">
          
-         <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-white/5 mb-8 border border-white/10 shadow-lg shadow-green-500/10 group-hover:scale-105 transition-transform duration-500">
+         <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] mb-8 shadow-none group-hover:scale-105 transition-transform duration-500">
             {(() => {
                const IconComponent = Icons[skill.name.toLowerCase().replace(/[\s\.\-\+]/g, '') as IconName] || Zap;
-               return <IconComponent className="w-14 h-14 text-green-400" />;
+               return <IconComponent className="w-14 h-14 text-black" />;
             })()}
          </div>
-         <h1 className="text-5xl font-bold text-white mb-6 tracking-tight">{skill.name}</h1>
-         <div className="inline-block px-5 py-2 rounded-full bg-white/5 border border-white/10 text-gray-300 text-sm font-medium capitalize mb-10">
+         <h1 className="text-5xl font-extrabold text-black mb-6 tracking-tight">{skill.name}</h1>
+         <div className="inline-block px-5 py-2 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] text-[#4c4546] text-sm font-semibold capitalize mb-10">
            {skill.proficiency} • {skill.skill_type}
          </div>
-         <p className="text-gray-400 text-lg leading-relaxed max-w-lg mx-auto">
-           This skill is a key part of my stack. I have utilized <span className="text-white font-medium">{skill.name}</span> in various projects to build robust and scalable solutions, demonstrating a deep understanding of its core concepts.
+         <p className="text-[#4c4546] text-lg leading-relaxed max-w-lg mx-auto">
+           This skill is a key part of my stack. I have utilized <span className="text-black font-semibold">{skill.name}</span> in various projects to build robust and scalable solutions, demonstrating a deep understanding of its core concepts.
          </p>
       </div>
     </main>

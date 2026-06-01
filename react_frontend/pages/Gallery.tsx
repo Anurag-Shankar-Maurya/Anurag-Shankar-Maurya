@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ImageIcon, Loader2, RefreshCw, Filter, Layers, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ImageIcon, Loader2, RefreshCw, Filter, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import Gallery from '../components/Gallery';
 import { MetaTags } from '../components/MetaTags';
 import { api } from '../services/api';
@@ -89,17 +89,17 @@ export const GalleryView: React.FC = () => {
       <MetaTags title="Visual Gallery | Anurag Shankar Maurya" description="Explore the visual narrative of my journey." />
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
         <div className="flex items-center gap-5">
-          <div className="p-4 bg-pink-500/10 rounded-2xl text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.15)] ring-1 ring-pink-500/20">
+          <div className="p-4 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none">
             <ImageIcon className="w-10 h-10"/>
           </div>
           <div>
-             <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">Visual Gallery</h1>
-             <p className="text-gray-400 mt-1.5 font-light">Explore the visual narrative of my journey.</p>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-black tracking-tight">Visual Gallery</h1>
+              <p className="text-[#4c4546] mt-1.5 font-semibold">Explore the visual narrative of my journey.</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={fetchImages} className="text-gray-400 hover:text-white">
+          <Button variant="ghost" size="sm" onClick={fetchImages} className="text-[#4c4546] hover:text-black">
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
@@ -107,9 +107,9 @@ export const GalleryView: React.FC = () => {
       </div>
 
       {/* Modern Filter Bar */}
-      <div className="glass-card p-2 rounded-2xl mb-12 flex flex-wrap items-center gap-2 bg-white/5 border-white/10 backdrop-blur-md sticky top-24 z-30">
+      <div className="bg-white/80 border border-[#E5E5E5] p-3 rounded-full mb-12 flex flex-wrap items-center gap-2 backdrop-blur-[20px] sticky top-24 z-30 shadow-none">
         <div className="flex flex-wrap items-center gap-2 p-1 grow">
-          <div className="flex items-center gap-2 px-3 py-2 mr-2 text-gray-500 border-r border-white/10">
+          <div className="flex items-center gap-2 px-3 py-2 mr-2 text-[#7e7576] border-r border-[#E5E5E5]">
             <Filter className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-widest">Filters</span>
           </div>
@@ -119,11 +119,11 @@ export const GalleryView: React.FC = () => {
             <select 
               value={typeFilter || ''} 
               onChange={(e) => setTypeFilter(e.target.value || undefined)}
-              className="appearance-none bg-white/5 hover:bg-white/10 text-gray-300 px-4 py-2 pr-10 rounded-xl text-sm font-medium border border-white/10 focus:outline-none focus:ring-2 focus:ring-pink-500/40 transition-all cursor-pointer min-w-[140px]"
+              className="appearance-none bg-[#f9f9f9] hover:bg-[#F2F2F2] text-black px-4 py-2 pr-10 rounded-full text-sm font-semibold border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-black/20 transition-all cursor-pointer min-w-[140px]"
             >
-              {contentTypes.map(c => <option key={c.label} value={c.value || ''} className="bg-gray-900 text-white">{c.label}</option>)}
+              {contentTypes.map(c => <option key={c.label} value={c.value || ''} className="bg-white text-black">{c.label}</option>)}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none group-hover/select:text-white transition-colors" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7e7576] pointer-events-none group-hover/select:text-black transition-colors" />
           </div>
 
           {/* Linked Object Selector */}
@@ -131,29 +131,29 @@ export const GalleryView: React.FC = () => {
             <select 
               value={objectFilter || ''} 
               onChange={(e) => setObjectFilter(e.target.value || undefined)}
-              className="appearance-none bg-white/5 hover:bg-white/10 text-gray-300 px-4 py-2 pr-10 rounded-xl text-sm font-medium border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all cursor-pointer min-w-[140px]"
+              className="appearance-none bg-[#f9f9f9] hover:bg-[#F2F2F2] text-black px-4 py-2 pr-10 rounded-full text-sm font-semibold border border-[#E5E5E5] focus:outline-none focus:ring-2 focus:ring-black/20 transition-all cursor-pointer min-w-[140px]"
             >
-              {linkedObjects.map(o => <option key={o.label} value={o.value || ''} className="bg-gray-900 text-white">{o.label}</option>)}
+              {linkedObjects.map(o => <option key={o.label} value={o.value || ''} className="bg-white text-black">{o.label}</option>)}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none group-hover/select:text-white transition-colors" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7e7576] pointer-events-none group-hover/select:text-black transition-colors" />
           </div>
 
-          <div className="h-6 w-px bg-white/10 mx-2 hidden sm:block"></div>
+          <div className="h-6 w-px bg-[#E5E5E5] mx-2 hidden sm:block"></div>
 
           {/* Active Filter Pills (Horizontal Scrollable) */}
           <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
              {typeFilter && (
-               <button onClick={() => setTypeFilter(undefined)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-pink-500/10 text-pink-400 text-xs font-semibold border border-pink-500/20 whitespace-nowrap hover:bg-pink-500/20 transition-colors">
+               <button onClick={() => setTypeFilter(undefined)} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F2F2F2] text-black text-xs font-semibold border border-[#E5E5E5] whitespace-nowrap hover:border-black transition-all">
                  Type: {contentTypes.find(c => c.value === typeFilter)?.label} <span>×</span>
                </button>
              )}
              {objectFilter && (
-               <button onClick={() => setObjectFilter(undefined)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-semibold border border-blue-500/20 whitespace-nowrap hover:bg-blue-500/20 transition-colors">
+               <button onClick={() => setObjectFilter(undefined)} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F2F2F2] text-black text-xs font-semibold border border-[#E5E5E5] whitespace-nowrap hover:border-black transition-all">
                  Source: {linkedObjects.find(o => o.value === objectFilter)?.label} <span>×</span>
                </button>
              )}
              {(typeFilter || objectFilter) && (
-               <button onClick={() => { setTypeFilter(undefined); setObjectFilter(undefined); }} className="text-gray-500 hover:text-white text-xs font-medium px-2 py-1.5 transition-colors">
+               <button onClick={() => { setTypeFilter(undefined); setObjectFilter(undefined); }} className="text-[#7e7576] hover:text-black text-xs font-bold px-2 py-1.5 transition-colors">
                  Reset All
                </button>
              )}
@@ -163,8 +163,8 @@ export const GalleryView: React.FC = () => {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-32 space-y-4">
-          <Loader2 className="w-10 h-10 animate-spin text-pink-500" />
-          <p className="text-gray-500 animate-pulse">Filtering visual assets...</p>
+          <Loader2 className="w-10 h-10 animate-spin text-black" />
+          <p className="text-[#4c4546] font-semibold animate-pulse">Filtering visual assets...</p>
         </div>
       ) : images.length > 0 ? (
         <div className="animate-fade-in flex flex-col gap-12">
@@ -172,11 +172,11 @@ export const GalleryView: React.FC = () => {
            
            {/* Pagination UI */}
            {totalPages > 1 && (
-             <div className="flex items-center justify-center gap-4 pt-8 border-t border-white/5">
+             <div className="flex items-center justify-center gap-4 pt-8 border-t border-[#E5E5E5]">
                 <button 
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-white/10"
+                  className="p-3 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] text-[#4c4546] hover:text-black hover:border-black disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
@@ -193,10 +193,10 @@ export const GalleryView: React.FC = () => {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl text-sm font-bold transition-all border ${
+                        className={`w-10 h-10 rounded-full text-sm font-bold transition-all border shadow-none ${
                           page === p 
-                          ? 'bg-pink-500 border-pink-500 text-white shadow-lg shadow-pink-500/30' 
-                          : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-white'
+                          ? 'bg-black border-black text-white' 
+                          : 'bg-[#f9f9f9] border-[#E5E5E5] text-[#4c4546] hover:border-black hover:text-black'
                         }`}
                       >
                         {p}
@@ -208,27 +208,27 @@ export const GalleryView: React.FC = () => {
                 <button 
                   onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-white/10"
+                  className="p-3 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] text-[#4c4546] hover:text-black hover:border-black disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
              </div>
            )}
 
-           <div className="text-center text-gray-500 text-sm">
+           <div className="text-center text-[#7e7576] font-semibold text-sm">
              Showing {((page-1)*PAGE_SIZE) + 1} to {Math.min(page*PAGE_SIZE, totalCount)} of {totalCount} images
            </div>
         </div>
       ) : (
-        <div className="text-center py-32 rounded-3xl border-2 border-dashed border-white/5 bg-white/[0.02]">
-          <div className="p-4 bg-white/5 rounded-full w-fit mx-auto mb-4">
-            <ImageIcon className="w-8 h-8 text-gray-600" />
+        <div className="text-center py-32 rounded-[3rem] border border-dashed border-[#cfc4c5] bg-white">
+          <div className="p-4 bg-[#f9f9f9] rounded-full w-fit mx-auto mb-4 border border-[#E5E5E5]">
+            <ImageIcon className="w-8 h-8 text-black" />
           </div>
-          <h3 className="text-xl font-bold text-white mb-1">No matches found</h3>
-          <p className="text-gray-500">Try adjusting your filters to find what you're looking for.</p>
+          <h3 className="text-xl font-bold text-black mb-1">No matches found</h3>
+          <p className="text-[#7e7576] font-semibold">Try adjusting your filters to find what you're looking for.</p>
           <button 
             onClick={() => { setTypeFilter(undefined); setObjectFilter(undefined); }}
-            className="mt-6 text-pink-400 hover:text-pink-300 text-sm font-medium underline underline-offset-4"
+            className="mt-6 text-black hover:underline text-sm font-bold"
           >
             Clear all filters
           </button>

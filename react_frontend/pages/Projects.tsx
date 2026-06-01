@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight, ArrowLeft, Loader2, Search, X, LayoutGrid, List } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
@@ -92,22 +91,22 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
         description="A complete archive of my open source contributions, client work, and side projects."
         keywords="projects, portfolio, software development, open source"
       />
-      <h1 className="text-4xl font-bold text-white mb-4">All Projects</h1>
-      <p className="text-gray-400 max-w-2xl mb-12">A complete archive of my open source contributions, client work, and side projects.</p>
+      <h1 className="text-4xl font-extrabold text-black mb-4">All Projects</h1>
+      <p className="text-[#4c4546] max-w-2xl mb-12">A complete archive of my open source contributions, client work, and side projects.</p>
       
       {/* Search Bar */}
       <div className="mb-6 relative">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7e7576]" />
           <input 
             type="text" 
             placeholder="Search projects by title, description, or technology..." 
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus-visible:ring-2 focus-visible:ring-blue-400/70 transition-colors"
+            className="w-full pl-12 pr-12 py-3 bg-white border border-[#cfc4c5] rounded-full text-black placeholder-[#7e7576] focus:outline-none focus:border-black focus:border-[2px] transition-all"
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 rounded-md">
+            <button onClick={() => setSearchQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7e7576] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-full">
               <X className="w-4 h-4" />
             </button>
           )}
@@ -116,17 +115,17 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
 
       {/* View Toggle */}
       <div className="mb-8 flex items-center justify-end">
-        <div className="inline-flex items-center p-1 rounded-lg bg-white/5 border border-white/10">
+        <div className="inline-flex items-center p-1 rounded-full bg-[#eeeeee] border border-[#cfc4c5]">
           <button
             onClick={() => setViewMode('grid')}
-            className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${viewMode === 'grid' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-white/5'}`}
+            className={`px-4 py-1.5 rounded-full text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${viewMode === 'grid' ? 'bg-black text-white font-semibold' : 'text-[#4c4546] hover:bg-[#f3f3f3]'}`}
             aria-pressed={viewMode === 'grid'}
           >
             <LayoutGrid className="w-4 h-4" /> Grid
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'text-gray-300 hover:bg-white/5'}`}
+            className={`px-4 py-1.5 rounded-full text-sm flex items-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${viewMode === 'list' ? 'bg-black text-white font-semibold' : 'text-[#4c4546] hover:bg-[#f3f3f3]'}`}
             aria-pressed={viewMode === 'list'}
           >
             <List className="w-4 h-4" /> List
@@ -137,11 +136,11 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
       {/* Status Filter */}
       {statuses.length > 0 && (
         <div className="mb-8">
-          <h3 className="text-sm font-semibold text-gray-400 mb-3">Status</h3>
+          <h3 className="text-xs font-bold text-[#7e7576] uppercase tracking-widest mb-3">Status</h3>
           <div className="flex flex-wrap gap-2">
             <button 
               onClick={() => { setSelectedStatus(null); setCurrentPage(1); }}
-              className={`px-4 py-2 rounded-lg transition-colors capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${!selectedStatus ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+              className={`px-4 py-2 text-sm rounded-full transition-all capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${!selectedStatus ? 'bg-black text-white font-semibold' : 'bg-[#F2F2F2] text-[#4c4546] hover:bg-[#eeeeee] border border-transparent hover:border-[#cfc4c5]'}`}
             >
               All
             </button>
@@ -149,7 +148,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
               <button 
                 key={status}
                 onClick={() => { setSelectedStatus(status); setCurrentPage(1); }}
-                className={`px-4 py-2 rounded-lg transition-colors capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${selectedStatus === status ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                className={`px-4 py-2 text-sm rounded-full transition-all capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${selectedStatus === status ? 'bg-black text-white font-semibold' : 'bg-[#F2F2F2] text-[#4c4546] hover:bg-[#eeeeee] border border-transparent hover:border-[#cfc4c5]'}`}
               >
                 {status}
               </button>
@@ -162,11 +161,11 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
       {technologies.length > 0 && (
         <div className="mb-10">
           <div className="flex items-center justify-between gap-3 mb-3">
-            <h3 className="text-sm font-semibold text-gray-400">Tech Stack</h3>
+            <h3 className="text-xs font-bold text-[#7e7576] uppercase tracking-widest">Tech Stack</h3>
             {technologies.length > 8 && (
               <button
                 onClick={() => setShowAllTechnologies((prev) => !prev)}
-                className="text-xs px-2.5 py-1 rounded-md bg-white/5 text-gray-300 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70"
+                className="text-xs px-3 py-1 rounded-full bg-[#eeeeee] border border-[#cfc4c5] text-black hover:bg-[#e2e2e2] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
               >
                 {showAllTechnologies ? 'Show less' : `Show all (${technologies.length})`}
               </button>
@@ -180,7 +179,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
                 value={techSearchQuery}
                 onChange={(e) => setTechSearchQuery(e.target.value)}
                 placeholder="Find a technology tag..."
-                className="w-full md:max-w-sm px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus-visible:ring-2 focus-visible:ring-blue-400/70"
+                className="w-full md:max-w-sm px-4 py-2 text-sm bg-white border border-[#cfc4c5] rounded-full text-black placeholder-[#7e7576] focus:outline-none focus:border-black"
               />
             </div>
           )}
@@ -188,7 +187,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setSelectedTechnology(null)}
-              className={`px-3 py-1.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${!selectedTechnology ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+              className={`px-3 py-1.5 text-sm rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${!selectedTechnology ? 'bg-black text-white font-semibold shadow-none' : 'bg-[#F2F2F2] text-[#4c4546] hover:bg-[#eeeeee] border border-transparent hover:border-[#cfc4c5]'}`}
             >
               All Tech
             </button>
@@ -196,14 +195,14 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
               <button
                 key={tech}
                 onClick={() => setSelectedTechnology(tech)}
-                className={`px-3 py-1.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 ${selectedTechnology === tech ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                className={`px-3 py-1.5 text-sm rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${selectedTechnology === tech ? 'bg-black text-white font-semibold shadow-none' : 'bg-[#F2F2F2] text-[#4c4546] hover:bg-[#eeeeee] border border-transparent hover:border-[#cfc4c5]'}`}
               >
                 {tech}
               </button>
             ))}
           </div>
           {techSearchQuery && filteredTechnologies.length === 0 && (
-            <p className="text-xs text-gray-500 mt-2">No technology tags found for “{techSearchQuery}”.</p>
+            <p className="text-xs text-[#7e7576] mt-2">No technology tags found for “{techSearchQuery}”.</p>
           )}
         </div>
       )}
@@ -212,15 +211,15 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
       {loading ? (
         <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6 mb-8`}>
           {Array.from({ length: viewMode === 'grid' ? 6 : 4 }).map((_, idx) => (
-            <div key={idx} className={`glass-card rounded-2xl overflow-hidden animate-pulse ${viewMode === 'list' ? 'flex gap-4 p-4 items-start' : ''}`}>
-              <div className={`${viewMode === 'list' ? 'w-56 h-36 rounded-xl' : 'w-full aspect-video'} bg-white/5`} />
-              <div className={`${viewMode === 'list' ? 'flex-1' : 'p-6'} ${viewMode === 'list' ? '' : ''}`}>
-                <div className={`${viewMode === 'list' ? 'mt-0' : ''} h-5 w-3/4 bg-white/10 rounded mb-3`} />
-                <div className="h-4 w-full bg-white/5 rounded mb-2" />
-                <div className="h-4 w-2/3 bg-white/5 rounded mb-4" />
+            <div key={idx} className={`bg-white border border-[#E5E5E5] rounded-[3rem] p-10 animate-pulse ${viewMode === 'list' ? 'flex flex-col md:flex-row gap-6' : 'flex flex-col'}`}>
+              <div className={`${viewMode === 'list' ? 'w-full md:w-[320px] rounded-[2rem]' : 'w-full aspect-video rounded-[2rem]'} bg-[#eeeeee]`} />
+              <div className="flex-grow pt-4">
+                <div className="h-6 w-3/4 bg-[#eeeeee] rounded mb-3" />
+                <div className="h-4 w-full bg-[#eeeeee] rounded mb-2" />
+                <div className="h-4 w-2/3 bg-[#eeeeee] rounded mb-4" />
                 <div className="flex gap-2">
-                  <div className="h-6 w-16 bg-white/5 rounded" />
-                  <div className="h-6 w-20 bg-white/5 rounded" />
+                  <div className="h-6 w-16 bg-[#eeeeee] rounded-full" />
+                  <div className="h-6 w-20 bg-[#eeeeee] rounded-full" />
                 </div>
               </div>
             </div>
@@ -228,28 +227,26 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
         </div>
       ) : paginatedData && displayedProjects.length > 0 ? (
         <>
-          <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6 mb-8`}>
+          <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-8 mb-8`}>
             {displayedProjects.map((project, index) => (
               <div 
                 key={project.id} 
-                className={`group glass-card rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 cursor-pointer ${viewMode === 'list' ? 'flex flex-col md:flex-row' : 'flex flex-col'}`}
+                className={`group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black hover:border-[2px] transition-all duration-500 cursor-pointer shadow-none ${viewMode === 'list' ? 'flex flex-col md:flex-row gap-6' : 'flex flex-col'}`}
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter') onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug }); }}
               >
-                <div className={`${viewMode === 'list' ? 'md:w-[320px] md:min-w-[320px]' : ''} aspect-video bg-black/50 overflow-hidden relative`}>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                  <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div className={`${viewMode === 'list' ? 'md:w-[320px] md:min-w-[320px]' : ''} aspect-video bg-[#F2F2F2] rounded-[2rem] overflow-hidden relative`}>
+                  <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" />
 
                   {/* Overlay icons: Live, Source, Demo, Gallery */}
                   <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
                     {project.live_url && (
                       <button
                         onClick={(e) => { e.stopPropagation(); window.open(project.live_url, '_blank'); }}
-                        className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60"
+                        className="p-2 rounded-full bg-white/90 text-black border border-[#cfc4c5] hover:bg-black hover:text-white transition-all"
                         aria-label={`Open live site for ${project.title}`}
                       >
                         {React.createElement(Icons.globe, { className: 'w-4 h-4' })}
@@ -259,7 +256,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
                     {project.github_url && (
                       <button
                         onClick={(e) => { e.stopPropagation(); window.open(project.github_url, '_blank'); }}
-                        className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60"
+                        className="p-2 rounded-full bg-white/90 text-black border border-[#cfc4c5] hover:bg-black hover:text-white transition-all"
                         aria-label={`Open source for ${project.title}`}
                       >
                         {React.createElement(SocialIcons.github, { className: 'w-4 h-4' })}
@@ -269,7 +266,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
                     {project.demo_url && (
                       <button
                         onClick={(e) => { e.stopPropagation(); window.open(project.demo_url, '_blank'); }}
-                        className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60"
+                        className="p-2 rounded-full bg-white/90 text-black border border-[#cfc4c5] hover:bg-black hover:text-white transition-all"
                         aria-label={`Open demo for ${project.title}`}
                       >
                         {React.createElement(Icons.play, { className: 'w-4 h-4' })}
@@ -279,7 +276,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
                     {project.images && project.images.length > 0 && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleOpenGallery(project); }}
-                        className="p-2 rounded-md bg-black/50 text-white hover:bg-black/60"
+                        className="p-2 rounded-full bg-white/90 text-black border border-[#cfc4c5] hover:bg-black hover:text-white transition-all"
                         aria-label={`Open gallery for ${project.title}`}
                       >
                         {React.createElement(Icons.gallery, { className: 'w-4 h-4' })}
@@ -287,20 +284,20 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
                     )}
                   </div>
 
-                  <div className="absolute top-2 left-3 z-20 px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-md text-xs font-medium text-white border border-white/10 capitalize shadow-lg">
+                  <div className="absolute top-2 left-3 z-20 px-3 py-1 bg-white/90 border border-[#cfc4c5] rounded-full text-xs font-semibold text-black capitalize">
                     {project.status}
                   </div>
                 </div>
-                <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{project.title}</h3>
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-3 flex-grow">{project.short_description}</p>
+                <div className="pt-6 flex flex-col flex-grow">
+                  <h3 className="text-xl font-bold text-black mb-2 group-hover:text-black transition-colors">{project.title}</h3>
+                  <p className="text-[#4c4546] text-sm mb-4 line-clamp-3 flex-grow leading-[1.6]">{project.short_description}</p>
                   {/* tech badges */}
                   <div className="mt-4 flex flex-wrap gap-2">
                     {project.technologies.split(',').slice(0, 3).map(t => (
-                      <span key={t} className="px-2 py-1 text-xs bg-white/5 rounded-md text-gray-300 border border-white/5">{t.trim()}</span>
+                      <span key={t} className="px-3 py-1 text-xs bg-[#F2F2F2] rounded-full text-black font-semibold">{t.trim()}</span>
                     ))}
                     {project.technologies.split(',').length > 3 && (
-                      <span className="px-2 py-1 text-xs text-gray-400 bg-white/5 rounded-md border border-dashed border-white/20">
+                      <span className="px-3 py-1 text-xs text-[#7e7576] bg-[#F2F2F2] rounded-full border border-dashed border-[#cfc4c5] font-semibold">
                         +{project.technologies.split(',').length - 3} more
                       </span>
                     )}
@@ -316,16 +313,16 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
               <button 
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={!paginatedData.previous}
-                className="px-4 py-2 rounded-lg bg-white/5 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+                className="px-5 py-2.5 rounded-full bg-transparent border border-black text-black disabled:opacity-30 hover:bg-neutral-100/50 transition-colors"
               >
                 Previous
               </button>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 {Array.from({ length: Math.ceil(paginatedData.count / ITEMS_PER_PAGE) }, (_, i) => i + 1).map(page => (
                   <button 
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-2 rounded-lg transition-colors ${currentPage === page ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                    className={`px-4 py-2 rounded-full transition-colors font-semibold ${currentPage === page ? 'bg-black text-white' : 'bg-[#F2F2F2] text-[#4c4546] hover:bg-[#eeeeee]'}`}
                   >
                     {page}
                   </button>
@@ -334,7 +331,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
               <button 
                 onClick={() => setCurrentPage(p => p + 1)}
                 disabled={!paginatedData.next}
-                className="px-4 py-2 rounded-lg bg-white/5 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+                className="px-5 py-2.5 rounded-full bg-transparent border border-black text-black disabled:opacity-30 hover:bg-neutral-100/50 transition-colors"
               >
                 Next
               </button>
@@ -343,8 +340,8 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
         </>
       ) : (
         <div className="text-center py-12">
-          <p className="text-gray-300 text-lg font-medium mb-2">No projects match these filters yet.</p>
-          <p className="text-gray-500 mb-5">Try clearing status, tech stack, or search to view more projects.</p>
+          <p className="text-black text-lg font-bold mb-2">No projects match these filters yet.</p>
+          <p className="text-[#7e7576] mb-5">Try clearing status, tech stack, or search to view more projects.</p>
           <Button
             variant="secondary"
             onClick={() => {
@@ -400,22 +397,22 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
   if (loading) return (
     <div className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8 animate-pulse">
       {/* Banner Skeleton */}
-      <div className="w-full aspect-video rounded-3xl bg-white/5 border border-white/5" />
+      <div className="w-full aspect-video rounded-[3rem] bg-[#eeeeee] border border-[#E5E5E5]" />
       {/* Grid Layout Skeleton */}
       <div className="flex flex-col md:flex-row gap-12">
         <div className="flex-1 space-y-4">
-          <div className="h-10 w-2/3 bg-white/10 rounded-xl" />
+          <div className="h-10 w-2/3 bg-[#eeeeee] rounded-xl" />
           <div className="space-y-2">
-            <div className="h-4 w-full bg-white/5 rounded-md" />
-            <div className="h-4 w-full bg-white/5 rounded-md" />
-            <div className="h-4 w-5/6 bg-white/5 rounded-md" />
+            <div className="h-4 w-full bg-[#eeeeee] rounded-md" />
+            <div className="h-4 w-full bg-[#eeeeee] rounded-md" />
+            <div className="h-4 w-5/6 bg-[#eeeeee] rounded-md" />
           </div>
         </div>
         <div className="w-full md:w-80 space-y-6">
-          <div className="p-6 glass-card rounded-2xl space-y-3">
-            <div className="h-4 w-2/3 bg-white/10 rounded" />
-            <div className="h-4 w-full bg-white/5 rounded" />
-            <div className="h-4 w-full bg-white/5 rounded" />
+          <div className="p-10 bg-white border border-[#E5E5E5] rounded-[3rem] space-y-3">
+            <div className="h-4 w-2/3 bg-[#eeeeee] rounded" />
+            <div className="h-4 w-full bg-[#eeeeee] rounded" />
+            <div className="h-4 w-full bg-[#eeeeee] rounded" />
           </div>
         </div>
       </div>
@@ -460,9 +457,9 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
         onNavigate={onNavigate} 
       />
       
-      <div className="glass-card p-2 rounded-3xl mb-12">
+      <div className="bg-white border border-[#E5E5E5] p-4 rounded-[3rem] mb-12 shadow-none">
         <button onClick={() => openGallery(0)} className="w-full block">
-          <img src={project.featured_image} alt={project.title} className="w-full aspect-video object-cover rounded-2xl cursor-pointer" />
+          <img src={project.featured_image} alt={project.title} className="w-full aspect-video object-cover rounded-[2rem] cursor-pointer" />
         </button>
       </div>
 
@@ -470,45 +467,45 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
 
       <div className="flex flex-col md:flex-row gap-12">
         <div className="flex-1">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{project.title}</h1>
-          <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-gray-300" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-black mb-6">{project.title}</h1>
+          <div ref={contentRef} className="prose prose-lg max-w-none text-[#4c4546] leading-[1.6]" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
              <p className="whitespace-pre-wrap">{project.description}</p>
           </div>
           {needsTruncate && (
             <div className="mt-6">
-              <Button variant="ghost" onClick={() => setExpanded(prev => !prev)}>{expanded ? 'Read less' : 'Read more'}</Button>
+              <Button variant="ghost" onClick={() => setExpanded(prev => !prev)} className="text-[#7e7576]">{expanded ? 'Read less' : 'Read more'}</Button>
             </div>
           )}
         </div>
         <div className="w-full md:w-80 space-y-6">
-          <div className="p-6 glass-card rounded-2xl">
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Project Links</h3>
+          <div className="p-10 bg-white border border-[#E5E5E5] rounded-[3rem] shadow-none">
+            <h3 className="text-xs font-bold text-[#7e7576] uppercase tracking-widest mb-6">Project Links</h3>
             <div className="space-y-4">
               {project.live_url && (
-                <a href={project.live_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-blue-400 hover:text-blue-300 transition-colors group" onClick={(e) => e.stopPropagation()}>
-                  <span className="flex items-center">{React.createElement(Icons.globe, { className: 'w-4 h-4 mr-2' })} Live Site</span>
+                <a href={project.live_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-black hover:text-black font-semibold border-b border-transparent hover:border-black pb-0.5 transition-all group" onClick={(e) => e.stopPropagation()}>
+                  <span className="flex items-center">{React.createElement(Icons.globe, { className: 'w-4 h-4 mr-2 text-black' })} Live Site</span>
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"/>
                 </a>
               )}
               {project.github_url && (
-                <a href={project.github_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-gray-300 hover:text-white transition-colors group" onClick={(e) => e.stopPropagation()}>
-                  <span className="flex items-center">{React.createElement(SocialIcons.github, { className: 'w-4 h-4 mr-2' })} Source Code</span>
+                <a href={project.github_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-black hover:text-black font-semibold border-b border-transparent hover:border-black pb-0.5 transition-all group" onClick={(e) => e.stopPropagation()}>
+                  <span className="flex items-center">{React.createElement(SocialIcons.github, { className: 'w-4 h-4 mr-2 text-black' })} Source Code</span>
                    <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"/>
                 </a>
               )}
               {project.demo_url && (
-                <a href={project.demo_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-gray-300 hover:text-white transition-colors group" onClick={(e) => e.stopPropagation()}>
-                  <span className="flex items-center">{React.createElement(Icons.play, { className: 'w-4 h-4 mr-2' })} Demo</span>
+                <a href={project.demo_url} target="_blank" rel="noreferrer" className="flex items-center justify-between text-black hover:text-black font-semibold border-b border-transparent hover:border-black pb-0.5 transition-all group" onClick={(e) => e.stopPropagation()}>
+                  <span className="flex items-center">{React.createElement(Icons.play, { className: 'w-4 h-4 mr-2 text-black' })} Demo</span>
                    <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"/>
                 </a>
               )}
             </div>
           </div>
-          <div className="p-6 glass-card rounded-2xl">
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Technologies</h3>
+          <div className="p-10 bg-white border border-[#E5E5E5] rounded-[3rem] shadow-none">
+            <h3 className="text-xs font-bold text-[#7e7576] uppercase tracking-widest mb-6">Technologies</h3>
             <div className="flex flex-wrap gap-2">
               {project.technologies.split(',').map(t => (
-                <span key={t} className="px-3 py-1.5 bg-white/5 rounded-lg text-xs font-medium text-gray-300 border border-white/5">{t.trim()}</span>
+                <span key={t} className="px-3.5 py-1.5 bg-[#F2F2F2] rounded-full text-xs font-semibold text-black border border-transparent">{t.trim()}</span>
               ))}
             </div>
           </div>
@@ -516,8 +513,8 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
       </div>
 
       {project.images && project.images.length > 0 && (
-        <div className="mt-8 mb-8">
-          <h3 className="text-lg font-bold text-white mb-4">Project Gallery</h3>
+        <div className="mt-12 mb-8 border-t border-[#E5E5E5] pt-12">
+          <h3 className="text-2xl font-extrabold text-black mb-6">Project Gallery</h3>
           <Gallery images={project.images} />
         </div>
       )}

@@ -246,15 +246,15 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-[#f9f9f9]/90 backdrop-blur-md" onClick={onClose} />
 
       <div className="relative max-w-[95%] max-h-[95%] w-full flex flex-col items-center justify-center p-4">
-        <button className="fixed top-4 right-4 z-60 p-2 rounded-md bg-gray-700/60 text-white" onClick={(e) => { e.stopPropagation(); onClose(); }} aria-label="Close">
+        <button className="fixed top-4 right-4 z-60 p-3 rounded-full bg-white border border-[#E5E5E5] text-black hover:border-black transition-all shadow-none" onClick={(e) => { e.stopPropagation(); onClose(); }} aria-label="Close">
           <X className="w-5 h-5" />
         </button>
 
         {images.length > 1 && (
-          <button className="fixed left-6 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-gray-700/60 text-white" onClick={(e) => { e.stopPropagation(); goPrev(); }} aria-label="Previous">
+          <button className="fixed left-6 top-1/2 -translate-y-1/2 z-60 p-4 rounded-full bg-white border border-[#E5E5E5] text-black hover:border-black transition-all shadow-none" onClick={(e) => { e.stopPropagation(); goPrev(); }} aria-label="Previous">
             <ChevronLeft className="w-6 h-6" />
           </button>
         )}
@@ -290,7 +290,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
         >
           <div
             ref={containerRef}
-            className={`relative max-w-full max-h-[70vh] rounded shadow-lg p-2 flex items-center justify-center ${zoom > 1 ? (isPanning ? 'cursor-grabbing' : 'cursor-grab') : ''}`}
+            className={`relative max-w-full max-h-[70vh] rounded-[2rem] border border-[#E5E5E5] bg-white p-4 flex items-center justify-center shadow-none ${zoom > 1 ? (isPanning ? 'cursor-grabbing' : 'cursor-grab') : ''}`}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -304,7 +304,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
               ref={imgRef}
               src={images[index].src}
               alt={images[index].alt || ''}
-              className="max-w-full max-h-[70vh] object-contain rounded transition-transform duration-0"
+              className="max-w-full max-h-[70vh] object-contain rounded-[1.5rem] transition-transform duration-0"
               style={{ transform: `translate(${translate.x}px, ${translate.y}px) scale(${zoom})` }}
               onClick={(e) => e.stopPropagation()}
               onLoad={handleImageLoad}
@@ -313,9 +313,9 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
           </div>
 
           {/* Controls (zoom, play/pause) */}
-          <div className="fixed right-6 top-20 z-60 flex flex-col gap-2">
+          <div className="fixed right-6 top-20 z-60 flex flex-col gap-2 p-1.5 bg-white border border-[#E5E5E5] rounded-full shadow-none">
             <button
-              className="p-2 rounded-md bg-gray-700/60 text-white"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-transparent hover:bg-[#F2F2F2] text-black font-bold border border-transparent hover:border-[#cfc4c5] transition-all"
               onClick={(e) => { e.stopPropagation(); zoomIn(); }}
               aria-label="Zoom in"
               title="Zoom in"
@@ -323,7 +323,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
               +
             </button>
             <button
-              className="p-2 rounded-md bg-gray-700/60 text-white"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-transparent hover:bg-[#F2F2F2] text-black font-bold border border-transparent hover:border-[#cfc4c5] transition-all"
               onClick={(e) => { e.stopPropagation(); zoomOut(); }}
               aria-label="Zoom out"
               title="Zoom out"
@@ -331,7 +331,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
               −
             </button>
             <button
-              className={`p-2 rounded-md bg-gray-700/60 text-white ${isPlaying ? 'ring-2 ring-white' : ''}`}
+              className={`w-10 h-10 flex items-center justify-center rounded-full font-bold border border-transparent transition-all ${isPlaying ? 'bg-black text-white' : 'bg-transparent hover:bg-[#F2F2F2] text-black hover:border-[#cfc4c5]'}`}
               onClick={(e) => { e.stopPropagation(); togglePlay(); }}
               aria-label={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
               title={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
@@ -342,13 +342,13 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
         </div>
 
         {images[index].caption && (
-          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-60 text-center text-sm text-gray-200 px-4 py-2 bg-black/40 rounded max-w-[90%]">
+          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-60 text-center text-sm font-semibold text-black px-6 py-2.5 bg-white border border-[#E5E5E5] rounded-full max-w-[90%] shadow-none">
             {images[index].caption}
           </div>
         )}
 
         {images.length > 1 && (
-          <button className="fixed right-6 top-1/2 -translate-y-1/2 z-60 p-3 rounded-full bg-gray-700/60 text-white" onClick={(e) => { e.stopPropagation(); goNext(); }} aria-label="Next">
+          <button className="fixed right-6 top-1/2 -translate-y-1/2 z-60 p-4 rounded-full bg-white border border-[#E5E5E5] text-black hover:border-black transition-all shadow-none" onClick={(e) => { e.stopPropagation(); goNext(); }} aria-label="Next">
             <ChevronRight className="w-6 h-6" />
           </button>
         )}
@@ -361,16 +361,16 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, is
                 <button
                   key={i}
                   onClick={(e) => { e.stopPropagation(); setIndex(i); setZoom(1); }}
-                  className={`relative rounded-md overflow-hidden border-2 transform transition ${i === index ? 'border-white scale-105' : 'border-transparent'} focus:outline-none`}
+                  className={`relative rounded-[1rem] overflow-hidden border-2 transform transition ${i === index ? 'border-black scale-105' : 'border-[#E5E5E5] hover:border-black'} focus:outline-none`}
                   style={{ width: 80, height: 56 }}
                   aria-label={`Preview ${i + 1}`}
                 >
-                  <img src={img.src} alt={img.alt || ''} className="w-full h-full object-cover transition-transform duration-150 hover:scale-110" />
+                  <img src={img.src} alt={img.alt || ''} className="w-full h-full object-cover transition-transform duration-150 rounded-[1rem] hover:scale-110" />
 
                   {i === index && (
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-white/30">
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-black/10">
                       <div
-                        className="h-1 bg-white"
+                        className="h-1 bg-black"
                         style={{ width: `${Math.round(100 * Math.max(0, Math.min(1, progress))) }%`, transition: isPlaying ? 'width 0.05s linear' : 'none' }}
                       />
                     </div>

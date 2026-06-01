@@ -124,6 +124,13 @@
         color: #1a1c1c;
         overflow-x: hidden;
       }
+      .scrollbar-none::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-none {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
       /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 8px;

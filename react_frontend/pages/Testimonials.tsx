@@ -6,6 +6,7 @@ import { MetaTags } from '../components/MetaTags';
 import { Button } from '../components/Button';
 import { Testimonial, ViewState } from '../types';
 import { api } from '../services/api';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 const RatingStars = ({ rating, size = "sm" }: { rating: number, size?: "sm" | "lg" }) => {
   const iconSize = size === "lg" ? "w-6 h-6" : "w-4 h-4";
@@ -107,7 +108,7 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
     api.getTestimonialDetail(slug).then(setTest).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <SkeletonLoader type="detail" />;
   if (!test) return <div>Testimonial not found</div>;
 
   return (

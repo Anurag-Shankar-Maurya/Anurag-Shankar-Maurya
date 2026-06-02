@@ -9,6 +9,7 @@ import { BlogPost, ViewState, PaginatedResponse } from '../types';
 import { api } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewState) => void }> = ({ posts, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
@@ -328,7 +329,7 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
     }
   }, [post]);
 
-  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <SkeletonLoader type="blog-detail" />;
   if (!post) return <div>Post not found</div>;
 
   const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name || "Anurag Shankar Maurya";

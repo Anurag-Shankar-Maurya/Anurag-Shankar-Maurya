@@ -7,6 +7,7 @@ import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
 import { Achievement, ViewState } from '../types';
 import { api } from '../services/api';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigate: (view: ViewState) => void }> = ({ achievements, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
@@ -71,7 +72,7 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
     api.getAchievementDetail(slug).then(setAch).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <SkeletonLoader type="detail" />;
   if (!ach) return <div>Achievement not found</div>;
 
   return (

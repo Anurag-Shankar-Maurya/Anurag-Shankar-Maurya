@@ -8,6 +8,7 @@ import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { Project, ViewState, PaginatedResponse } from '../types';
 import { api } from '../services/api';
 import { Icons, SocialIcons } from '../components/Icons';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: ViewState) => void }> = ({ projects, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
@@ -394,30 +395,7 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
     }
   }, [project]);
 
-  if (loading) return (
-    <div className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8 animate-pulse">
-      {/* Banner Skeleton */}
-      <div className="w-full aspect-video rounded-[3rem] bg-[#eeeeee] border border-[#E5E5E5]" />
-      {/* Grid Layout Skeleton */}
-      <div className="flex flex-col md:flex-row gap-12">
-        <div className="flex-1 space-y-4">
-          <div className="h-10 w-2/3 bg-[#eeeeee] rounded-xl" />
-          <div className="space-y-2">
-            <div className="h-4 w-full bg-[#eeeeee] rounded-md" />
-            <div className="h-4 w-full bg-[#eeeeee] rounded-md" />
-            <div className="h-4 w-5/6 bg-[#eeeeee] rounded-md" />
-          </div>
-        </div>
-        <div className="w-full md:w-80 space-y-6">
-          <div className="p-10 bg-white border border-[#E5E5E5] rounded-[3rem] space-y-3">
-            <div className="h-4 w-2/3 bg-[#eeeeee] rounded" />
-            <div className="h-4 w-full bg-[#eeeeee] rounded" />
-            <div className="h-4 w-full bg-[#eeeeee] rounded" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  if (loading) return <SkeletonLoader type="project-detail" />;
   if (!project) return <div>Project not found</div>;
 
   const schemaData = {

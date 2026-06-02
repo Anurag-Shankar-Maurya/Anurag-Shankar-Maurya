@@ -6,6 +6,7 @@ import { Button } from '../components/Button';
 import Gallery from '../components/Gallery';
 import { Education, ViewState } from '../types';
 import { api } from '../services/api';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 export const EducationView: React.FC<{ education: Education[], onNavigate: (view: ViewState) => void }> = ({ education, onNavigate }) => (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
@@ -59,7 +60,7 @@ export const EducationDetailView: React.FC<{ slug: string, onNavigate: (view: Vi
     api.getEducationDetail(slug).then(setEducation).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <SkeletonLoader type="detail" />;
   if (!education) return <div>Education not found</div>;
 
   return (

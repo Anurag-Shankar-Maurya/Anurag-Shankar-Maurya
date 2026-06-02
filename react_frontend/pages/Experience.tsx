@@ -6,6 +6,7 @@ import { MetaTags } from '../components/MetaTags';
 import Gallery from '../components/Gallery';
 import { WorkExperience, ViewState } from '../types';
 import { api } from '../services/api';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate: (view: ViewState) => void }> = ({ experience, onNavigate }) => (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
@@ -66,7 +67,7 @@ export const ExperienceDetailView: React.FC<{ id: number, onNavigate: (view: Vie
     api.getExperienceDetail(id).then(setExperience).catch(console.error).finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <SkeletonLoader type="detail" />;
   if (!experience) return <div>Experience not found</div>;
 
   return (

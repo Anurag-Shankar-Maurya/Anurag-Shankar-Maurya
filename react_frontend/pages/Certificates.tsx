@@ -7,6 +7,7 @@ import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
 import { Certificate, ViewState } from '../types';
 import { api } from '../services/api';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigate: (view: ViewState) => void }> = ({ certificates, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
@@ -75,7 +76,7 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
     api.getCertificateDetail(slug).then(setCert).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <SkeletonLoader type="detail" />;
   if (!cert) return <div>Certificate not found</div>;
 
   return (

@@ -5,6 +5,7 @@ import { MetaTags } from '../components/MetaTags';
 import { api } from '../services/api';
 import { Image } from '../types';
 import { Button } from '../components/Button';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 export const GalleryView: React.FC = () => {
   const [images, setImages] = useState<Image[]>([]);
@@ -162,10 +163,7 @@ export const GalleryView: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-32 space-y-4">
-          <Loader2 className="w-10 h-10 animate-spin text-black" />
-          <p className="text-[#4c4546] font-semibold animate-pulse">Filtering visual assets...</p>
-        </div>
+        <SkeletonLoader type="gallery" />
       ) : images.length > 0 ? (
         <div className="animate-fade-in flex flex-col gap-12">
            <Gallery images={images} className="rounded-3xl overflow-hidden" />

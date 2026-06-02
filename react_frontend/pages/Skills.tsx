@@ -6,6 +6,7 @@ import { MetaTags } from '../components/MetaTags';
 import { Skill, ViewState } from '../types';
 import { api } from '../services/api';
 import { Icons, IconName } from '../components/Icons';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewState) => void }> = ({ skills, onNavigate }) => {
   const grouped = skills.reduce((acc, s) => {
@@ -70,7 +71,7 @@ export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSt
     api.getSkillDetail(slug).then(setSkill).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div className="pt-32 text-center text-black"><Loader2 className="w-8 h-8 animate-spin mx-auto"/></div>;
+  if (loading) return <SkeletonLoader type="detail" />;
   if (!skill) return <div>Skill not found</div>;
 
   return (

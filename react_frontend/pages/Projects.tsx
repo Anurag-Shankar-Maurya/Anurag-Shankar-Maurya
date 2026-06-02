@@ -233,22 +233,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
 
       {/* Projects Grid */}
       {loading ? (
-        <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6 mb-8`}>
-          {Array.from({ length: viewMode === 'grid' ? 6 : 4 }).map((_, idx) => (
-            <div key={idx} className={`bg-white border border-[#E5E5E5] rounded-[3rem] p-10 animate-pulse ${viewMode === 'list' ? 'flex flex-col md:flex-row gap-6' : 'flex flex-col'}`}>
-              <div className={`${viewMode === 'list' ? 'w-full md:w-[320px] rounded-[2rem]' : 'w-full aspect-video rounded-[2rem]'} bg-[#eeeeee]`} />
-              <div className="flex-grow pt-4">
-                <div className="h-6 w-3/4 bg-[#eeeeee] rounded mb-3" />
-                <div className="h-4 w-full bg-[#eeeeee] rounded mb-2" />
-                <div className="h-4 w-2/3 bg-[#eeeeee] rounded mb-4" />
-                <div className="flex gap-2">
-                  <div className="h-6 w-16 bg-[#eeeeee] rounded-full" />
-                  <div className="h-6 w-20 bg-[#eeeeee] rounded-full" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <SkeletonLoader type="projects-grid" viewMode={viewMode} />
       ) : paginatedData && displayedProjects.length > 0 ? (
         <>
           <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-8 mb-8`}>

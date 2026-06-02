@@ -4,8 +4,10 @@ export interface SkeletonLoaderProps {
   type:
     | 'home'
     | 'projects-list'
+    | 'projects-grid'
     | 'project-detail'
     | 'blog-list'
+    | 'blog-grid'
     | 'blog-detail'
     | 'contact'
     | 'experience-list'
@@ -22,11 +24,52 @@ export interface SkeletonLoaderProps {
     | 'testimonials-detail'
     | 'gallery'
     | 'gallery-grid';
+  viewMode?: 'grid' | 'list';
 }
 
-export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type }) => {
+export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type, viewMode = 'grid' }) => {
   // Common light-theme pulsing elements
   const pulseBar = "bg-[#eeeeee] rounded-md animate-pulse";
+
+  // Projects Grid-Only Skeleton (for API load after page is already mounted)
+  const ProjectsGridSkeleton = ({ mode = viewMode }: { mode?: 'grid' | 'list' }) => (
+    <div className={`grid ${mode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6 mb-8 animate-pulse`}>
+      {Array.from({ length: mode === 'grid' ? 6 : 4 }).map((_, idx) => (
+        <div key={idx} className={`bg-white border border-[#E5E5E5] rounded-[3rem] p-10 flex ${mode === 'list' ? 'flex-col md:flex-row gap-6' : 'flex flex-col'} shadow-none`}>
+          <div className={`${mode === 'list' ? 'w-full md:w-[320px] rounded-[2rem]' : 'w-full aspect-video rounded-[2rem]'} bg-[#eeeeee]`} />
+          <div className="flex-grow pt-4">
+            <div className="h-6 w-3/4 bg-[#eeeeee] rounded mb-3" />
+            <div className="h-4 w-full bg-[#eeeeee] rounded mb-2" />
+            <div className="h-4 w-2/3 bg-[#eeeeee] rounded mb-4" />
+            <div className="flex gap-2">
+              <div className="h-6 w-16 bg-[#eeeeee] rounded-full" />
+              <div className="h-6 w-20 bg-[#eeeeee] rounded-full" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Blog Grid-Only Skeleton (for API load after page is already mounted)
+  const BlogGridSkeleton = ({ mode = viewMode }: { mode?: 'grid' | 'list' }) => (
+    <div className={`${mode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6 mb-8 animate-pulse`}>
+      {Array.from({ length: mode === 'grid' ? 6 : 4 }).map((_, idx) => (
+        <div key={idx} className={`bg-white border border-[#E5E5E5] rounded-[3rem] p-10 flex ${mode === 'list' ? 'flex-col md:flex-row gap-6' : 'flex flex-col'} shadow-none`}>
+          <div className={`${mode === 'list' ? 'w-full md:w-72 rounded-[2rem]' : 'w-full aspect-video rounded-[2rem]'} bg-[#eeeeee]`} />
+          <div className="flex-grow pt-4">
+            <div className="h-6 w-3/4 bg-[#eeeeee] rounded mb-3" />
+            <div className="h-4 w-full bg-[#eeeeee] rounded mb-2" />
+            <div className="h-4 w-2/3 bg-[#eeeeee] rounded mb-4" />
+            <div className="flex gap-2">
+              <div className="h-6 w-16 bg-[#eeeeee] rounded-full" />
+              <div className="h-6 w-20 bg-[#eeeeee] rounded-full" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   // 1. Home Page Skeleton - Matches Home.tsx exactly
   const HomeSkeleton = () => (
@@ -146,25 +189,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type }) => {
           ))}
         </div>
       </div>
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="bg-white border border-[#E5E5E5] rounded-[3rem] p-10 flex flex-col shadow-none">
-            <div className="aspect-video bg-[#F2F2F2] rounded-[2rem]" />
-            <div className="pt-6 flex flex-col flex-grow space-y-4">
-              <div className="h-6 w-3/4 bg-[#eeeeee] rounded" />
-              <div className="space-y-2">
-                <div className="h-4 w-full bg-[#eeeeee] rounded" />
-                <div className="h-4 w-2/3 bg-[#eeeeee] rounded" />
-              </div>
-              <div className="flex gap-2 pt-2">
-                <div className="h-6 w-16 bg-[#eeeeee] rounded-full" />
-                <div className="h-6 w-20 bg-[#eeeeee] rounded-full" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <ProjectsGridSkeleton mode="grid" />
     </main>
   );
 
@@ -248,28 +273,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type }) => {
       <div className="mb-8 flex items-center justify-end">
         <div className="h-10 w-36 bg-[#eeeeee] rounded-full" />
       </div>
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="bg-white border border-[#E5E5E5] rounded-[3rem] p-10 flex flex-col space-y-6">
-            <div className="aspect-video bg-[#F2F2F2] rounded-[2rem]" />
-            <div className="flex flex-col flex-grow">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="h-4 w-16 bg-[#eeeeee] rounded" />
-                <div className="h-4 w-16 bg-[#eeeeee] rounded" />
-              </div>
-              <h3 className="h-6 w-11/12 bg-[#eeeeee] rounded mb-3" />
-              <p className="h-4 w-full bg-[#eeeeee] rounded mb-2" />
-              <p className="h-4 w-5/6 bg-[#eeeeee] rounded mb-4" />
-              <div className="mt-auto flex flex-wrap gap-2 pt-2">
-                {Array.from({ length: 3 }).map((_, j) => (
-                  <div key={j} className="h-8 w-16 bg-[#eeeeee] rounded-full" />
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <BlogGridSkeleton mode="grid" />
     </main>
   );
 
@@ -861,6 +865,10 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type }) => {
       return <GallerySkeleton />;
     case 'gallery-grid':
       return <GalleryGridSkeleton />;
+    case 'projects-grid':
+      return <ProjectsGridSkeleton />;
+    case 'blog-grid':
+      return <BlogGridSkeleton />;
     default:
       return <HomeSkeleton />;
   }

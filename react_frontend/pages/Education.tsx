@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { GraduationCap, ArrowRight, ArrowLeft, Calendar, Loader2 } from 'lucide-react';
+import { GraduationCap, ArrowRight, ArrowLeft, Calendar, Loader2, HelpCircle } from 'lucide-react';
 import { MetaTags } from '../components/MetaTags';
 import { Button } from '../components/Button';
 import Gallery from '../components/Gallery';
 import { Education, ViewState } from '../types';
 import { api } from '../services/api';
 import { SkeletonLoader } from '../components/SkeletonLoader';
+import { EmptyState } from '../components/EmptyState';
 
 export const EducationView: React.FC<{ education: Education[], onNavigate: (view: ViewState) => void }> = ({ education, onNavigate }) => (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
@@ -18,37 +19,46 @@ export const EducationView: React.FC<{ education: Education[], onNavigate: (view
          <p className="text-[#4c4546] mt-2">Academic background and qualifications.</p>
       </div>
     </div>
-    <div className="grid grid-cols-1 gap-6">
-      {education.map((edu, index) => (
-        <div 
-          key={edu.id} 
-          className="bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black transition-all cursor-pointer group shadow-none" 
-          onClick={() => onNavigate({ type: 'EDUCATION_DETAIL', slug: edu.slug || String(edu.id) })}
-          style={{ animationDelay: `${index * 0.1}s` }}
-        >
-          <div className="flex items-start gap-6">
-              {edu.logo ? (
-                <img src={edu.logo} alt={edu.institution} className="w-16 h-16 rounded-[1.5rem] object-cover bg-white border border-[#E5E5E5]"/>
-              ) : (
-                <div className="w-16 h-16 rounded-[1.5rem] bg-[#F2F2F2] flex items-center justify-center text-black border border-[#E5E5E5]"><GraduationCap className="w-8 h-8"/></div>
-              )}
-              <div className="flex-1">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
-                  <h3 className="text-2xl font-bold text-black group-hover:text-black transition-colors">{edu.institution}</h3>
-                  <span className="text-sm font-semibold text-[#4c4546] bg-[#f9f9f9] px-4 py-1.5 rounded-full border border-[#E5E5E5] w-fit">
-                    {new Date(edu.start_date).getFullYear()} - {edu.end_date ? new Date(edu.end_date).getFullYear() : 'Present'}
-                  </span>
+    {education.length === 0 ? (
+      <EmptyState
+        title="Academic Milestones Coming Soon"
+        description="Formal degrees, academic specializations, and academic milestones are currently being compiled. Stay tuned!"
+        icon={GraduationCap}
+        variant="general"
+      />
+    ) : (
+      <div className="grid grid-cols-1 gap-6">
+        {education.map((edu, index) => (
+          <div 
+            key={edu.id} 
+            className="bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black transition-all cursor-pointer group shadow-none" 
+            onClick={() => onNavigate({ type: 'EDUCATION_DETAIL', slug: edu.slug || String(edu.id) })}
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <div className="flex items-start gap-6">
+                {edu.logo ? (
+                  <img src={edu.logo} alt={edu.institution} className="w-16 h-16 rounded-[1.5rem] object-cover bg-white border border-[#E5E5E5]"/>
+                ) : (
+                  <div className="w-16 h-16 rounded-[1.5rem] bg-[#F2F2F2] flex items-center justify-center text-black border border-[#E5E5E5]"><GraduationCap className="w-8 h-8"/></div>
+                )}
+                <div className="flex-1">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
+                    <h3 className="text-2xl font-bold text-black group-hover:text-black transition-colors">{edu.institution}</h3>
+                    <span className="text-sm font-semibold text-[#4c4546] bg-[#f9f9f9] px-4 py-1.5 rounded-full border border-[#E5E5E5] w-fit">
+                      {new Date(edu.start_date).getFullYear()} - {edu.end_date ? new Date(edu.end_date).getFullYear() : 'Present'}
+                    </span>
+                  </div>
+                  <div className="text-lg text-black mt-1 font-semibold">{edu.degree} in {edu.field_of_study}</div>
+                  <p className="text-[#4c4546] mt-4 line-clamp-2 leading-relaxed">{edu.description}</p>
+                  <div className="mt-4 text-sm text-black font-semibold flex items-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
+                    Read more <ArrowRight className="w-3 h-3 ml-1"/>
+                  </div>
                 </div>
-                <div className="text-lg text-black mt-1 font-semibold">{edu.degree} in {edu.field_of_study}</div>
-                <p className="text-[#4c4546] mt-4 line-clamp-2 leading-relaxed">{edu.description}</p>
-                <div className="mt-4 text-sm text-black font-semibold flex items-center opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
-                  Read more <ArrowRight className="w-3 h-3 ml-1"/>
-                </div>
-              </div>
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    )}
   </main>
 );
 
@@ -61,7 +71,20 @@ export const EducationDetailView: React.FC<{ slug: string, onNavigate: (view: Vi
   }, [slug]);
 
   if (loading) return <SkeletonLoader type="education-detail" />;
-  if (!education) return <div>Education not found</div>;
+  if (!education) {
+    return (
+      <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
+        <EmptyState
+          title="Education Record Not Found"
+          description="The educational qualification or program record you are looking for may have been moved, renamed, or is currently unavailable."
+          icon={HelpCircle}
+          actionText="Back to Education"
+          onAction={() => onNavigate({ type: 'EDUCATION' })}
+          variant="general"
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">

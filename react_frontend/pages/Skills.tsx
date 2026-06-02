@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { Zap, Loader2, ArrowLeft } from 'lucide-react';
+import { Zap, Loader2, ArrowLeft, HelpCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
 import { Skill, ViewState } from '../types';
 import { api } from '../services/api';
 import { Icons, IconName } from '../components/Icons';
 import { SkeletonLoader } from '../components/SkeletonLoader';
+import { EmptyState } from '../components/EmptyState';
 
 export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewState) => void }> = ({ skills, onNavigate }) => {
   const grouped = skills.reduce((acc, s) => {
@@ -29,36 +30,45 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
         </div>
       </div>
 
-      {groupKeys.map((type) => (
-        <section key={type} className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-black">{type}</h2>
-            <div className="text-sm font-semibold text-[#7e7576]">{grouped[type].length} skills</div>
-          </div>
+      {skills.length === 0 ? (
+        <EmptyState
+          title="Skill Profile Being Formed"
+          description="A comprehensive breakdown of my programming languages, frameworks, and developer tools is currently on its way. Stay tuned!"
+          icon={Zap}
+          variant="general"
+        />
+      ) : (
+        groupKeys.map((type) => (
+          <section key={type} className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-black">{type}</h2>
+              <div className="text-sm font-semibold text-[#7e7576]">{grouped[type].length} skills</div>
+            </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {grouped[type].map((skill, index) => (
-              <div 
-                key={skill.id} 
-                className="bg-white border border-[#E5E5E5] p-6 rounded-[2.5rem] hover:border-black transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-3 aspect-square group shadow-none"
-                onClick={() => onNavigate({ type: 'SKILL_DETAIL', slug: skill.slug })}
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
-                 <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#f9f9f9] border border-[#E5E5E5] group-hover:scale-110 transition-all duration-300">
-                   {(() => {
-                     const IconComponent = Icons[skill.name.toLowerCase().replace(/[\s\.\-\+]/g, '') as IconName] || Zap;
-                     return <IconComponent className="w-8 h-8 text-black" />;
-                   })()}
-                 </div>
-                 <div>
-                   <div className="font-bold text-black mb-1 group-hover:text-black transition-colors">{skill.name}</div>
-                   <div className="text-xs font-semibold text-[#4c4546] capitalize px-3 py-1 rounded-full border border-[#E5E5E5] bg-[#f9f9f9]">{skill.proficiency}</div>
-                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {grouped[type].map((skill, index) => (
+                <div 
+                  key={skill.id} 
+                  className="bg-white border border-[#E5E5E5] p-6 rounded-[2.5rem] hover:border-black transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-3 aspect-square group shadow-none"
+                  onClick={() => onNavigate({ type: 'SKILL_DETAIL', slug: skill.slug })}
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                   <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#f9f9f9] border border-[#E5E5E5] group-hover:scale-110 transition-all duration-300">
+                     {(() => {
+                       const IconComponent = Icons[skill.name.toLowerCase().replace(/[\s\.\-\+]/g, '') as IconName] || Zap;
+                       return <IconComponent className="w-8 h-8 text-black" />;
+                     })()}
+                   </div>
+                   <div>
+                     <div className="font-bold text-black mb-1 group-hover:text-black transition-colors">{skill.name}</div>
+                     <div className="text-xs font-semibold text-[#4c4546] capitalize px-3 py-1 rounded-full border border-[#E5E5E5] bg-[#f9f9f9]">{skill.proficiency}</div>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))
+      )}
     </main>
   );
 };
@@ -72,7 +82,20 @@ export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSt
   }, [slug]);
 
   if (loading) return <SkeletonLoader type="skill-detail" />;
-  if (!skill) return <div>Skill not found</div>;
+  if (!skill) {
+    return (
+      <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto text-center animate-fade-in-up">
+        <EmptyState
+          title="Skill Not Found"
+          description="The technical capability or expertise record you are looking for may have been moved, renamed, or is currently unavailable."
+          icon={HelpCircle}
+          actionText="Back to Skills"
+          onAction={() => onNavigate({ type: 'SKILLS' })}
+          variant="general"
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto text-center animate-fade-in-up">

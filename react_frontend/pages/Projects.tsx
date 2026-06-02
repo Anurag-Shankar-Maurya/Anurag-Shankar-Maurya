@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ArrowLeft, Loader2, Search, X, LayoutGrid, List } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2, Search, X, LayoutGrid, List, FolderOpen, HelpCircle } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
@@ -9,6 +9,7 @@ import { Project, ViewState, PaginatedResponse } from '../types';
 import { api } from '../services/api';
 import { Icons, SocialIcons } from '../components/Icons';
 import { SkeletonLoader } from '../components/SkeletonLoader';
+import { EmptyState } from '../components/EmptyState';
 
 export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: ViewState) => void }> = ({ projects, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
@@ -84,6 +85,28 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
     setLbIndex(index);
     setLbOpen(true);
   };
+
+  if (!loading && projects.length === 0) {
+    return (
+      <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+        <MetaTags 
+          title="Portfolio Projects | Anurag Shankar Maurya"
+          description="A complete archive of my open source contributions, client work, and side projects."
+          keywords="projects, portfolio, software development, open source"
+        />
+        <h1 className="text-4xl font-extrabold text-black mb-4">All Projects</h1>
+        <p className="text-[#4c4546] max-w-2xl mb-12">A complete archive of my open source contributions, client work, and side projects.</p>
+        <EmptyState
+          title="Portfolio Under Construction"
+          description="I am currently curating my development work, side projects, and open-source contributions. Please check back later!"
+          icon={FolderOpen}
+          actionText="Back to Home"
+          onAction={() => onNavigate({ type: 'HOME' })}
+          variant="general"
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
@@ -340,21 +363,19 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
           )}
         </>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-black text-lg font-bold mb-2">No projects match these filters yet.</p>
-          <p className="text-[#7e7576] mb-5">Try clearing status, tech stack, or search to view more projects.</p>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedStatus(null);
-              setSelectedTechnology(null);
-              setCurrentPage(1);
-            }}
-          >
-            Reset Filters
-          </Button>
-        </div>
+        <EmptyState
+          title="No projects match these filters"
+          description="We couldn't find any projects matching your status, technology stack, or search keyword. Try clearing some selections!"
+          icon={Search}
+          actionText="Reset Filters"
+          onAction={() => {
+            setSearchQuery('');
+            setSelectedStatus(null);
+            setSelectedTechnology(null);
+            setCurrentPage(1);
+          }}
+          variant="filter"
+        />
       )}
 
       <Lightbox images={lbImages} initialIndex={lbIndex} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
@@ -396,7 +417,21 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
   }, [project]);
 
   if (loading) return <SkeletonLoader type="project-detail" />;
-  if (!project) return <div>Project not found</div>;
+
+  if (!project) {
+    return (
+      <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+        <EmptyState
+          title="Project Not Found"
+          description="The project you are looking for might have been moved, renamed, or is currently unavailable."
+          icon={HelpCircle}
+          actionText="Back to Projects"
+          onAction={() => onNavigate({ type: 'PROJECTS' })}
+          variant="general"
+        />
+      </main>
+    );
+  }
 
   const schemaData = {
     "@context": "https://schema.org",

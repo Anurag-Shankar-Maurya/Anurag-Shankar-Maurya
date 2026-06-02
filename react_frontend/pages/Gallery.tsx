@@ -6,6 +6,7 @@ import { api } from '../services/api';
 import { Image } from '../types';
 import { Button } from '../components/Button';
 import { SkeletonLoader } from '../components/SkeletonLoader';
+import { EmptyState } from '../components/EmptyState';
 
 export const GalleryView: React.FC = () => {
   const [images, setImages] = useState<Image[]>([]);
@@ -218,19 +219,26 @@ export const GalleryView: React.FC = () => {
            </div>
         </div>
       ) : (
-        <div className="text-center py-32 rounded-[3rem] border border-dashed border-[#cfc4c5] bg-white">
-          <div className="p-4 bg-[#f9f9f9] rounded-full w-fit mx-auto mb-4 border border-[#E5E5E5]">
-            <ImageIcon className="w-8 h-8 text-black" />
-          </div>
-          <h3 className="text-xl font-bold text-black mb-1">No matches found</h3>
-          <p className="text-[#7e7576] font-semibold">Try adjusting your filters to find what you're looking for.</p>
-          <button 
-            onClick={() => { setTypeFilter(undefined); setObjectFilter(undefined); }}
-            className="mt-6 text-black hover:underline text-sm font-bold"
-          >
-            Clear all filters
-          </button>
-        </div>
+        !typeFilter && !objectFilter ? (
+          <EmptyState
+            title="Visual Gallery is Empty"
+            description="Photos, visual notes, and screenshots of my professional milestones are currently being compiled. Stay tuned!"
+            icon={ImageIcon}
+            variant="general"
+          />
+        ) : (
+          <EmptyState
+            title="No matching media found"
+            description="We couldn't find any images matching your active type or source selections. Try adjusting your filters!"
+            icon={Filter}
+            actionText="Reset Filters"
+            onAction={() => {
+              setTypeFilter(undefined);
+              setObjectFilter(undefined);
+            }}
+            variant="filter"
+          />
+        )
       )}
     </main>
   );

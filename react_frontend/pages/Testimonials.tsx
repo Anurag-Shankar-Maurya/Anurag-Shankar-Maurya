@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Loader2, ArrowLeft, Quote, Linkedin, Calendar, Building, User } from 'lucide-react';
+import { Star, Loader2, ArrowLeft, Quote, Linkedin, Calendar, Building, User, HelpCircle } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { MetaTags } from '../components/MetaTags';
@@ -7,6 +7,7 @@ import { Button } from '../components/Button';
 import { Testimonial, ViewState } from '../types';
 import { api } from '../services/api';
 import { SkeletonLoader } from '../components/SkeletonLoader';
+import { EmptyState } from '../components/EmptyState';
 
 const RatingStars = ({ rating, size = "sm" }: { rating: number, size?: "sm" | "lg" }) => {
   const iconSize = size === "lg" ? "w-6 h-6" : "w-4 h-4";
@@ -44,55 +45,64 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
         </div>
       </div>
       
-      <div className="columns-1 md:columns-2 lg:columns-2 gap-6 space-y-6">
-        {testimonials.map((test, index) => (
-          <div 
-            key={test.id} 
-            className="bg-white border border-[#E5E5E5] p-10 rounded-[3rem] break-inside-avoid hover:border-black transition-all cursor-pointer group shadow-none relative overflow-hidden flex flex-col mb-6" 
-            onClick={() => onNavigate({ type: 'TESTIMONIAL_DETAIL', slug: test.slug || String(test.id) })}
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-             {/* Top Row: Stars & Date */}
-             <div className="flex justify-between items-center mb-4">
-                 <RatingStars rating={test.rating} />
-                 <div className="text-xs font-semibold text-[#4c4546] bg-[#f9f9f9] border border-[#E5E5E5] px-3 py-1 rounded-full">
-                    {new Date(test.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
-                 </div>
-             </div>
-
-             <div className="relative mb-6 flex-grow">
-               <Quote className="absolute -top-2 -left-2 w-8 h-8 text-black/5 transform -scale-x-100" />
-               <p className="text-[#4c4546] relative z-10 leading-relaxed text-sm line-clamp-4 pl-4 border-l-2 border-black/25 group-hover:border-black transition-colors">
-                  {test.content}
-               </p>
-             </div>
-
-             <div className="mt-auto pt-5 border-t border-[#E5E5E5] flex items-center gap-3">
-               {test.author_image && (
-                 <img 
-                   onClick={(e) => { e.stopPropagation(); openSingle(test.author_image, test.author_name); }} 
-                   src={test.author_image} 
-                   alt={test.author_name} 
-                   className="w-10 h-10 rounded-full object-cover bg-white border border-[#E5E5E5] hover:border-black transition-all cursor-pointer"
-                 />
-               )}
-               <div className="flex-1 min-w-0">
-                   <div className="flex items-center justify-between">
-                      <div className="font-bold text-black text-sm truncate group-hover:text-black transition-colors">{test.author_name}</div>
-                      {test.linkedin_url && <Linkedin className="w-5 h-5 text-black shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" />}
+      {testimonials.length === 0 ? (
+        <EmptyState
+          title="No Client Reviews Yet"
+          description="Kind recommendations, reviews, and professional references from my clients and team members will be published here soon."
+          icon={Quote}
+          variant="general"
+        />
+      ) : (
+        <div className="columns-1 md:columns-2 lg:columns-2 gap-6 space-y-6">
+          {testimonials.map((test, index) => (
+            <div 
+              key={test.id} 
+              className="bg-white border border-[#E5E5E5] p-10 rounded-[3rem] break-inside-avoid hover:border-black transition-all cursor-pointer group shadow-none relative overflow-hidden flex flex-col mb-6" 
+              onClick={() => onNavigate({ type: 'TESTIMONIAL_DETAIL', slug: test.slug || String(test.id) })}
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+               {/* Top Row: Stars & Date */}
+               <div className="flex justify-between items-center mb-4">
+                   <RatingStars rating={test.rating} />
+                   <div className="text-xs font-semibold text-[#4c4546] bg-[#f9f9f9] border border-[#E5E5E5] px-3 py-1 rounded-full">
+                      {new Date(test.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
                    </div>
-                   {test.relationship && (
-                     <div className="absolute bottom-0 right-0 p-4 transition-opacity">
-                       <span className="text-[10px] uppercase font-bold tracking-wider text-[#7e7576] group-hover:text-black">{test.relationship}</span>
-                     </div>
-                   )}
-                   <div className="text-xs text-[#7e7576] font-medium truncate">{test.author_title}</div>
-                   {test.author_company && <div className="text-xs text-black font-semibold truncate mt-0.5">{test.author_company}</div>}
                </div>
-             </div>
-          </div>
-        ))}
-      </div>
+
+               <div className="relative mb-6 flex-grow">
+                 <Quote className="absolute -top-2 -left-2 w-8 h-8 text-black/5 transform -scale-x-100" />
+                 <p className="text-[#4c4546] relative z-10 leading-relaxed text-sm line-clamp-4 pl-4 border-l-2 border-black/25 group-hover:border-black transition-colors">
+                    {test.content}
+                 </p>
+               </div>
+
+               <div className="mt-auto pt-5 border-t border-[#E5E5E5] flex items-center gap-3">
+                 {test.author_image && (
+                   <img 
+                     onClick={(e) => { e.stopPropagation(); openSingle(test.author_image, test.author_name); }} 
+                     src={test.author_image} 
+                     alt={test.author_name} 
+                     className="w-10 h-10 rounded-full object-cover bg-white border border-[#E5E5E5] hover:border-black transition-all cursor-pointer"
+                   />
+                 )}
+                 <div className="flex-1 min-w-0">
+                     <div className="flex items-center justify-between">
+                        <div className="font-bold text-black text-sm truncate group-hover:text-black transition-colors">{test.author_name}</div>
+                        {test.linkedin_url && <Linkedin className="w-5 h-5 text-black shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" />}
+                     </div>
+                     {test.relationship && (
+                       <div className="absolute bottom-0 right-0 p-4 transition-opacity">
+                         <span className="text-[10px] uppercase font-bold tracking-wider text-[#7e7576] group-hover:text-black">{test.relationship}</span>
+                       </div>
+                     )}
+                     <div className="text-xs text-[#7e7576] font-medium truncate">{test.author_title}</div>
+                     {test.author_company && <div className="text-xs text-black font-semibold truncate mt-0.5">{test.author_company}</div>}
+                 </div>
+               </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
     </main>
@@ -109,7 +119,20 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
   }, [slug]);
 
   if (loading) return <SkeletonLoader type="testimonials-detail" />;
-  if (!test) return <div>Testimonial not found</div>;
+  if (!test) {
+    return (
+      <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+        <EmptyState
+          title="Testimonial Not Found"
+          description="The testimonial record you are looking for may have been moved, renamed, or is currently unavailable."
+          icon={HelpCircle}
+          actionText="Back to Testimonials"
+          onAction={() => onNavigate({ type: 'TESTIMONIALS' })}
+          variant="general"
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">

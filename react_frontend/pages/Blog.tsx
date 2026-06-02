@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, BookOpen, Calendar, Loader2, Search, X, List, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, BookOpen, Calendar, Loader2, Search, X, List, LayoutGrid, HelpCircle } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
@@ -10,6 +10,7 @@ import { api } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { SkeletonLoader } from '../components/SkeletonLoader';
+import { EmptyState } from '../components/EmptyState';
 
 export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewState) => void }> = ({ posts, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
@@ -71,6 +72,29 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
     setLbImages([{ src, alt }]);
     setLbOpen(true);
   };
+
+  if (!loading && posts.length === 0) {
+    return (
+      <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
+        <MetaTags title="Blog & Insights | Anurag Shankar Maurya" description="Thoughts on software engineering, product design, and the tech industry." />
+        <div className="flex items-center gap-4 mb-12">
+          <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><BookOpen className="w-8 h-8"/></div>
+          <div>
+            <h1 className="text-4xl font-extrabold text-black">Blog & Insights</h1>
+            <p className="text-[#4c4546] mt-2">Thoughts on software engineering, product design, and the tech industry.</p>
+          </div>
+        </div>
+        <EmptyState
+          title="Writing Desk is Empty"
+          description="Guides, tutorials, and tech stories are currently being drafted. Please check back soon for my latest writings!"
+          icon={BookOpen}
+          actionText="Back to Home"
+          onAction={() => onNavigate({ type: 'HOME' })}
+          variant="general"
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
@@ -289,9 +313,19 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
           )}
         </>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-[#7e7576]">No posts found matching your filters.</p>
-        </div>
+        <EmptyState
+          title="No articles match these filters"
+          description="We couldn't find any articles matching your search query or tag/category selections. Try resetting your filters!"
+          icon={Search}
+          actionText="Reset Filters"
+          onAction={() => {
+            setSearchQuery('');
+            setSelectedCategory(null);
+            setSelectedTag(null);
+            setCurrentPage(1);
+          }}
+          variant="filter"
+        />
       )}
     </main>
   );
@@ -330,7 +364,20 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
   }, [post]);
 
   if (loading) return <SkeletonLoader type="blog-detail" />;
-  if (!post) return <div>Post not found</div>;
+  if (!post) {
+    return (
+      <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto animate-fade-in-up">
+        <EmptyState
+          title="Article Not Found"
+          description="The article you are looking for might have been moved, renamed, or is currently unavailable."
+          icon={HelpCircle}
+          actionText="Back to Blog"
+          onAction={() => onNavigate({ type: 'BLOG' })}
+          variant="general"
+        />
+      </main>
+    );
+  }
 
   const authorName = typeof post.author === 'string' ? post.author : (post.author as any)?.name || "Anurag Shankar Maurya";
 

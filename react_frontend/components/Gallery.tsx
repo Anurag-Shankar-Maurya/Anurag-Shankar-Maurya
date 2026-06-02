@@ -30,10 +30,10 @@ export const Gallery: React.FC<GalleryProps> = ({ images = [], className = '', c
           <button
             key={i}
             onClick={() => { setIndex(i); setOpen(true); }}
-            className="relative overflow-hidden rounded-lg p-0 border-0 bg-transparent cursor-pointer"
+            className="relative overflow-hidden rounded-[1.5rem] p-0 border-0 bg-transparent cursor-pointer"
             style={{ aspectRatio: '16/9' }}
           >
-            <img src={img.src} alt={img.alt} className="w-full h-full object-cover rounded-lg" />
+            <img src={img.src} alt={img.alt} className="w-full h-full object-cover rounded-[1.5rem]" />
           </button>
         ))}
       </div>

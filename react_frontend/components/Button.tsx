@@ -21,14 +21,14 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = "inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:pointer-events-none active:scale-95";
+  const baseStyles = "inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:pointer-events-none active:scale-95";
   
   const variants: Record<ButtonVariant, string> = {
-    primary: "bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-500 hover:to-blue-400 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 border border-blue-400/20",
-    secondary: "bg-white/5 backdrop-blur-md text-white border border-white/10 hover:bg-white/10 hover:border-white/20 hover:shadow-lg",
-    tertiary: "bg-transparent text-gray-400 hover:text-white underline-offset-4 hover:underline",
-    danger: "bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-400 shadow-lg shadow-red-500/25",
-    ghost: "bg-transparent text-gray-400 hover:text-white hover:bg-white/5", 
+    primary: "bg-black text-white hover:bg-neutral-800 border border-black shadow-none",
+    secondary: "bg-transparent text-black border border-black hover:bg-neutral-100/50 shadow-none",
+    tertiary: "bg-transparent text-neutral-600 hover:text-black underline-offset-4 hover:underline",
+    danger: "bg-[#ba1a1a] text-white hover:bg-red-700 shadow-none",
+    ghost: "bg-transparent text-neutral-500 hover:text-black hover:bg-neutral-100/30", 
   };
 
   return (

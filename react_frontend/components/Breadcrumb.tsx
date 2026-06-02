@@ -25,7 +25,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, onNavigate, class
         <li>
           <button
             onClick={() => onNavigate({ type: 'HOME' })}
-            className="flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 rounded px-1"
+            className="flex items-center gap-1.5 text-[#7e7576] hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 rounded px-1 font-semibold"
             aria-label="Go to home"
           >
             <Home className="w-4 h-4" />
@@ -36,12 +36,12 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, onNavigate, class
         {items.map((item, index) => (
           <React.Fragment key={index}>
             <li aria-hidden="true">
-              <ChevronRight className="w-4 h-4 text-gray-600" />
+              <ChevronRight className="w-4 h-4 text-[#cfc4c5]" />
             </li>
             <li>
               {item.isActive || !item.view ? (
                 <span 
-                  className={`${item.isActive ? 'text-white font-medium' : 'text-gray-400'} max-w-[200px] sm:max-w-[300px] truncate block`}
+                  className={`${item.isActive ? 'text-black font-bold' : 'text-[#7e7576] font-semibold'} max-w-[200px] sm:max-w-[300px] truncate block`}
                   aria-current={item.isActive ? 'page' : undefined}
                 >
                   {item.label}
@@ -49,7 +49,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, onNavigate, class
               ) : (
                 <button
                   onClick={() => item.view && onNavigate(item.view)}
-                  className="text-gray-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 rounded px-1 max-w-[200px] sm:max-w-[300px] truncate"
+                  className="text-[#7e7576] hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 rounded px-1 max-w-[200px] sm:max-w-[300px] truncate font-semibold"
                 >
                   {item.label}
                 </button>

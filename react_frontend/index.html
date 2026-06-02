@@ -21,11 +21,70 @@
               sans: ['Inter', 'sans-serif'],
             },
             colors: {
-              background: '#09090b',
-              surface: '#18181b',
-              primary: '#3b82f6',
-              secondary: '#a1a1aa',
-              danger: '#ef4444',
+              background: '#f9f9f9',
+              'on-background': '#1a1c1c',
+              surface: '#ffffff',
+              'on-surface': '#1a1c1c',
+              'surface-dim': '#dadada',
+              'surface-bright': '#f9f9f9',
+              'surface-container-lowest': '#ffffff',
+              'surface-container-low': '#f3f3f3',
+              'surface-container': '#eeeeee',
+              'surface-container-high': '#e8e8e8',
+              'surface-container-highest': '#e2e2e2',
+              'on-surface-variant': '#4c4546',
+              'inverse-surface': '#2f3131',
+              'inverse-on-surface': '#f1f1f1',
+              outline: '#7e7576',
+              'outline-variant': '#cfc4c5',
+              'surface-tint': '#5e5e5e',
+              primary: '#000000',
+              'on-primary': '#ffffff',
+              'primary-container': '#1b1b1b',
+              'on-primary-container': '#848484',
+              'inverse-primary': '#c6c6c6',
+              secondary: '#5e5e5e',
+              'on-secondary': '#ffffff',
+              'secondary-container': '#e1dfdf',
+              'on-secondary-container': '#626262',
+              tertiary: '#000000',
+              'on-tertiary': '#ffffff',
+              'tertiary-container': '#1b1b1b',
+              'on-tertiary-container': '#848484',
+              error: '#ba1a1a',
+              'on-error': '#ffffff',
+              'error-container': '#ffdad6',
+              'on-error-container': '#93000a',
+              'primary-fixed': '#e2e2e2',
+              'primary-fixed-dim': '#c6c6c6',
+              'on-primary-fixed': '#1b1b1b',
+              'on-primary-fixed-variant': '#474747',
+              'secondary-fixed': '#e4e2e2',
+              'secondary-fixed-dim': '#c7c6c6',
+              'on-secondary-fixed': '#1b1c1c',
+              'on-secondary-fixed-variant': '#464747',
+              'tertiary-fixed': '#e2e2e2',
+              'tertiary-fixed-dim': '#c6c6c6',
+              'on-tertiary-fixed': '#1b1b1b',
+              'on-tertiary-fixed-variant': '#474747',
+              'surface-variant': '#e2e2e2',
+              danger: '#ba1a1a',
+            },
+            borderRadius: {
+              sm: '0.5rem',
+              DEFAULT: '1rem',
+              md: '1.5rem',
+              lg: '2rem',
+              xl: '3rem',
+              full: '9999px',
+            },
+            spacing: {
+              unit: '8px',
+              gutter: '32px',
+              'margin-desktop': '80px',
+              'margin-mobile': '24px',
+              'container-max-width': '1280px',
+              'stack-xl': '120px',
             },
             animation: {
               'fade-in': 'fadeIn 0.5s ease-out forwards',
@@ -61,36 +120,46 @@
     </script>
     <style>
       body {
-        background-color: #09090b;
-        color: #f4f4f5;
+        background-color: #f9f9f9;
+        color: #1a1c1c;
         overflow-x: hidden;
+      }
+      .scrollbar-none::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-none {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
       }
       /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #09090b; 
+        background: #f9f9f9; 
       }
       ::-webkit-scrollbar-thumb {
-        background: #27272a; 
-        border-radius: 4px;
+        background: #dadada; 
+        border-radius: 9999px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #3f3f46; 
+        background: #cfc4c5; 
       }
       
       .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: #ffffff;
+        border: 1px solid #E5E5E5;
+        border-radius: 3rem; /* rounded-xl (3rem) */
+        padding: 40px;
+        box-shadow: none;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       }
       
       .glass-card:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.1);
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+        background: #fdfdfd;
+        border-color: #000000;
+        border-width: 2px;
+        box-shadow: none;
       }
       
       @keyframes shimmer {
@@ -116,7 +185,15 @@
 }
 </script>
 <link rel="stylesheet" href="/index.css">
-</head>
+    <!-- Clarity tracking code for https://anuragshankarmaurya.in/ -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "wza6htqq7p");
+    </script>
+  </head>
   <body>
     <div id="root"></div>
   <script type="module" src="/index.tsx"></script>

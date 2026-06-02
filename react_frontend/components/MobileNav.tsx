@@ -20,14 +20,14 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
   ];
 
   const menuItems = [
-    { icon: Briefcase, label: 'Experience', view: 'EXPERIENCE' as const, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-    { icon: GraduationCap, label: 'Education', view: 'EDUCATION' as const, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-    { icon: Zap, label: 'Skills', view: 'SKILLS' as const, color: 'text-green-400', bg: 'bg-green-500/10' },
-    { icon: Award, label: 'Certificates', view: 'CERTIFICATES' as const, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-    { icon: Trophy, label: 'Achievements', view: 'ACHIEVEMENTS' as const, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-    { icon: Grid, label: 'Gallery', view: 'GALLERY' as const, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-    { icon: Star, label: 'Testimonials', view: 'TESTIMONIALS' as const, color: 'text-orange-400', bg: 'bg-orange-500/10' },
-    { icon: Mail, label: 'Contact', view: 'CONTACT' as const, color: 'text-gray-400', bg: 'bg-white/5' },
+    { icon: Briefcase, label: 'Experience', view: 'EXPERIENCE' as const, color: 'text-black', bg: 'bg-[#eeeeee]' },
+    { icon: GraduationCap, label: 'Education', view: 'EDUCATION' as const, color: 'text-black', bg: 'bg-[#eeeeee]' },
+    { icon: Zap, label: 'Skills', view: 'SKILLS' as const, color: 'text-black', bg: 'bg-[#eeeeee]' },
+    { icon: Award, label: 'Certificates', view: 'CERTIFICATES' as const, color: 'text-black', bg: 'bg-[#eeeeee]' },
+    { icon: Trophy, label: 'Achievements', view: 'ACHIEVEMENTS' as const, color: 'text-black', bg: 'bg-[#eeeeee]' },
+    { icon: Grid, label: 'Gallery', view: 'GALLERY' as const, color: 'text-black', bg: 'bg-[#eeeeee]' },
+    { icon: Star, label: 'Testimonials', view: 'TESTIMONIALS' as const, color: 'text-black', bg: 'bg-[#eeeeee]' },
+    { icon: Mail, label: 'Contact', view: 'CONTACT' as const, color: 'text-black', bg: 'bg-[#eeeeee]' },
   ];
 
   const handleNavigate = (view: ViewState) => {
@@ -40,18 +40,18 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
       {/* Menu Popup */}
       {isMenuOpen && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50 animate-in slide-in-from-bottom-5 duration-200">
-          <div className="bg-[#18181b]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
+          <div className="bg-white border border-[#E5E5E5] rounded-[2rem] p-4 shadow-none">
             <div className="grid grid-cols-2 gap-3">
               {menuItems.map((item) => (
                 <button
                   key={item.label}
                   onClick={() => handleNavigate({ type: item.view })}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70"
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#f3f3f3] transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
                 >
                   <div className={`p-2 rounded-lg ${item.bg} ${item.color}`}>
                     <item.icon className="w-5 h-5" />
                   </div>
-                  <span className="text-sm font-medium text-gray-200">{item.label}</span>
+                  <span className="text-sm font-medium text-black">{item.label}</span>
                 </button>
               ))}
             </div>
@@ -63,7 +63,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
 
       {/* Navigation Bar */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden">
-        <div className="flex items-center gap-1 bg-[#18181b]/90 backdrop-blur-xl border border-white/10 rounded-full p-2 shadow-2xl shadow-black/50">
+        <div className="flex items-center gap-1 bg-white/90 backdrop-blur-[20px] border border-[#cfc4c5]/50 rounded-full p-2 shadow-none">
           {mainItems.map((item) => {
             const isActive = currentView.type === item.view || (currentView.type.startsWith(item.view) && item.view !== 'HOME');
             return (
@@ -71,8 +71,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
                 key={item.label}
                 onClick={() => { setIsMenuOpen(false); onNavigate({ type: item.view }); }}
                 className={`relative p-3 rounded-full transition-all duration-300 ${
-                  isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' : 'text-gray-400 hover:text-white hover:bg-white/5'
-                } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70`}
+                  isActive ? 'bg-black text-white shadow-none' : 'text-[#7e7576] hover:text-black hover:bg-[#eeeeee]'
+                } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black`}
                 aria-current={isActive ? 'page' : undefined}
               >
                 <item.icon className="w-5 h-5" />
@@ -85,8 +85,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`relative p-3 rounded-full transition-all duration-300 ${
-              isMenuOpen ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'
-            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70`}
+              isMenuOpen ? 'bg-[#eeeeee] text-black' : 'text-[#7e7576] hover:text-black hover:bg-[#eeeeee]'
+            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black`}
             aria-expanded={isMenuOpen}
             aria-label="Toggle mobile menu"
           >

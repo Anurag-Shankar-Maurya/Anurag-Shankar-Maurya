@@ -108,7 +108,7 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
     api.getTestimonialDetail(slug).then(setTest).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <SkeletonLoader type="detail" />;
+  if (loading) return <SkeletonLoader type="testimonials-detail" />;
   if (!test) return <div>Testimonial not found</div>;
 
   return (

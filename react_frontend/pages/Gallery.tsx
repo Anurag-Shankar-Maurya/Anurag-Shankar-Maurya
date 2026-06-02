@@ -163,7 +163,7 @@ export const GalleryView: React.FC = () => {
       </div>
 
       {loading ? (
-        <SkeletonLoader type="gallery" />
+        <SkeletonLoader type="gallery-grid" />
       ) : images.length > 0 ? (
         <div className="animate-fade-in flex flex-col gap-12">
            <Gallery images={images} className="rounded-3xl overflow-hidden" />

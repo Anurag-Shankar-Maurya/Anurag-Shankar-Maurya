@@ -76,7 +76,7 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
     api.getCertificateDetail(slug).then(setCert).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <SkeletonLoader type="detail" />;
+  if (loading) return <SkeletonLoader type="certificate-detail" />;
   if (!cert) return <div>Certificate not found</div>;
 
   return (

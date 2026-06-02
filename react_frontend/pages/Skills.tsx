@@ -71,7 +71,7 @@ export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSt
     api.getSkillDetail(slug).then(setSkill).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <SkeletonLoader type="detail" />;
+  if (loading) return <SkeletonLoader type="skill-detail" />;
   if (!skill) return <div>Skill not found</div>;
 
   return (

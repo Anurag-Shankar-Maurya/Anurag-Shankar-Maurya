@@ -67,7 +67,7 @@ export const ExperienceDetailView: React.FC<{ id: number, onNavigate: (view: Vie
     api.getExperienceDetail(id).then(setExperience).catch(console.error).finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <SkeletonLoader type="detail" />;
+  if (loading) return <SkeletonLoader type="experience-detail" />;
   if (!experience) return <div>Experience not found</div>;
 
   return (

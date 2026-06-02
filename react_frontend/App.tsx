@@ -126,18 +126,18 @@ const App: React.FC = () => {
             <Route path="/blog" element={<Suspense fallback={<SkeletonLoader type="blog-list" />}><BlogView posts={blogPosts} onNavigate={navigateTo} /></Suspense>} />
             <Route path="/blog/:slug" element={<Suspense fallback={<SkeletonLoader type="blog-detail" />}><BlogDetailRoute /></Suspense>} />
             <Route path="/contact" element={<Suspense fallback={<SkeletonLoader type="contact" />}><Contact profile={profile} /></Suspense>} />
-            <Route path="/experience" element={<Suspense fallback={<SkeletonLoader type="list" />}><ExperienceView experience={experience} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/experience/:id" element={<Suspense fallback={<SkeletonLoader type="detail" />}><ExperienceDetailRoute /></Suspense>} />
-            <Route path="/education" element={<Suspense fallback={<SkeletonLoader type="list" />}><EducationView education={education} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/education/:slug" element={<Suspense fallback={<SkeletonLoader type="detail" />}><EducationDetailRoute /></Suspense>} />
-            <Route path="/skills" element={<Suspense fallback={<SkeletonLoader type="list" />}><SkillsView skills={skills} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/skills/:slug" element={<Suspense fallback={<SkeletonLoader type="detail" />}><SkillDetailRoute /></Suspense>} />
-            <Route path="/certificates" element={<Suspense fallback={<SkeletonLoader type="list" />}><CertificatesView certificates={certificates} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/certificates/:slug" element={<Suspense fallback={<SkeletonLoader type="detail" />}><CertificateDetailRoute /></Suspense>} />
-            <Route path="/achievements" element={<Suspense fallback={<SkeletonLoader type="list" />}><AchievementsView achievements={achievements} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/achievements/:slug" element={<Suspense fallback={<SkeletonLoader type="detail" />}><AchievementDetailRoute /></Suspense>} />
-            <Route path="/testimonials" element={<Suspense fallback={<SkeletonLoader type="list" />}><TestimonialsView testimonials={testimonials} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/testimonials/:slug" element={<Suspense fallback={<SkeletonLoader type="detail" />}><TestimonialDetailRoute /></Suspense>} />
+            <Route path="/experience" element={<Suspense fallback={<SkeletonLoader type="experience-list" />}><ExperienceView experience={experience} onNavigate={navigateTo} /></Suspense>} />
+            <Route path="/experience/:id" element={<Suspense fallback={<SkeletonLoader type="experience-detail" />}><ExperienceDetailRoute /></Suspense>} />
+            <Route path="/education" element={<Suspense fallback={<SkeletonLoader type="education-list" />}><EducationView education={education} onNavigate={navigateTo} /></Suspense>} />
+            <Route path="/education/:slug" element={<Suspense fallback={<SkeletonLoader type="education-detail" />}><EducationDetailRoute /></Suspense>} />
+            <Route path="/skills" element={<Suspense fallback={<SkeletonLoader type="skills-list" />}><SkillsView skills={skills} onNavigate={navigateTo} /></Suspense>} />
+            <Route path="/skills/:slug" element={<Suspense fallback={<SkeletonLoader type="skill-detail" />}><SkillDetailRoute /></Suspense>} />
+            <Route path="/certificates" element={<Suspense fallback={<SkeletonLoader type="certificates-list" />}><CertificatesView certificates={certificates} onNavigate={navigateTo} /></Suspense>} />
+            <Route path="/certificates/:slug" element={<Suspense fallback={<SkeletonLoader type="certificate-detail" />}><CertificateDetailRoute /></Suspense>} />
+            <Route path="/achievements" element={<Suspense fallback={<SkeletonLoader type="achievements-list" />}><AchievementsView achievements={achievements} onNavigate={navigateTo} /></Suspense>} />
+            <Route path="/achievements/:slug" element={<Suspense fallback={<SkeletonLoader type="achievement-detail" />}><AchievementDetailRoute /></Suspense>} />
+            <Route path="/testimonials" element={<Suspense fallback={<SkeletonLoader type="testimonials-list" />}><TestimonialsView testimonials={testimonials} onNavigate={navigateTo} /></Suspense>} />
+            <Route path="/testimonials/:slug" element={<Suspense fallback={<SkeletonLoader type="testimonials-detail" />}><TestimonialDetailRoute /></Suspense>} />
             <Route path="/gallery" element={<Suspense fallback={<SkeletonLoader type="gallery" />}><GalleryView /></Suspense>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

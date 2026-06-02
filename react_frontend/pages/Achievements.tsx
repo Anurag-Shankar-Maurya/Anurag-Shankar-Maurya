@@ -72,7 +72,7 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
     api.getAchievementDetail(slug).then(setAch).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <SkeletonLoader type="detail" />;
+  if (loading) return <SkeletonLoader type="achievement-detail" />;
   if (!ach) return <div>Achievement not found</div>;
 
   return (

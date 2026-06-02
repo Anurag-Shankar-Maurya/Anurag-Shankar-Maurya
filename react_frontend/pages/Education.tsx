@@ -60,7 +60,7 @@ export const EducationDetailView: React.FC<{ slug: string, onNavigate: (view: Vi
     api.getEducationDetail(slug).then(setEducation).catch(console.error).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <SkeletonLoader type="detail" />;
+  if (loading) return <SkeletonLoader type="education-detail" />;
   if (!education) return <div>Education not found</div>;
 
   return (

@@ -1,5 +1,30 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/blog/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare).*"
+        }
+      ],
+      "destination": "https://anurag-shankar-maurya-backend.vercel.app/blog/:slug"
+    },
+    {
+      "source": "/projects/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare).*"
+        }
+      ],
+      "destination": "https://anurag-shankar-maurya-backend.vercel.app/projects/:slug"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

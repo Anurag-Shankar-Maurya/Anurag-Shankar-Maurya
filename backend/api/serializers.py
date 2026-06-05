@@ -188,14 +188,25 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(ProjectSerializer):
-    """Detailed project serializer with full data"""
+    """Detailed project serializer with full data including SEO/OG fields"""
     images = ImageSerializer(many=True, read_only=True)
-    
+    og_image = serializers.SerializerMethodField()
+
     class Meta(ProjectSerializer.Meta):
         fields = ProjectSerializer.Meta.fields + [
             'description', 'role', 'team_size',
-            'start_date', 'end_date', 'images'
+            'start_date', 'end_date', 'images',
+            'meta_title', 'meta_description', 'meta_keywords', 'canonical_url',
+            'og_title', 'og_description', 'og_image',
         ]
+
+    def get_og_image(self, obj):
+        """Return OG image URL (uploaded file preferred, then external URL, else None)"""
+        if obj.og_image_file:
+            return obj.og_image_file.url
+        if getattr(obj, 'og_image_url', None):
+            return obj.og_image_url
+        return None
 
 
 # ============================================

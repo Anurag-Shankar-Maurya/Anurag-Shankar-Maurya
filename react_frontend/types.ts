@@ -71,6 +71,16 @@ export interface Project {
   start_date?: string;
   end_date?: string;
   images?: Image[];
+  updated_at?: string;
+  // SEO Fields
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+  canonical_url?: string;
+  // Open Graph / Social
+  og_title?: string;
+  og_description?: string;
+  og_image?: string;
 }
 
 export interface BlogPost {

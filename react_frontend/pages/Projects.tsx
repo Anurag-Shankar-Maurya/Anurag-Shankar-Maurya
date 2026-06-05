@@ -422,8 +422,8 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
     "@context": "https://schema.org",
     "@type": "CreativeWork",
     "name": project.title,
-    "description": project.short_description,
-    "image": project.featured_image,
+    "description": project.meta_description || project.short_description,
+    "image": project.og_image || project.featured_image,
     "url": window.location.href,
     "author": {
       "@type": "Person",
@@ -443,11 +443,15 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
-      <MetaTags 
-        title={`${project.title} | Projects | Anurag Shankar Maurya`}
-        description={project.short_description}
-        keywords={`${project.technologies}, project detail`}
-        ogImage={project.featured_image}
+      <MetaTags
+        title={`${project.meta_title || project.title} | Projects | Anurag Shankar Maurya`}
+        description={project.meta_description || project.short_description}
+        keywords={project.meta_keywords || project.technologies}
+        canonical={project.canonical_url || window.location.href}
+        ogTitle={project.og_title || project.title}
+        ogDescription={project.og_description || project.short_description}
+        ogImage={project.og_image || project.featured_image}
+        ogType="website"
         schemaData={schemaData}
       />
       <Breadcrumb 

@@ -394,7 +394,7 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
         canonical={post.canonical_url || window.location.href}
         ogTitle={post.og_title || post.title}
         ogDescription={post.og_description || post.excerpt}
-        ogImage={(post as any).og_image || post.featured_image}
+        ogImage={post.og_image || post.featured_image}
         ogType="article"
         publishedTime={post.published_at}
         modifiedTime={post.updated_at}

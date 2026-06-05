@@ -20,10 +20,10 @@ export const testimonialsApi = {
     apiClient.get<PaginatedTestimonials>('/testimonials/', params),
 
   /**
-   * Get testimonial by ID
+   * Get testimonial by slug
    */
-  get: (id: number) =>
-    apiClient.get<Testimonial>(`/testimonials/${id}/`),
+  get: (slug: string) =>
+    apiClient.get<Testimonial>(`/testimonials/${slug}/`),
 
   /**
    * Get featured testimonials

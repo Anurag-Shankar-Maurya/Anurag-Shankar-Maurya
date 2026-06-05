@@ -16,12 +16,12 @@ export const skillsApi = {
   /**
    * Get all skills
    */
-  list: (params?: SkillFilters) =>
+  list: (params?: SkillFilters & { limit?: number }) =>
     apiClient.get<PaginatedSkills>('/skills/', params),
 
   /**
-   * Get skill by ID
+   * Get skill by slug
    */
-  get: (id: number) =>
-    apiClient.get<Skill>(`/skills/${id}/`),
+  get: (slug: string) =>
+    apiClient.get<Skill>(`/skills/${slug}/`),
 };

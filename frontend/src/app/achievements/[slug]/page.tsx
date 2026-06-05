@@ -11,17 +11,13 @@ interface Props {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  // best effort: search by slug-like title
-  const query = slug.replace(/[-]/g, " ");
   try {
-    const resp = await achievementsApi.list({ search: query });
-    const item = resp.results.find((a) => a.title && a.title.toLowerCase().replace(/\s+/g, "-") === slug);
-    const title = item ? item.title : `Achievement – ${slug}`;
+    const item = await achievementsApi.get(slug);
     return Meta.generate({
-      title,
-      description: item?.description || "Achievement detail",
+      title: item.title,
+      description: item.description || "Achievement detail",
       baseURL,
-      image: item?.image ? item.image : `/api/og/generate?title=${encodeURIComponent(title)}`,
+      image: item.image ? item.image : `/api/og/generate?title=${encodeURIComponent(item.title)}`,
       path: `/achievements/${slug}`,
     });
   } catch (e) {
@@ -35,16 +31,11 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function AchievementDetail({ params }: Props) {
   const { slug } = await params;
-  const searchQuery = slug.replace(/-/g, " ");
 
   let achievement: Achievement | null = null;
 
   try {
-    const resp = await achievementsApi.list({ search: searchQuery });
-    if (resp && resp.results && resp.results.length > 0) {
-      // prefer exact slug match on title if possible
-      achievement = resp.results.find((a) => a.title && a.title.toLowerCase().replace(/\s+/g, "-") === slug) || resp.results[0];
-    }
+    achievement = await achievementsApi.get(slug);
   } catch (error) {
     console.error("Failed to fetch achievement:", error);
   }

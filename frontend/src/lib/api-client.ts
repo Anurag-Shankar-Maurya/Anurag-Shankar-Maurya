@@ -70,7 +70,6 @@ async function apiFetch<T>(
         ...options.headers,
       },
       signal: controller.signal,
-      credentials: 'include', // For cookie-based auth
     });
 
     clearTimeout(timeoutId);

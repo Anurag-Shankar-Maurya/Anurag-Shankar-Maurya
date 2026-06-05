@@ -20,8 +20,8 @@ export const imagesApi = {
     apiClient.get<PaginatedImages>('/images/', params),
 
   /**
-   * Get image by ID
+   * Get image by UUID
    */
-  get: (id: number) =>
-    apiClient.get<Image>(`/images/${id}/`),
+  get: (uuid: string) =>
+    apiClient.get<Image>(`/images/${uuid}/`),
 };

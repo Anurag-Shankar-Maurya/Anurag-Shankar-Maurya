@@ -9,6 +9,7 @@ import { routes, display, person, about, blog, work, gallery } from "@/resources
 import { ThemeToggle } from "./ThemeToggle";
 import { MegaMenu } from "./MegaMenu"; // Import MegaMenu
 import styles from "./Header.module.scss";
+import type { ProfileDetail } from "@/types/api.types";
 
 type TimeDisplayProps = {
   timeZone: string;
@@ -43,7 +44,7 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({ timeZone, locale = "en-GB" })
 
 export default TimeDisplay;
 
-export const Header = () => {
+export const Header = ({ profile }: { profile: ProfileDetail | null }) => {
   const pathname = usePathname() ?? "";
   const [isMegaMenuOpen, setMegaMenuOpen] = useState(false);
 
@@ -76,7 +77,7 @@ export const Header = () => {
         }}
       >
         <Row paddingLeft="12" fillWidth vertical="center" textVariant="body-default-s">
-          {display.location && <Row s={{ hide: true }}>{person.location}</Row>}
+          {display.location && <Row s={{ hide: true }}>{profile?.location || person.location}</Row>}
         </Row>
         <Row fillWidth horizontal="center">
           <Row

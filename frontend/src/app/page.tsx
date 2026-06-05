@@ -61,22 +61,22 @@ export default async function Home() {
   
   try {
     const [profileData, achievementsData, testimonialsData, skillsData, certificatesData, educationData, workData] = await Promise.all([
-      profileApi.list(),
-      achievementsApi.list({ show_on_home: true, ordering: '-date' }),
-      testimonialsApi.list({ show_on_home: true, ordering: '-date' }),
-      skillsApi.list({ show_on_home: true }),
-      certificatesApi.list({ show_on_home: true, ordering: '-issue_date' }),
-      educationApi.list({ show_on_home: true, ordering: "-start_date" }),
-      workExperienceApi.list({ show_on_home: true, ordering: "-start_date" }),
+      profileApi.list().catch(err => { console.error('Error fetching profile:', err); return { results: [] }; }),
+      achievementsApi.list({ show_on_home: true, ordering: '-date' }).catch(err => { console.error('Error fetching achievements:', err); return { results: [] }; }),
+      testimonialsApi.list({ show_on_home: true, ordering: '-date' }).catch(err => { console.error('Error fetching testimonials:', err); return { results: [] }; }),
+      skillsApi.list({ show_on_home: true }).catch(err => { console.error('Error fetching skills:', err); return { results: [] }; }),
+      certificatesApi.list({ show_on_home: true, ordering: '-issue_date' }).catch(err => { console.error('Error fetching certificates:', err); return { results: [] }; }),
+      educationApi.list({ show_on_home: true, ordering: "-start_date" }).catch(err => { console.error('Error fetching education:', err); return { results: [] }; }),
+      workExperienceApi.list({ show_on_home: true, ordering: "-start_date" }).catch(err => { console.error('Error fetching work experience:', err); return { results: [] }; }),
     ]);
 
     profile = profileData.results[0];
     featuredAchievement = achievementsData.results[0];
-    testimonials = testimonialsData.results;
-    featuredSkills = skillsData.results;
-    certificates = certificatesData.results;
-    education = educationData.results;
-    workExperience = workData.results;
+    testimonials = testimonialsData.results || [];
+    featuredSkills = skillsData.results || [];
+    certificates = certificatesData.results || [];
+    education = educationData.results || [];
+    workExperience = workData.results || [];
   } catch (error) {
     console.error('Failed to fetch home page data:', error);
   }

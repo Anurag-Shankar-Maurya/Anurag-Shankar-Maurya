@@ -47,13 +47,13 @@ export const blogApi = {
    * Get posts by category slug
    */
   getByCategory: (categorySlug: string) =>
-    apiClient.get<BlogPost[]>(`/blog/category/${categorySlug}/`),
+    apiClient.get<PaginatedBlogPosts>(`/blog/category/${categorySlug}/`),
 
   /**
    * Get posts by tag slug
    */
   getByTag: (tagSlug: string) =>
-    apiClient.get<BlogPost[]>(`/blog/tag/${tagSlug}/`),
+    apiClient.get<PaginatedBlogPosts>(`/blog/tag/${tagSlug}/`),
 
   // Categories
   categories: {

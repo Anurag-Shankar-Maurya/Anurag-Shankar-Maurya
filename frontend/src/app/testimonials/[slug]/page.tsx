@@ -10,12 +10,10 @@ interface Props {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const query = slug.replace(/[-]/g, " ");
   try {
-    const resp = await testimonialsApi.list({ ordering: '-date' });
-    const item = resp.results.find((t) => t.author_name && t.author_name.toLowerCase().replace(/\s+/g, "-") === slug);
-    const title = item ? `Testimonial – ${item.author_name}` : `Testimonial – ${slug}`;
-    return Meta.generate({ title, description: item?.content || '', baseURL, path: `/testimonials/${slug}` });
+    const item = await testimonialsApi.get(slug);
+    const title = `Testimonial – ${item.author_name}`;
+    return Meta.generate({ title, description: item.content || '', baseURL, path: `/testimonials/${slug}` });
   } catch (e) {
     return Meta.generate({ title: `Testimonial – ${slug}`, description: '', baseURL });
   }
@@ -23,15 +21,11 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function TestimonialDetail({ params }: Props) {
   const { slug } = await params;
-  const searchQuery = slug.replace(/-/g, " ");
 
   let testimonial: Testimonial | null = null;
 
   try {
-    const resp = await testimonialsApi.list({ ordering: '-date' });
-    if (resp && resp.results && resp.results.length > 0) {
-      testimonial = resp.results.find((t) => t.author_name && t.author_name.toLowerCase().replace(/\s+/g, "-") === slug) || resp.results[0];
-    }
+    testimonial = await testimonialsApi.get(slug);
   } catch (error) {
     console.error("Failed to fetch testimonial:", error);
   }

@@ -20,8 +20,8 @@ export const educationApi = {
     apiClient.get<PaginatedEducation>('/education/', params),
 
   /**
-   * Get education by ID
+   * Get education by slug
    */
-  get: (id: number) =>
-    apiClient.get<Education>(`/education/${id}/`),
+  get: (slug: string) =>
+    apiClient.get<Education>(`/education/${slug}/`),
 };

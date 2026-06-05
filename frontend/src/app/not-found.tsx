@@ -14,7 +14,7 @@ export default function NotFound() {
       
       <Column center gap="32" maxWidth={32}>
         <Text onBackground="neutral-weak" align="center">
-          The page you're looking for seems to have vanished or never existed in this dimension. Don't worry, even the best explorers get lost sometimes.
+          The page you&apos;re looking for seems to have vanished or never existed in this dimension. Don&apos;t worry, even the best explorers get lost sometimes.
         </Text>
 
         <Row gap="12" wrap>

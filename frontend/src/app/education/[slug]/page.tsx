@@ -11,12 +11,10 @@ interface Props {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const query = slug.replace(/[-]/g, " ");
   try {
-    const resp = await educationApi.list({ ordering: '-start_date' });
-    const item = resp.results.find((e) => e.institution && e.institution.toLowerCase().replace(/\s+/g, "-") === slug);
-    const title = item ? `${item.degree} – ${item.institution}` : `Education – ${slug}`;
-    return Meta.generate({ title, description: item?.description || '', baseURL, path: `/education/${slug}` });
+    const item = await educationApi.get(slug);
+    const title = `${item.degree} – ${item.institution}`;
+    return Meta.generate({ title, description: item.description || '', baseURL, path: `/education/${slug}` });
   } catch (e) {
     return Meta.generate({ title: `Education – ${slug}`, description: '', baseURL });
   }
@@ -24,15 +22,11 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function EducationDetail({ params }: Props) {
   const { slug } = await params;
-  const searchQuery = slug.replace(/-/g, " ");
 
   let edu: Education | null = null;
 
   try {
-    const resp = await educationApi.list({ ordering: '-start_date' });
-    if (resp && resp.results && resp.results.length > 0) {
-      edu = resp.results.find((e) => e.institution && e.institution.toLowerCase().replace(/\s+/g, "-") === slug) || resp.results[0];
-    }
+    edu = await educationApi.get(slug);
   } catch (error) {
     console.error("Failed to fetch education:", error);
   }

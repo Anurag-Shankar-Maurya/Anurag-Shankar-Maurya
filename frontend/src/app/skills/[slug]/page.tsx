@@ -10,12 +10,10 @@ interface Props {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const query = slug.replace(/[-]/g, " ");
   try {
-    const resp = await skillsApi.list({});
-    const item = resp.results.find((s) => s.name && s.name.toLowerCase().replace(/\s+/g, "-") === slug);
-    const title = item ? item.name : `Skill – ${slug}`;
-    const description = item ? `${item.name} — ${item.proficiency || ''}` : '';
+    const item = await skillsApi.get(slug);
+    const title = item.name;
+    const description = `${item.name} — ${item.proficiency || ''}`;
     return Meta.generate({ title, description, baseURL, path: `/skills/${slug}` });
   } catch (e) {
     return Meta.generate({ title: `Skill – ${slug}`, description: '', baseURL });
@@ -24,15 +22,11 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function SkillDetail({ params }: Props) {
   const { slug } = await params;
-  const searchQuery = slug.replace(/-/g, " ");
 
   let skill: Skill | null = null;
 
   try {
-    const resp = await skillsApi.list({});
-    if (resp && resp.results && resp.results.length > 0) {
-      skill = resp.results.find((s) => s.name && s.name.toLowerCase().replace(/\s+/g, "-") === slug) || resp.results[0];
-    }
+    skill = await skillsApi.get(slug);
   } catch (error) {
     console.error("Failed to fetch skill:", error);
   }

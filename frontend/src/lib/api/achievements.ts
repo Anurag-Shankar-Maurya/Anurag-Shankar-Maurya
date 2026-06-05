@@ -20,8 +20,8 @@ export const achievementsApi = {
     apiClient.get<PaginatedAchievements>('/achievements/', params),
 
   /**
-   * Get achievement by ID
+   * Get achievement by slug
    */
-  get: (id: number) =>
-    apiClient.get<Achievement>(`/achievements/${id}/`),
+  get: (slug: string) =>
+    apiClient.get<Achievement>(`/achievements/${slug}/`),
 };

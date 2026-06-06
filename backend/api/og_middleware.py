@@ -49,30 +49,45 @@ def _get_profile():
         return None
 
 
+def _optimize_cloudinary_url(url):
+    """
+    WhatsApp has a strict 300KB limit for OG images.
+    If the URL is a Cloudinary image, inject a transformation to scale it down and optimize.
+    e.g. .../image/upload/v1/... -> .../image/upload/c_scale,w_800,q_auto/v1/...
+    """
+    if not url:
+        return url
+    if 'res.cloudinary.com' in url and '/image/upload/' in url:
+        if 'c_scale' not in url:
+            return url.replace('/image/upload/', '/image/upload/c_scale,w_800,q_auto/')
+    return url
+
 def _og_image_for_blog(post):
     """Return the best available OG image URL for a blog post."""
+    url = None
     if post.og_image_file:
-        return post.og_image_file.url
-    if getattr(post, 'og_image_url', None):
-        return post.og_image_url
-    if post.featured_image_file:
-        return post.featured_image_file.url
-    if getattr(post, 'featured_image_url', None):
-        return post.featured_image_url
-    return None
+        url = post.og_image_file.url
+    elif getattr(post, 'og_image_url', None):
+        url = post.og_image_url
+    elif post.featured_image_file:
+        url = post.featured_image_file.url
+    elif getattr(post, 'featured_image_url', None):
+        url = post.featured_image_url
+    return _optimize_cloudinary_url(url)
 
 
 def _og_image_for_project(project):
     """Return the best available OG image URL for a project."""
+    url = None
     if project.og_image_file:
-        return project.og_image_file.url
-    if getattr(project, 'og_image_url', None):
-        return project.og_image_url
-    if project.featured_image_file:
-        return project.featured_image_file.url
-    if getattr(project, 'featured_image_url', None):
-        return project.featured_image_url
-    return None
+        url = project.og_image_file.url
+    elif getattr(project, 'og_image_url', None):
+        url = project.og_image_url
+    elif project.featured_image_file:
+        url = project.featured_image_file.url
+    elif getattr(project, 'featured_image_url', None):
+        url = project.featured_image_url
+    return _optimize_cloudinary_url(url)
 
 
 # ──────────────────────────────────────────────

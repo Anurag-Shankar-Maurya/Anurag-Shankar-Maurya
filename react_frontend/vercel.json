@@ -9,7 +9,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare).*"
         }
       ],
-      "destination": "https://anurag-shankar-maurya-backend.vercel.app/blog/:slug"
+      "destination": "https://backend.anuragshankarmaurya.in/blog/:slug"
     },
     {
       "source": "/projects/:slug",
@@ -20,7 +20,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare).*"
         }
       ],
-      "destination": "https://anurag-shankar-maurya-backend.vercel.app/projects/:slug"
+      "destination": "https://backend.anuragshankarmaurya.in/projects/:slug"
     },
     {
       "source": "/(.*)",

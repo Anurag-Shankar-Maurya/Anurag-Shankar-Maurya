@@ -171,7 +171,14 @@ class OGMetaMiddleware:
         """
         profile = _get_profile()
         site_name = profile.full_name if profile else 'Portfolio'
-        base_url = request.build_absolute_uri('/').rstrip('/')
+        
+        # Use X-Forwarded-Host if proxying through Vercel/Nginx so og:url matches the frontend domain
+        forwarded_host = request.META.get('HTTP_X_FORWARDED_HOST')
+        if forwarded_host:
+            proto = request.META.get('HTTP_X_FORWARDED_PROTO', 'https')
+            base_url = f"{proto}://{forwarded_host}"
+        else:
+            base_url = request.build_absolute_uri('/').rstrip('/')
 
         # ── Blog detail: /blog/<slug>
         m = BLOG_ROUTE.match(path)

@@ -768,6 +768,10 @@ class Project(models.Model):
             self.og_title = self.title[:100]
         if not self.og_description:
             self.og_description = self.short_description[:200]
+        if not self.og_image_url and self.featured_image_url:
+            self.og_image_url = self.featured_image_url
+        if not self.og_image_file and self.featured_image_file:
+            self.og_image_file = self.featured_image_file
 
         super().save(*args, **kwargs)
 
@@ -1098,6 +1102,10 @@ class BlogPost(models.Model):
             self.og_title = self.title[:100]
         if not self.og_description:
             self.og_description = self.excerpt[:200]
+        if not self.og_image_url and self.featured_image_url:
+            self.og_image_url = self.featured_image_url
+        if not self.og_image_file and self.featured_image_file:
+            self.og_image_file = self.featured_image_file
         super().save(*args, **kwargs)
 
     def __str__(self):

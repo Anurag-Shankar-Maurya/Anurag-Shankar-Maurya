@@ -169,16 +169,26 @@ class OGMetaMiddleware:
         Try to resolve the path to content, build an OG HTML page and return it.
         Returns None if the path isn't a recognised content route.
         """
+        import os
+        from django.conf import settings
+        
         profile = _get_profile()
         site_name = profile.full_name if profile else 'Portfolio'
         
-        # Use X-Forwarded-Host if proxying through Vercel/Nginx so og:url matches the frontend domain
-        forwarded_host = request.META.get('HTTP_X_FORWARDED_HOST')
-        if forwarded_host:
-            proto = request.META.get('HTTP_X_FORWARDED_PROTO', 'https')
-            base_url = f"{proto}://{forwarded_host}"
+        # 1. Prioritize explicit FRONTEND_URL from environment variables
+        frontend_url = os.environ.get('FRONTEND_URL')
+        
+        if frontend_url:
+            base_url = frontend_url.rstrip('/')
         else:
-            base_url = request.build_absolute_uri('/').rstrip('/')
+            # 2. Fall back to X-Forwarded-Host if proxying through Vercel/Nginx
+            forwarded_host = request.META.get('HTTP_X_FORWARDED_HOST')
+            if forwarded_host:
+                proto = request.META.get('HTTP_X_FORWARDED_PROTO', 'https')
+                base_url = f"{proto}://{forwarded_host}"
+            else:
+                # 3. Absolute fallback to the request URI
+                base_url = request.build_absolute_uri('/').rstrip('/')
 
         # ── Blog detail: /blog/<slug>
         m = BLOG_ROUTE.match(path)

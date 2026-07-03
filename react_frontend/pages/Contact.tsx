@@ -24,18 +24,23 @@ export const Contact: React.FC<{ profile: ProfileDetail | null }> = ({ profile }
   };
 
   return (
-    <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+    <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
       <MetaTags 
         title={`Contact | ${profile?.full_name || "Anurag Shankar Maurya"}`}
         description={`Get in touch with ${profile?.full_name} for freelance projects or job opportunities.`}
         keywords="contact, hire, developer, freelance"
       />
+      <div className="flex items-center gap-4 mb-12">
+        <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Mail className="w-8 h-8"/></div>
+        <div>
+           <h1 className="text-4xl font-extrabold text-black">Get in Touch</h1>
+           <p className="text-[#4c4546] mt-2">I'm currently available for freelance projects and open to full-time opportunities.</p>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
          <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-black mb-6">Get in Touch</h1>
             <p className="text-[#4c4546] text-lg mb-10 leading-[1.6] font-normal">
-              I'm currently available for freelance projects and open to full-time opportunities. 
-              If you have a project that needs some creative injection then that's where I come in!
+              If you have a project that needs some creative injection then that's where I come in! Feel free to contact me.
             </p>
             
             <div className="space-y-8">

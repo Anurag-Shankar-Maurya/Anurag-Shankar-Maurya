@@ -3,12 +3,12 @@ import { ImageIcon, Loader2, RefreshCw, Filter, ChevronDown, ChevronLeft, Chevro
 import Gallery from '../components/Gallery';
 import { MetaTags } from '../components/MetaTags';
 import { api } from '../services/api';
-import { Image } from '../types';
+import { Image, ViewState } from '../types';
 import { Button } from '../components/Button';
 import { SkeletonLoader } from '../components/SkeletonLoader';
 import { EmptyState } from '../components/EmptyState';
 
-export const GalleryView: React.FC = () => {
+export const GalleryView: React.FC<{ onNavigate: (view: ViewState) => void }> = ({ onNavigate }) => {
   const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
@@ -89,19 +89,17 @@ export const GalleryView: React.FC = () => {
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
       <MetaTags title="Visual Gallery | Anurag Shankar Maurya" description="Explore the visual narrative of my journey." />
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
-        <div className="flex items-center gap-5">
-          <div className="p-4 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none">
-            <ImageIcon className="w-10 h-10"/>
-          </div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><ImageIcon className="w-8 h-8"/></div>
           <div>
-              <h1 className="text-4xl md:text-5xl font-extrabold text-black tracking-tight">Visual Gallery</h1>
-              <p className="text-[#4c4546] mt-1.5 font-semibold">Explore the visual narrative of my journey.</p>
+             <h1 className="text-4xl font-extrabold text-black">Visual Gallery</h1>
+             <p className="text-[#4c4546] mt-2">Explore the visual narrative of my journey.</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={fetchImages} className="text-[#4c4546] hover:text-black">
+          <Button variant="ghost" onClick={fetchImages} className="text-[#4c4546] hover:text-black">
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
@@ -224,6 +222,8 @@ export const GalleryView: React.FC = () => {
             title="Visual Gallery is Empty"
             description="Photos, visual notes, and screenshots of my professional milestones are currently being compiled. Stay tuned!"
             icon={ImageIcon}
+            actionText="Back to Home"
+            onAction={() => onNavigate({ type: 'HOME' })}
             variant="general"
           />
         ) : (

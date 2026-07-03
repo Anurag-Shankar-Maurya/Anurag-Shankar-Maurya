@@ -50,6 +50,8 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
           title="No Client Reviews Yet"
           description="Kind recommendations, reviews, and professional references from my clients and team members will be published here soon."
           icon={Quote}
+          actionText="Back to Home"
+          onAction={() => onNavigate({ type: 'HOME' })}
           variant="general"
         />
       ) : (

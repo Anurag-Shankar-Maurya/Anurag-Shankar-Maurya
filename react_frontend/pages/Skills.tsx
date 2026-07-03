@@ -35,6 +35,8 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
           title="Skill Profile Being Formed"
           description="A comprehensive breakdown of my programming languages, frameworks, and developer tools is currently on its way. Stay tuned!"
           icon={Zap}
+          actionText="Back to Home"
+          onAction={() => onNavigate({ type: 'HOME' })}
           variant="general"
         />
       ) : (

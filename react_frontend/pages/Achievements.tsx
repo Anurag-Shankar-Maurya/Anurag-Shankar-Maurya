@@ -22,7 +22,7 @@ export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigat
   };
 
   return (
-    <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto animate-fade-in-up">
+    <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
        <MetaTags title="Honors & Achievements | Anurag Shankar Maurya" description="Recognitions, awards, and professional milestones." />
        <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Trophy className="w-8 h-8"/></div>
@@ -37,6 +37,8 @@ export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigat
           title="Trophy Cabinet is Empty"
           description="Recognitions, professional honors, and key industry milestones are currently being gathered. Check back soon!"
           icon={Trophy}
+          actionText="Back to Home"
+          onAction={() => onNavigate({ type: 'HOME' })}
           variant="general"
         />
       ) : (

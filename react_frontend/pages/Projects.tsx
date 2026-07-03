@@ -94,8 +94,13 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
           description="A complete archive of my open source contributions, client work, and side projects."
           keywords="projects, portfolio, software development, open source"
         />
-        <h1 className="text-4xl font-extrabold text-black mb-4">All Projects</h1>
-        <p className="text-[#4c4546] max-w-2xl mb-12">A complete archive of my open source contributions, client work, and side projects.</p>
+        <div className="flex items-center gap-4 mb-12">
+          <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><FolderOpen className="w-8 h-8"/></div>
+          <div>
+            <h1 className="text-4xl font-extrabold text-black">All Projects</h1>
+            <p className="text-[#4c4546] mt-2">A complete archive of my open source contributions, client work, and side projects.</p>
+          </div>
+        </div>
         <EmptyState
           title="Portfolio Under Construction"
           description="I am currently curating my development work, side projects, and open-source contributions. Please check back later!"
@@ -115,8 +120,13 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
         description="A complete archive of my open source contributions, client work, and side projects."
         keywords="projects, portfolio, software development, open source"
       />
-      <h1 className="text-4xl font-extrabold text-black mb-4">All Projects</h1>
-      <p className="text-[#4c4546] max-w-2xl mb-12">A complete archive of my open source contributions, client work, and side projects.</p>
+      <div className="flex items-center gap-4 mb-12">
+        <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><FolderOpen className="w-8 h-8"/></div>
+        <div>
+          <h1 className="text-4xl font-extrabold text-black">All Projects</h1>
+          <p className="text-[#4c4546] mt-2">A complete archive of my open source contributions, client work, and side projects.</p>
+        </div>
+      </div>
       
       {/* Search Bar */}
       <div className="mb-6 relative">

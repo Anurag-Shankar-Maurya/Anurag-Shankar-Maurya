@@ -482,12 +482,22 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
       <div className="flex flex-col md:flex-row gap-12">
         <div className="flex-1">
           <h1 className="text-4xl md:text-5xl font-extrabold text-black mb-6">{project.title}</h1>
-          <div ref={contentRef} className="markdown-content" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
-             <MarkdownRenderer content={project.description || ''} />
+          <div className="relative">
+            <div ref={contentRef} className="markdown-content" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
+               <MarkdownRenderer content={project.description || ''} />
+            </div>
+            {needsTruncate && !expanded && (
+              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#FBFBFB] via-[#FBFBFB]/80 to-transparent pointer-events-none" />
+            )}
           </div>
           {needsTruncate && (
-            <div className="mt-6">
-              <Button variant="ghost" onClick={() => setExpanded(prev => !prev)} className="text-[#7e7576]">{expanded ? 'Read less' : 'Read more'}</Button>
+            <div className="flex justify-center mt-8 relative z-20">
+              <Button 
+                onClick={() => setExpanded(prev => !prev)} 
+                className="px-8 py-3 rounded-full bg-black text-white hover:bg-neutral-800 transition-all font-bold text-sm shadow-none"
+              >
+                {expanded ? 'Read Less' : 'Read More'}
+              </Button>
             </div>
           )}
         </div>

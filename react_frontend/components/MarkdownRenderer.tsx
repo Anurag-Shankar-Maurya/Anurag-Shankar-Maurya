@@ -74,6 +74,17 @@ interface MarkdownRendererProps {
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className = '' }) => {
   return (
     <div className={`markdown-renderer prose prose-lg max-w-none text-[#4c4546] leading-[1.6] prose-code:before:content-none prose-code:after:content-none ${className}`}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .markdown-renderer ::selection {
+          background-color: rgba(0, 0, 0, 0.1) !important;
+        }
+        .markdown-renderer .relative.border ::selection,
+        .markdown-renderer .relative.border span::selection,
+        .markdown-renderer .relative.border code::selection {
+          background-color: rgba(255, 255, 255, 0.2) !important;
+          color: inherit !important;
+        }
+      ` }} />
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeKatex]}

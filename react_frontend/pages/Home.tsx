@@ -627,17 +627,12 @@ export const Home: React.FC<HomeProps> = ({
                   onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
                 >
                   <div className="aspect-[16/10] rounded-[2rem] overflow-hidden mb-4 relative bg-[#F2F2F2] border border-[#E5E5E5]">
-                     <button 
-                       onClick={(e) => { e.stopPropagation(); openSingle(post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog', post.title); }} 
-                       className="w-full h-full block"
-                     >
-                       <img 
-                         src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} 
-                         alt={post.title} 
-                         className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 cursor-pointer" 
-                         loading="lazy"
-                       />
-                     </button>
+                    <img 
+                      src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} 
+                      alt={post.title} 
+                      className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" 
+                      loading="lazy"
+                    />
                   </div>
                   <div className="px-1 flex flex-col flex-grow">
                     <div className="text-[10px] text-black font-bold uppercase tracking-widest mb-2">{post.category.name}</div>

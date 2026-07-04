@@ -252,38 +252,33 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
             {paginatedData.results.map((post, index) => (
               <div 
                 key={post.id} 
-                className={`group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black transition-all duration-300 cursor-pointer shadow-none ${viewMode === 'grid' ? 'flex flex-col' : 'flex flex-col md:flex-row gap-6'}`}
+                className={`group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black hover:border-[2px] transition-all duration-300 cursor-pointer shadow-none ${viewMode === 'grid' ? 'flex flex-col' : 'flex flex-col md:flex-row gap-8'}`}
                 onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className={`${viewMode === 'list' ? 'md:w-72 md:min-w-72 mb-0' : 'mb-6'} aspect-video w-full rounded-[2rem] overflow-hidden relative bg-[#F2F2F2] border border-[#E5E5E5]`}>
-                  <button onClick={(e) => { e.stopPropagation(); openSingle(post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog', post.title); }} className="w-full h-full block">
-                    <img src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-pointer" />
-                  </button>
-                  <div className="absolute top-4 left-4 z-20 px-3 py-1.5 bg-white border border-[#E5E5E5] rounded-full text-xs font-bold text-black capitalize">
+                <div className={`${viewMode === 'list' ? 'md:w-72 md:min-w-72 mb-0' : 'mb-4'} aspect-[16/10] w-full rounded-[2rem] overflow-hidden relative bg-[#F2F2F2] border border-[#E5E5E5]`}>
+                  <img 
+                    src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} 
+                    alt={post.title} 
+                    className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" 
+                    loading="lazy"
+                  />
+                </div>
+                <div className="px-1 flex flex-col flex-grow">
+                  <div className="text-[10px] text-black font-bold uppercase tracking-widest mb-2">
                     {post.category.name}
                   </div>
-                </div>
-                <div className="flex flex-col flex-grow">
-                  <div className="flex items-center gap-3 text-xs text-[#7e7576] mb-3">
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-[#4c4546]"/> {new Date(post.published_at).toLocaleDateString()}</span>
-                    <span>•</span>
+                  <h3 className="text-lg font-bold text-black mb-2 group-hover:text-black transition-colors leading-snug line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-[#4c4546] text-xs line-clamp-2 leading-[1.6] mb-4">
+                    {post.excerpt}
+                  </p>
+                  <div className="text-[10px] text-[#7e7576] font-semibold mt-auto flex items-center gap-3 pt-3 border-t border-[#E5E5E5]">
+                    <span>{new Date(post.published_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    <span className="w-1 h-1 rounded-full bg-[#cfc4c5]"></span>
                     <span>{post.reading_time} min read</span>
                   </div>
-                  <h3 className="text-xl font-extrabold text-black mb-3 leading-tight">{post.title}</h3>
-                  <p className="text-[#4c4546] text-sm leading-[1.6] mb-4 line-clamp-2">{post.excerpt}</p>
-                  
-                  {/* Tags */}
-                  {post.tags && post.tags.length > 0 && (
-                    <div className="mt-auto flex flex-wrap gap-2">
-                      {post.tags.slice(0, 3).map(tag => (
-                        <span key={tag.slug} className="px-3.5 py-1.5 text-xs bg-[#F2F2F2] border border-[#E5E5E5] rounded-full text-black font-semibold hover:border-black transition-colors cursor-default">{tag.name}</span>
-                      ))}
-                      {post.tags.length > 3 && (
-                        <span className="px-2 py-1 text-xs text-[#7e7576]">+{post.tags.length - 3}</span>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
             ))}

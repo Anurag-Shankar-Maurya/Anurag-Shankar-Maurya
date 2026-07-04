@@ -98,7 +98,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
           table({ children, ...props } : any) {
             return (
               <div className="w-full overflow-x-auto my-6 border border-[#E5E5E5] rounded-[1.5rem] shadow-none bg-white">
-                <table className="min-w-full text-sm border-collapse" {...props}>
+                <table className="min-w-[600px] md:min-w-full text-sm border-collapse" {...props}>
                   {children}
                 </table>
               </div>

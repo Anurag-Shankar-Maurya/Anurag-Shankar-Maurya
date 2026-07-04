@@ -5,7 +5,7 @@ import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
 import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
-import { BlogPost, ViewState, PaginatedResponse } from '../types';
+import { BlogPost, ViewState, PaginatedResponse, BlogCategory } from '../types';
 import { api } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -48,11 +48,20 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
     fetchData();
   }, [searchQuery, selectedCategory, selectedTag, currentPage]);
 
-  // Extract unique categories and tags from initial posts
-  const categories = Array.from(new Set(posts.map(p => p.category.slug))).map(slug => {
-    const post = posts.find(p => p.category.slug === slug);
-    return post?.category;
-  }).filter(Boolean);
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+
+  // Fetch categories directly from backend on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.getBlogCategories();
+        setCategories(response.results || []);
+      } catch (error) {
+        console.error('Failed to fetch categories from backend', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const uniqueTags = Array.from(new Set(posts.flatMap(p => p.tags.map(t => t.slug))));
   const allTags = uniqueTags

@@ -26,13 +26,27 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
   const [loading, setLoading] = useState(false);
   const ITEMS_PER_PAGE = 15;
 
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+  // Debounce search query to avoid overflooding the backend with API calls
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setCurrentPage(1);
+    }, 400); // 400ms delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
   // Fetch paginated data when filters change
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const params: any = { page: currentPage };
-        if (searchQuery) params.search = searchQuery;
+        if (debouncedSearchQuery) params.search = debouncedSearchQuery;
         if (selectedCategory) params.category = selectedCategory;
         if (selectedTag) params.tags = selectedTag;
         params.limit = ITEMS_PER_PAGE;
@@ -46,7 +60,7 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
       }
     };
     fetchData();
-  }, [searchQuery, selectedCategory, selectedTag, currentPage]);
+  }, [debouncedSearchQuery, selectedCategory, selectedTag, currentPage]);
 
   const [categories, setCategories] = useState<BlogCategory[]>([]);
 

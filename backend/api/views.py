@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
+import django_filters
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
@@ -275,6 +276,18 @@ class BlogTagViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
 
 
+class BlogPostFilter(django_filters.rest_framework.FilterSet):
+    category = django_filters.CharFilter(field_name='category__slug')
+    tags = django_filters.CharFilter(field_name='tags__slug')
+    profile = django_filters.NumberFilter(field_name='profile__id')
+    is_featured = django_filters.BooleanFilter()
+    show_on_home = django_filters.BooleanFilter()
+
+    class Meta:
+        model = BlogPost
+        fields = ['profile', 'category', 'tags', 'is_featured', 'show_on_home']
+
+
 @extend_schema_view(
     list=extend_schema(tags=['Blog'], description='List published blog posts (paginated)'),
     retrieve=extend_schema(tags=['Blog'], description='Retrieve blog post by slug (increments view count)'),
@@ -294,7 +307,7 @@ class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
     lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['profile', 'category', 'tags', 'is_featured', 'show_on_home']
+    filterset_class = BlogPostFilter
     search_fields = ['title', 'excerpt', 'content', 'meta_keywords', 'tags__name']
     ordering_fields = ['published_at', 'views_count', 'reading_time']
     ordering = ['-published_at']

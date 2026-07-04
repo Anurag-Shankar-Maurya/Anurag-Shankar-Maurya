@@ -10,7 +10,7 @@ import { SkeletonLoader } from '../components/SkeletonLoader';
 import { EmptyState } from '../components/EmptyState';
 
 export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate: (view: ViewState) => void }> = ({ experience, onNavigate }) => (
-  <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+  <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
     <MetaTags title="Work Experience | Anurag Shankar Maurya" description="My professional journey and career milestones." />
     <div className="flex items-center gap-4 mb-12">
       <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Briefcase className="w-8 h-8"/></div>
@@ -24,6 +24,8 @@ export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate
         title="Timeline Under Curation"
         description="My professional chronology and career milestones are currently being updated. Stay tuned for updates!"
         icon={Briefcase}
+        actionText="Back to Home"
+        onAction={() => onNavigate({ type: 'HOME' })}
         variant="general"
       />
     ) : (

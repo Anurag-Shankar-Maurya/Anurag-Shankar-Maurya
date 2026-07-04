@@ -22,7 +22,7 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigat
   };
 
   return (
-    <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto animate-fade-in-up">
+    <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
        <MetaTags title="Certificates | Anurag Shankar Maurya" description="Recognitions and professional validations." />
        <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Award className="w-8 h-8"/></div>
@@ -37,6 +37,8 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigat
           title="No Certificates Listed Yet"
           description="Course completions, technical credentials, and professional validations will be published here soon."
           icon={Award}
+          actionText="Back to Home"
+          onAction={() => onNavigate({ type: 'HOME' })}
           variant="general"
         />
       ) : (

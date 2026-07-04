@@ -138,7 +138,7 @@ const App: React.FC = () => {
             <Route path="/achievements/:slug" element={<Suspense fallback={<SkeletonLoader type="achievement-detail" />}><AchievementDetailRoute /></Suspense>} />
             <Route path="/testimonials" element={<Suspense fallback={<SkeletonLoader type="testimonials-list" />}><TestimonialsView testimonials={testimonials} onNavigate={navigateTo} /></Suspense>} />
             <Route path="/testimonials/:slug" element={<Suspense fallback={<SkeletonLoader type="testimonials-detail" />}><TestimonialDetailRoute /></Suspense>} />
-            <Route path="/gallery" element={<Suspense fallback={<SkeletonLoader type="gallery" />}><GalleryView /></Suspense>} />
+            <Route path="/gallery" element={<Suspense fallback={<SkeletonLoader type="gallery" />}><GalleryView onNavigate={navigateTo} /></Suspense>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

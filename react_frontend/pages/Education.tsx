@@ -10,7 +10,7 @@ import { SkeletonLoader } from '../components/SkeletonLoader';
 import { EmptyState } from '../components/EmptyState';
 
 export const EducationView: React.FC<{ education: Education[], onNavigate: (view: ViewState) => void }> = ({ education, onNavigate }) => (
-  <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
+  <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
     <MetaTags title="Education | Anurag Shankar Maurya" description="Academic background and qualifications." />
     <div className="flex items-center gap-4 mb-12">
       <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><GraduationCap className="w-8 h-8"/></div>
@@ -24,6 +24,8 @@ export const EducationView: React.FC<{ education: Education[], onNavigate: (view
         title="Academic Milestones Coming Soon"
         description="Formal degrees, academic specializations, and academic milestones are currently being compiled. Stay tuned!"
         icon={GraduationCap}
+        actionText="Back to Home"
+        onAction={() => onNavigate({ type: 'HOME' })}
         variant="general"
       />
     ) : (

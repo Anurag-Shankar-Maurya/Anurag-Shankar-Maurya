@@ -5,10 +5,9 @@ import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
 import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
-import { BlogPost, ViewState, PaginatedResponse } from '../types';
+import { BlogPost, ViewState, PaginatedResponse, BlogCategory } from '../types';
 import { api } from '../services/api';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { MarkdownRenderer } from '../components/MarkdownRenderer';
 import { SkeletonLoader } from '../components/SkeletonLoader';
 import { EmptyState } from '../components/EmptyState';
 
@@ -26,13 +25,27 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
   const [loading, setLoading] = useState(false);
   const ITEMS_PER_PAGE = 15;
 
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+  // Debounce search query to avoid overflooding the backend with API calls
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setCurrentPage(1);
+    }, 400); // 400ms delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
   // Fetch paginated data when filters change
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const params: any = { page: currentPage };
-        if (searchQuery) params.search = searchQuery;
+        if (debouncedSearchQuery) params.search = debouncedSearchQuery;
         if (selectedCategory) params.category = selectedCategory;
         if (selectedTag) params.tags = selectedTag;
         params.limit = ITEMS_PER_PAGE;
@@ -46,13 +59,22 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
       }
     };
     fetchData();
-  }, [searchQuery, selectedCategory, selectedTag, currentPage]);
+  }, [debouncedSearchQuery, selectedCategory, selectedTag, currentPage]);
 
-  // Extract unique categories and tags from initial posts
-  const categories = Array.from(new Set(posts.map(p => p.category.slug))).map(slug => {
-    const post = posts.find(p => p.category.slug === slug);
-    return post?.category;
-  }).filter(Boolean);
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+
+  // Fetch categories directly from backend on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.getBlogCategories();
+        setCategories(response.results || []);
+      } catch (error) {
+        console.error('Failed to fetch categories from backend', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const uniqueTags = Array.from(new Set(posts.flatMap(p => p.tags.map(t => t.slug))));
   const allTags = uniqueTags
@@ -229,38 +251,33 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
             {paginatedData.results.map((post, index) => (
               <div 
                 key={post.id} 
-                className={`group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black transition-all duration-300 cursor-pointer shadow-none ${viewMode === 'grid' ? 'flex flex-col' : 'flex flex-col md:flex-row gap-6'}`}
+                className={`group bg-white border border-[#E5E5E5] rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-10 hover:border-black hover:border-[2px] transition-all duration-300 cursor-pointer shadow-none ${viewMode === 'list' ? 'flex flex-row gap-4 sm:gap-8' : 'flex flex-col'}`}
                 onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className={`${viewMode === 'list' ? 'md:w-72 md:min-w-72 mb-0' : 'mb-6'} aspect-video w-full rounded-[2rem] overflow-hidden relative bg-[#F2F2F2] border border-[#E5E5E5]`}>
-                  <button onClick={(e) => { e.stopPropagation(); openSingle(post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog', post.title); }} className="w-full h-full block">
-                    <img src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-pointer" />
-                  </button>
-                  <div className="absolute top-4 left-4 z-20 px-3 py-1.5 bg-white border border-[#E5E5E5] rounded-full text-xs font-bold text-black capitalize">
+                <div className={`${viewMode === 'list' ? 'w-24 min-w-24 sm:w-72 sm:min-w-72 mb-0' : 'mb-4'} aspect-[16/10] w-full rounded-[1rem] sm:rounded-[2rem] overflow-hidden relative bg-[#F2F2F2] border border-[#E5E5E5]`}>
+                  <img 
+                    src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} 
+                    alt={post.title} 
+                    className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" 
+                    loading="lazy"
+                  />
+                </div>
+                <div className="px-1 flex flex-col flex-grow">
+                  <div className="text-[9px] sm:text-[10px] text-black font-bold uppercase tracking-widest mb-1 sm:mb-2">
                     {post.category.name}
                   </div>
-                </div>
-                <div className="flex flex-col flex-grow">
-                  <div className="flex items-center gap-3 text-xs text-[#7e7576] mb-3">
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-[#4c4546]"/> {new Date(post.published_at).toLocaleDateString()}</span>
-                    <span>•</span>
+                  <h3 className="text-sm sm:text-lg font-bold text-black mb-1 sm:mb-2 group-hover:text-black transition-colors leading-snug line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-[#4c4546] text-xs line-clamp-2 leading-[1.4] sm:leading-[1.6] mb-2 sm:mb-4">
+                    {post.excerpt}
+                  </p>
+                  <div className="text-[9px] sm:text-[10px] text-[#7e7576] font-semibold mt-auto flex items-center gap-1.5 sm:gap-3 pt-2 sm:pt-3 border-t border-[#E5E5E5]">
+                    <span>{new Date(post.published_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    <span className="w-1 h-1 rounded-full bg-[#cfc4c5]"></span>
                     <span>{post.reading_time} min read</span>
                   </div>
-                  <h3 className="text-xl font-extrabold text-black mb-3 leading-tight">{post.title}</h3>
-                  <p className="text-[#4c4546] text-sm leading-[1.6] mb-4 line-clamp-2">{post.excerpt}</p>
-                  
-                  {/* Tags */}
-                  {post.tags && post.tags.length > 0 && (
-                    <div className="mt-auto flex flex-wrap gap-2">
-                      {post.tags.slice(0, 3).map(tag => (
-                        <span key={tag.slug} className="px-3.5 py-1.5 text-xs bg-[#F2F2F2] border border-[#E5E5E5] rounded-full text-black font-semibold hover:border-black transition-colors cursor-default">{tag.name}</span>
-                      ))}
-                      {post.tags.length > 3 && (
-                        <span className="px-2 py-1 text-xs text-[#7e7576]">+{post.tags.length - 3}</span>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
             ))}
@@ -435,13 +452,23 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
 
       <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
 
-      <div ref={contentRef} className="prose prose-lg max-w-none text-[#4c4546] leading-[1.6]" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
-         <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+      <div className="relative">
+        <div ref={contentRef} className="markdown-content" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
+           <MarkdownRenderer content={post.content} />
+        </div>
+        {needsTruncate && !expanded && (
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#FBFBFB] via-[#FBFBFB]/80 to-transparent pointer-events-none" />
+        )}
       </div>
-
+      
       {needsTruncate && (
-        <div className="mt-6">
-          <Button variant="ghost" onClick={() => setExpanded(prev => !prev)} className="text-[#7e7576]">{expanded ? 'Read less' : 'Read more'}</Button>
+        <div className="flex justify-center mt-8 relative z-20">
+          <Button 
+            onClick={() => setExpanded(prev => !prev)} 
+            className="px-8 py-3 rounded-full bg-black text-white hover:bg-neutral-800 transition-all font-bold text-sm shadow-none"
+          >
+            {expanded ? 'Read Less' : 'Read More'}
+          </Button>
         </div>
       )}
 

@@ -83,6 +83,16 @@ export interface Project {
   og_image?: string;
 }
 
+export interface BlogCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  order: number;
+  post_count: number;
+  show_on_home: boolean;
+}
+
 export interface BlogPost {
   id: number;
   title: string;

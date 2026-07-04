@@ -4,6 +4,7 @@ import {
   ProfileDetail, 
   Project, 
   BlogPost, 
+  BlogCategory,
   WorkExperience, 
   Education, 
   Certificate, 
@@ -77,6 +78,7 @@ export const api = {
       offset: params.page ? (params.page - 1) * (params.limit || 15) : undefined
     }),
   getBlogPostDetail: (slug: string) => fetchJson<BlogPost>(`/blog/${slug}/`),
+  getBlogCategories: () => fetchJson<PaginatedResponse<BlogCategory>>('/blog/categories/'),
 
   getExperience: (params: { show_on_home?: boolean; page?: number } = {}) => fetchJson<PaginatedResponse<WorkExperience>>('/work-experience/', { show_on_home: params.show_on_home ? 'true' : undefined, ordering: '-start_date', page: params.page }),
   getExperienceDetail: (id: number) => fetchJson<WorkExperience>(`/work-experience/${id}/`),

@@ -10,8 +10,7 @@ import { api } from '../services/api';
 import { Icons, SocialIcons } from '../components/Icons';
 import { SkeletonLoader } from '../components/SkeletonLoader';
 import { EmptyState } from '../components/EmptyState';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { MarkdownRenderer } from '../components/MarkdownRenderer';
 
 export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: ViewState) => void }> = ({ projects, onNavigate }) => {
   const [lbOpen, setLbOpen] = useState(false);
@@ -483,8 +482,8 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
       <div className="flex flex-col md:flex-row gap-12">
         <div className="flex-1">
           <h1 className="text-4xl md:text-5xl font-extrabold text-black mb-6">{project.title}</h1>
-          <div ref={contentRef} className="prose prose-lg max-w-none text-[#4c4546] leading-[1.6] markdown-content" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
-             <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.description || ''}</ReactMarkdown>
+          <div ref={contentRef} className="markdown-content" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
+             <MarkdownRenderer content={project.description || ''} />
           </div>
           {needsTruncate && (
             <div className="mt-6">

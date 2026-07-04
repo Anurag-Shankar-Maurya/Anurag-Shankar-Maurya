@@ -7,8 +7,7 @@ import { MetaTags } from '../components/MetaTags';
 import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { BlogPost, ViewState, PaginatedResponse, BlogCategory } from '../types';
 import { api } from '../services/api';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { MarkdownRenderer } from '../components/MarkdownRenderer';
 import { SkeletonLoader } from '../components/SkeletonLoader';
 import { EmptyState } from '../components/EmptyState';
 
@@ -453,8 +452,8 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
 
       <Lightbox images={lbImages} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
 
-      <div ref={contentRef} className="prose prose-lg max-w-none text-[#4c4546] leading-[1.6]" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
-         <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+      <div ref={contentRef} className="markdown-content" style={expanded ? undefined : { maxHeight: maxHeight ? `${maxHeight}px` : undefined, overflow: 'hidden' }}>
+         <MarkdownRenderer content={post.content} />
       </div>
 
       {needsTruncate && (

@@ -91,7 +91,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
         components={{
           pre({ children, ...props } : any) {
             const codeEl = React.Children.toArray(children)[0] as any;
-            if (codeEl && codeEl.type === 'code') {
+            if (codeEl && codeEl.props) {
               const className = codeEl.props.className || '';
               const match = /language-(\w+)/.exec(className);
               const language = match ? match[1] : 'code';
@@ -137,6 +137,13 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
               <tr className="hover:bg-[#FCFCFC] transition-colors last:children:border-b-0">
                 {children}
               </tr>
+            );
+          },
+          code({ children, ...props } : any) {
+            return (
+              <code className="px-1.5 py-0.5 mx-0.5 bg-[#F3F3F3] border border-[#C5C5C5] rounded-[0.375rem] text-xs sm:text-sm font-semibold font-mono text-black" {...props}>
+                {children}
+              </code>
             );
           }
         }}

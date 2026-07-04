@@ -94,6 +94,39 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
               return <CodeBlock language={language} value={value} />;
             }
             return <pre {...props}>{children}</pre>;
+          },
+          table({ children, ...props } : any) {
+            return (
+              <div className="w-full overflow-x-auto my-6 border border-[#E5E5E5] rounded-[1.5rem] shadow-none bg-white">
+                <table className="min-w-full text-sm border-collapse" {...props}>
+                  {children}
+                </table>
+              </div>
+            );
+          },
+          thead({ children }) {
+            return <thead className="bg-[#F9F9F9]">{children}</thead>;
+          },
+          th({ children }) {
+            return (
+              <th className="px-6 py-4 text-left text-xs font-bold text-black uppercase tracking-wider border-b border-[#E5E5E5] select-none">
+                {children}
+              </th>
+            );
+          },
+          td({ children }) {
+            return (
+              <td className="px-6 py-4 text-sm text-[#4c4546] align-top border-b border-[#E5E5E5] leading-[1.6]">
+                {children}
+              </td>
+            );
+          },
+          tr({ children }) {
+            return (
+              <tr className="hover:bg-[#FCFCFC] transition-colors last:children:border-b-0">
+                {children}
+              </tr>
+            );
           }
         }}
       >

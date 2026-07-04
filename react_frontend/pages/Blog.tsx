@@ -252,11 +252,11 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
             {paginatedData.results.map((post, index) => (
               <div 
                 key={post.id} 
-                className={`group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black hover:border-[2px] transition-all duration-300 cursor-pointer shadow-none ${viewMode === 'grid' ? 'flex flex-col' : 'flex flex-col md:flex-row gap-8'}`}
+                className={`group bg-white border border-[#E5E5E5] rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-10 hover:border-black hover:border-[2px] transition-all duration-300 cursor-pointer shadow-none ${viewMode === 'list' ? 'flex flex-row gap-4 sm:gap-8' : 'flex flex-col'}`}
                 onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className={`${viewMode === 'list' ? 'md:w-72 md:min-w-72 mb-0' : 'mb-4'} aspect-[16/10] w-full rounded-[2rem] overflow-hidden relative bg-[#F2F2F2] border border-[#E5E5E5]`}>
+                <div className={`${viewMode === 'list' ? 'w-24 min-w-24 sm:w-72 sm:min-w-72 mb-0' : 'mb-4'} aspect-[16/10] w-full rounded-[1rem] sm:rounded-[2rem] overflow-hidden relative bg-[#F2F2F2] border border-[#E5E5E5]`}>
                   <img 
                     src={post.featured_image || 'https://placehold.co/600x400/18181b/FFF?text=Blog'} 
                     alt={post.title} 
@@ -265,16 +265,16 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
                   />
                 </div>
                 <div className="px-1 flex flex-col flex-grow">
-                  <div className="text-[10px] text-black font-bold uppercase tracking-widest mb-2">
+                  <div className="text-[9px] sm:text-[10px] text-black font-bold uppercase tracking-widest mb-1 sm:mb-2">
                     {post.category.name}
                   </div>
-                  <h3 className="text-lg font-bold text-black mb-2 group-hover:text-black transition-colors leading-snug line-clamp-2">
+                  <h3 className="text-sm sm:text-lg font-bold text-black mb-1 sm:mb-2 group-hover:text-black transition-colors leading-snug line-clamp-2">
                     {post.title}
                   </h3>
-                  <p className="text-[#4c4546] text-xs line-clamp-2 leading-[1.6] mb-4">
+                  <p className="text-[#4c4546] text-xs line-clamp-2 leading-[1.4] sm:leading-[1.6] mb-2 sm:mb-4">
                     {post.excerpt}
                   </p>
-                  <div className="text-[10px] text-[#7e7576] font-semibold mt-auto flex items-center gap-3 pt-3 border-t border-[#E5E5E5]">
+                  <div className="text-[9px] sm:text-[10px] text-[#7e7576] font-semibold mt-auto flex items-center gap-1.5 sm:gap-3 pt-2 sm:pt-3 border-t border-[#E5E5E5]">
                     <span>{new Date(post.published_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     <span className="w-1 h-1 rounded-full bg-[#cfc4c5]"></span>
                     <span>{post.reading_time} min read</span>

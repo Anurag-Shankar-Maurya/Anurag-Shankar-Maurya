@@ -250,18 +250,18 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
             {displayedProjects.map((project, index) => (
               <div 
                 key={project.id} 
-                className={`group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black hover:border-[2px] transition-all duration-500 cursor-pointer shadow-none ${viewMode === 'list' ? 'flex flex-col md:flex-row gap-6' : 'flex flex-col'}`}
+                className={`group bg-white border border-[#E5E5E5] rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-10 hover:border-black hover:border-[2px] transition-all duration-500 cursor-pointer shadow-none ${viewMode === 'list' ? 'flex flex-row gap-4 sm:gap-8' : 'flex flex-col'}`}
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter') onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug }); }}
               >
-                <div className={`${viewMode === 'list' ? 'md:w-[320px] md:min-w-[320px]' : ''} aspect-video bg-[#F2F2F2] rounded-[2rem] overflow-hidden relative`}>
+                <div className={`${viewMode === 'list' ? 'w-24 min-w-24 sm:w-[320px] sm:min-w-[320px] mb-0' : 'mb-6'} aspect-video bg-[#F2F2F2] rounded-[1rem] sm:rounded-[2rem] overflow-hidden relative`}>
                   <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" />
 
-                  {/* Overlay icons: Live, Source, Demo, Gallery */}
-                  <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
+                  {/* Overlay icons: Live, Source, Demo, Gallery (hidden in mobile list mode to prevent crowding) */}
+                  <div className={`absolute top-3 right-3 z-30 ${viewMode === 'list' ? 'hidden sm:flex' : 'flex'} items-center gap-2`}>
                     {project.live_url && (
                       <button
                         onClick={(e) => { e.stopPropagation(); window.open(project.live_url, '_blank'); }}
@@ -307,17 +307,18 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
                     {project.status}
                   </div>
                 </div>
-                <div className="pt-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold text-black mb-2 group-hover:text-black transition-colors">{project.title}</h3>
-                  <p className="text-[#4c4546] text-sm mb-4 line-clamp-3 flex-grow leading-[1.6]">{project.short_description}</p>
+                <div className={`${viewMode === 'list' ? 'pt-0' : 'pt-6'} flex flex-col flex-grow`}>
+                  <h3 className="text-sm sm:text-xl font-bold text-black mb-1 sm:mb-2 group-hover:text-black transition-colors">{project.title}</h3>
+                  <p className="text-[#4c4546] text-xs sm:text-sm mb-2 sm:mb-4 line-clamp-2 sm:line-clamp-3 flex-grow leading-[1.4] sm:leading-[1.6]">{project.short_description}</p>
+                  
                   {/* tech badges */}
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {project.technologies.split(',').slice(0, 3).map(t => (
-                      <span key={t} className="px-3 py-1 text-xs bg-[#F2F2F2] rounded-full text-black font-semibold">{t.trim()}</span>
+                  <div className="mt-2 sm:mt-4 flex flex-wrap gap-1 sm:gap-2">
+                    {project.technologies.split(',').slice(0, 2).map(t => (
+                      <span key={t} className="px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs bg-[#F2F2F2] rounded-full text-black font-semibold">{t.trim()}</span>
                     ))}
-                    {project.technologies.split(',').length > 3 && (
-                      <span className="px-3 py-1 text-xs text-[#7e7576] bg-[#F2F2F2] rounded-full border border-dashed border-[#cfc4c5] font-semibold">
-                        +{project.technologies.split(',').length - 3} more
+                    {project.technologies.split(',').length > 2 && (
+                      <span className="px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs text-[#7e7576] bg-[#F2F2F2] rounded-full border border-dashed border-[#cfc4c5] font-semibold">
+                        +{project.technologies.split(',').length - 2}
                       </span>
                     )}
                   </div>

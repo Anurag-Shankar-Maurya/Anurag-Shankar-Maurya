@@ -112,7 +112,18 @@ portfolio_admin_site.register(Group, GroupAdmin)
 class ImageAdminForm(forms.ModelForm):
     """Custom form for Image model with file upload and external URL"""
     external_image_url = forms.URLField(required=False, label='External Image URL', help_text='Optional URL to an externally hosted image (CDN)')
-    upload_image = forms.FileField(required=False, label='Upload Image', help_text='Upload an image file')
+    upload_image = forms.FileField(
+        required=False, 
+        label='Upload Image', 
+        help_text='Upload an image file (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.85',
+            'data-webp-max-width': '1920',
+            'data-webp-max-height': '1080',
+            'accept': 'image/*'
+        })
+    )
     clear_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the current image')
 
     class Meta:
@@ -182,7 +193,14 @@ class ProfileAdminForm(forms.ModelForm):
     upload_profile_image = forms.ImageField(
         required=False,
         label='Upload Profile Image',
-        help_text='Current profile image will be replaced if new file is uploaded'
+        help_text='Current profile image will be replaced if new file is uploaded (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.9',
+            'data-webp-max-width': '800',
+            'data-webp-max-height': '800',
+            'accept': 'image/*'
+        })
     )
     clear_profile_image = forms.BooleanField(required=False, label='Clear Profile Image', help_text='Check to remove the profile image')
     resume_url = forms.URLField(required=False, label='Resume URL', help_text='External resume URL (PDF)')
@@ -283,7 +301,18 @@ class ProfileAdminForm(forms.ModelForm):
 class EducationAdminForm(forms.ModelForm):
     """Custom form for Education model with logo upload or external URL"""
     logo_url = forms.URLField(required=False, label='Logo URL', help_text='External institution logo URL')
-    upload_logo = forms.ImageField(required=False, label='Upload Institution Logo')
+    upload_logo = forms.ImageField(
+        required=False, 
+        label='Upload Institution Logo',
+        help_text='Upload institution logo (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.85',
+            'data-webp-max-width': '400',
+            'data-webp-max-height': '400',
+            'accept': 'image/*'
+        })
+    )
     clear_logo = forms.BooleanField(required=False, label='Clear Logo', help_text='Check to remove the logo')
 
     class Meta:
@@ -332,7 +361,18 @@ class EducationAdminForm(forms.ModelForm):
 class WorkExperienceAdminForm(forms.ModelForm):
     """Custom form for WorkExperience model with logo upload or external URL"""
     company_logo_url = forms.URLField(required=False, label='Company Logo URL', help_text='External company logo URL')
-    upload_company_logo = forms.ImageField(required=False, label='Upload Company Logo')
+    upload_company_logo = forms.ImageField(
+        required=False, 
+        label='Upload Company Logo',
+        help_text='Upload company logo (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.85',
+            'data-webp-max-width': '400',
+            'data-webp-max-height': '400',
+            'accept': 'image/*'
+        })
+    )
     clear_company_logo = forms.BooleanField(required=False, label='Clear Logo', help_text='Check to remove the company logo')
 
     class Meta:
@@ -381,7 +421,18 @@ class WorkExperienceAdminForm(forms.ModelForm):
 class ProjectAdminForm(forms.ModelForm):
     """Custom form for Project model with featured image upload or external URL"""
     featured_image_url = forms.URLField(required=False, label='Featured Image URL', help_text='External featured image URL (CDN)')
-    upload_featured_image = forms.ImageField(required=False, label='Upload Featured Image')
+    upload_featured_image = forms.ImageField(
+        required=False, 
+        label='Upload Featured Image',
+        help_text='Upload featured image (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.85',
+            'data-webp-max-width': '1200',
+            'data-webp-max-height': '800',
+            'accept': 'image/*'
+        })
+    )
     clear_featured_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the featured image')
 
     class Meta:
@@ -430,10 +481,32 @@ class ProjectAdminForm(forms.ModelForm):
 class CertificateAdminForm(forms.ModelForm):
     """Custom form for Certificate model with image uploads or external URLs"""
     organization_logo_url = forms.URLField(required=False, label='Organization Logo URL', help_text='External organization logo URL')
-    upload_organization_logo = forms.ImageField(required=False, label='Upload Organization Logo')
+    upload_organization_logo = forms.ImageField(
+        required=False, 
+        label='Upload Organization Logo',
+        help_text='Upload organization logo (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.85',
+            'data-webp-max-width': '400',
+            'data-webp-max-height': '400',
+            'accept': 'image/*'
+        })
+    )
     clear_organization_logo = forms.BooleanField(required=False, label='Clear Org Logo', help_text='Check to remove the organization logo')
     certificate_image_url = forms.URLField(required=False, label='Certificate Image URL', help_text='External certificate image URL')
-    upload_certificate_image = forms.ImageField(required=False, label='Upload Certificate Image')
+    upload_certificate_image = forms.ImageField(
+        required=False, 
+        label='Upload Certificate Image',
+        help_text='Upload certificate image (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.85',
+            'data-webp-max-width': '1200',
+            'data-webp-max-height': '1600',
+            'accept': 'image/*'
+        })
+    )
     clear_certificate_image = forms.BooleanField(required=False, label='Clear Certificate Image', help_text='Check to remove the certificate image')
 
     class Meta:
@@ -509,7 +582,18 @@ class CertificateAdminForm(forms.ModelForm):
 class AchievementAdminForm(forms.ModelForm):
     """Custom form for Achievement model with image upload or external URL"""
     image_url = forms.URLField(required=False, label='Achievement Image URL', help_text='External achievement image URL')
-    upload_achievement_image = forms.ImageField(required=False, label='Upload Achievement Image')
+    upload_achievement_image = forms.ImageField(
+        required=False, 
+        label='Upload Achievement Image',
+        help_text='Upload achievement image (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.85',
+            'data-webp-max-width': '800',
+            'data-webp-max-height': '800',
+            'accept': 'image/*'
+        })
+    )
     clear_achievement_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the achievement image')
 
     class Meta:
@@ -558,10 +642,32 @@ class AchievementAdminForm(forms.ModelForm):
 class BlogPostAdminForm(forms.ModelForm):
     """Custom form for BlogPost model with image uploads or external URLs"""
     featured_image_url = forms.URLField(required=False, label='Featured Image URL', help_text='External featured image URL (CDN)')
-    upload_featured_image = forms.ImageField(required=False, label='Upload Featured Image')
+    upload_featured_image = forms.ImageField(
+        required=False, 
+        label='Upload Featured Image',
+        help_text='Upload featured image (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.85',
+            'data-webp-max-width': '1200',
+            'data-webp-max-height': '800',
+            'accept': 'image/*'
+        })
+    )
     clear_featured_image = forms.BooleanField(required=False, label='Clear Featured Image', help_text='Check to remove the featured image')
     og_image_url = forms.URLField(required=False, label='OG Image URL', help_text='External OG image URL')
-    upload_og_image = forms.ImageField(required=False, label='Upload OG Image')
+    upload_og_image = forms.ImageField(
+        required=False, 
+        label='Upload OG Image',
+        help_text='Upload OG image (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.85',
+            'data-webp-max-width': '1200',
+            'data-webp-max-height': '630',
+            'accept': 'image/*'
+        })
+    )
     clear_og_image = forms.BooleanField(required=False, label='Clear OG Image', help_text='Check to remove the OG image')
 
     class Meta:
@@ -635,7 +741,18 @@ class BlogPostAdminForm(forms.ModelForm):
 
 class TestimonialAdminForm(forms.ModelForm):
     """Custom form for Testimonial model with author image upload"""
-    upload_author_image = forms.ImageField(required=False, label='Upload Author Image')
+    upload_author_image = forms.ImageField(
+        required=False, 
+        label='Upload Author Image',
+        help_text='Upload author image (will be converted to WebP)',
+        widget=forms.ClearableFileInput(attrs={
+            'data-webp-convert': 'true',
+            'data-webp-quality': '0.9',
+            'data-webp-max-width': '400',
+            'data-webp-max-height': '400',
+            'accept': 'image/*'
+        })
+    )
     clear_author_image = forms.BooleanField(required=False, label='Clear Image', help_text='Check to remove the author image')
     
     class Meta:

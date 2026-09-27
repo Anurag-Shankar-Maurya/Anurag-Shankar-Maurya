@@ -1,11 +1,30 @@
 {
-    "buildCommand": "npm run build",
-    "outputDirectory": ".next",
-    "framework": "nextjs",
-    "regions": ["sin1"],
-    "functions": {
-        "src/app/api/**/*.ts": {
-            "maxDuration": 10
+  "rewrites": [
+    {
+      "source": "/blog/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare).*"
         }
+      ],
+      "destination": "https://backend.anuragshankarmaurya.in/blog/:slug"
+    },
+    {
+      "source": "/projects/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare).*"
+        }
+      ],
+      "destination": "https://backend.anuragshankarmaurya.in/projects/:slug"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
+  ]
 }

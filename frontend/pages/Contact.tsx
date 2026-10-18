@@ -27,8 +27,9 @@ export const Contact: React.FC<{ profile: ProfileDetail | null }> = ({ profile }
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
       <MetaTags 
         title={`Contact | ${profile?.full_name || "Anurag Shankar Maurya"}`}
-        description={`Get in touch with ${profile?.full_name} for freelance projects or job opportunities.`}
-        keywords="contact, hire, developer, freelance"
+        description={`Get in touch with ${profile?.full_name || "Anurag Shankar Maurya"} for software engineering projects, collaboration, or hiring opportunities.`}
+        keywords="contact, hire, developer, freelance, software engineer"
+        canonical="https://www.anuragshankarmaurya.in/contact"
       />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Mail className="w-8 h-8"/></div>

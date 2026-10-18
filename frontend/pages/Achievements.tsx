@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { Award, ArrowRight, ArrowLeft, Loader2, Trophy, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Award, ArrowRight, ArrowLeft, Trophy, HelpCircle } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
@@ -23,7 +23,11 @@ export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigat
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-       <MetaTags title="Honors & Achievements | Anurag Shankar Maurya" description="Recognitions, awards, and professional milestones." />
+       <MetaTags 
+         title="Honors & Achievements | Anurag Shankar Maurya" 
+         description="Recognitions, awards, hackathons, and professional milestones earned by Anurag Shankar Maurya." 
+         canonical="https://www.anuragshankarmaurya.in/achievements"
+       />
        <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Trophy className="w-8 h-8"/></div>
         <div>
@@ -44,14 +48,25 @@ export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigat
       ) : (
         <div className="space-y-6">
            {achievements.map((ach, index) => (
-              <div 
+              <Link 
                 key={ach.id} 
-                className="bg-white border border-[#E5E5E5] flex flex-col md:flex-row md:items-center gap-8 rounded-[3rem] p-10 hover:border-black transition-all cursor-pointer group shadow-none" 
+                to={`/achievements/${ach.slug || String(ach.id)}`}
                 onClick={() => onNavigate({ type: 'ACHIEVEMENT_DETAIL', slug: ach.slug || String(ach.id) })}
+                className="block bg-white border border-[#E5E5E5] flex flex-col md:flex-row md:items-center gap-8 rounded-[3rem] p-10 hover:border-black transition-all cursor-pointer group shadow-none" 
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="w-full md:w-56 h-36 md:h-32 rounded-[2rem] bg-[#F2F2F2] border border-[#E5E5E5] overflow-hidden flex-shrink-0 relative shadow-none">
-                   {ach.image ? <img onClick={(e) => { e.stopPropagation(); openSingle(ach.image); }} src={ach.image} alt={ach.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"/> : <div className="w-full h-full flex items-center justify-center text-black bg-[#F2F2F2]"><Trophy className="w-10 h-10"/></div>}
+                   {ach.image ? (
+                     <img 
+                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); openSingle(ach.image, ach.title); }} 
+                       src={ach.image} 
+                       alt={ach.title} 
+                       loading="lazy"
+                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                     />
+                   ) : (
+                     <div className="w-full h-full flex items-center justify-center text-black bg-[#F2F2F2]"><Trophy className="w-10 h-10"/></div>
+                   )}
                 </div>
                 <div className="flex-1">
                    <div className="flex justify-between items-start mb-2 gap-4">
@@ -65,7 +80,7 @@ export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigat
                    </div>
                    <p className="text-[#4c4546] line-clamp-2 text-sm leading-relaxed">{ach.description}</p>
                 </div>
-              </div>
+              </Link>
            ))}
         </div>
       )}
@@ -73,7 +88,7 @@ export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigat
       <Lightbox images={lbImages} initialIndex={lbIndex} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
     </main>
   );
-}
+};
 
 export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: ViewState) => void }> = ({ slug, onNavigate }) => {
   const [ach, setAch] = useState<Achievement | null>(null);
@@ -102,15 +117,20 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
-      <MetaTags title={ach?.title ? `${ach.title} | Achievements | Anurag Shankar Maurya` : 'Achievements | Anurag Shankar Maurya'} description={ach?.description} ogImage={ach?.image} />
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'ACHIEVEMENTS' })} className="mb-8 pl-0 hover:pl-2 transition-all">
+      <MetaTags 
+        title={ach?.title ? `${ach.title} | Achievements | Anurag Shankar Maurya` : 'Achievements | Anurag Shankar Maurya'} 
+        description={ach?.description} 
+        canonical={`https://www.anuragshankarmaurya.in/achievements/${slug}`}
+        ogImage={ach?.image} 
+      />
+      <Link to="/achievements" onClick={() => onNavigate({ type: 'ACHIEVEMENTS' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Achievements
-      </Button>
+      </Link>
       
       <div className="bg-white border border-[#E5E5E5] rounded-[3rem] overflow-hidden mb-10 shadow-none">
          <div className="w-full h-80 bg-[#F2F2F2] border-b border-[#E5E5E5] relative overflow-hidden">
             <button onClick={() => setLbOpen(true)} className="w-full h-full block">
-              <img src={ach.image} alt={ach.title} className="w-full h-full object-cover cursor-pointer opacity-90 hover:opacity-100 transition-opacity"/>
+              <img src={ach.image} alt={ach.title} loading="lazy" className="w-full h-full object-cover cursor-pointer opacity-90 hover:opacity-100 transition-opacity"/>
             </button>
          </div>
          
@@ -129,7 +149,7 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
             
             {ach.url && (
                <div className="mt-10 pt-8 border-t border-[#E5E5E5]">
-                  <a href={ach.url} target="_blank" rel="noreferrer" className="text-black hover:text-black font-bold flex items-center gap-2 group w-fit">
+                  <a href={ach.url} target="_blank" rel="noopener noreferrer" className="text-black hover:text-black font-bold flex items-center gap-2 group w-fit">
                      View Official Announcement <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform"/>
                   </a>
                </div>

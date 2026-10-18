@@ -3,25 +3,35 @@ URL configuration for portfolio project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from api.admin import portfolio_admin_site
 from django.conf import settings
 from django.conf.urls.static import static
 
+
+def backend_robots_txt(request):
+    """
+    Prevent search engines from indexing the API and admin backend,
+    while permitting sitemap discovery and media serving.
+    """
+    lines = [
+        "User-agent: *",
+        "Disallow: /admin/",
+        "Disallow: /api/",
+        "Allow: /api/sitemap/",
+        "Allow: /media/",
+        "",
+        "Sitemap: https://backend.anuragshankarmaurya.in/api/sitemap/",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
 urlpatterns = [
+    path('robots.txt', backend_robots_txt, name='backend_robots_txt'),
     path('admin/', portfolio_admin_site.urls),
     path('api/', include('api.urls')),
     

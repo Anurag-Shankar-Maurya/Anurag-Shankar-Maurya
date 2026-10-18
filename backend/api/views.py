@@ -674,7 +674,6 @@ class SitemapView(APIView):
             {'url': '/', 'changefreq': 'daily', 'priority': '1.0'},
             {'url': '/projects', 'changefreq': 'weekly', 'priority': '0.8'},
             {'url': '/blog', 'changefreq': 'daily', 'priority': '0.8'},
-            {'url': '/about', 'changefreq': 'monthly', 'priority': '0.7'},
             {'url': '/contact', 'changefreq': 'monthly', 'priority': '0.7'},
             {'url': '/experience', 'changefreq': 'monthly', 'priority': '0.6'},
             {'url': '/education', 'changefreq': 'monthly', 'priority': '0.6'},
@@ -755,6 +754,33 @@ class SitemapView(APIView):
                 'changefreq': 'monthly',
                 'priority': '0.5',
                 'lastmod': test.date.isoformat() if test.date else None
+            })
+        
+        # Skills detail
+        skills = Skill.objects.all().only('slug')
+        for sk in skills:
+            dynamic_urls.append({
+                'url': f'/skills/{sk.slug}',
+                'changefreq': 'monthly',
+                'priority': '0.6'
+            })
+
+        # Education detail
+        educations = Education.objects.all().only('slug')
+        for edu in educations:
+            dynamic_urls.append({
+                'url': f'/education/{edu.slug}',
+                'changefreq': 'monthly',
+                'priority': '0.6'
+            })
+
+        # Work Experience detail
+        experiences = WorkExperience.objects.all().only('id')
+        for exp in experiences:
+            dynamic_urls.append({
+                'url': f'/experience/{exp.id}',
+                'changefreq': 'monthly',
+                'priority': '0.6'
             })
         
         # Build XML

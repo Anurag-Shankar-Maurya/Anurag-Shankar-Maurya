@@ -1,0 +1,40 @@
+# Anurag Shankar Maurya
+
+> Android & Full-Stack Developer | AI & Software Developer | Django Backend Architect specializing in Generative AI, React, Kotlin, and scalable distributed systems.
+
+## Profile Summary
+- Name: Anurag Shankar Maurya
+- Website: https://www.anuragshankarmaurya.in
+- Portfolio API: https://backend.anuragshankarmaurya.in/api/
+- GitHub: https://github.com/Anurag-Shankar-Maurya
+- LinkedIn: https://linkedin.com/in/anurag-shankar-maurya
+- Twitter: https://twitter.com/AnuragSMaurya
+- Contact: https://www.anuragshankarmaurya.in/contact
+
+## Core Technical Capabilities
+- Languages: Kotlin, Python, Java, JavaScript, TypeScript, C++, SQL
+- Backend & Frameworks: Django, Django REST Framework, React 19, Node.js, Express, Tailwind CSS
+- Mobile Engineering: Android Native (Kotlin/Java), Jetpack Compose, XML, MVVM, Room, Retrofit
+- AI & LLM Systems: Generative AI, Google Gemini API, OpenAI API, LangChain, RAG (Retrieval-Augmented Generation), Vector Databases
+- Data & Cloud: PostgreSQL, SQLite, Redis, Docker, Vercel, Cloudinary, Git, GitHub Actions
+
+## Featured Projects
+- [GDA (Global Development Alliance)](https://www.anuragshankarmaurya.in/projects/gda-global-development-alliance): Global development community platform.
+- [Julia English Kids Talk](https://www.anuragshankarmaurya.in/projects/julia-english-kids-talk): Interactive speech and learning tool for young learners.
+- [DeepTranscribe](https://www.anuragshankarmaurya.in/projects/deeptranscribe): High-accuracy audio transcription and speech-to-text pipeline.
+- [Censor AI](https://www.anuragshankarmaurya.in/projects/censor-ai): Intelligent text and content moderation service with automated filtering.
+- [Sparkle AI](https://www.anuragshankarmaurya.in/projects/sparkle-ai): AI-assisted content enhancement and generation application.
+- [FakeHai](https://www.anuragshankarmaurya.in/projects/fakehai): Misinformation and counterfeit detection system.
+- [We Parcel](https://www.anuragshankarmaurya.in/projects/we-parcel): Logistics, tracking, and parcel delivery management application.
+- [Arduino Burglar Alarm System](https://www.anuragshankarmaurya.in/projects/arduino-burglar-alarm-system): Embedded hardware security system with sensor alert triggers.
+- [Auto Street Light with Dusk Detection](https://www.anuragshankarmaurya.in/projects/auto-street-light-with-dusk-detection): Smart energy-efficient automation with light intensity sensors.
+
+## Blog Articles & Guides
+- [Building AI-Powered Android Apps with Gemini API](https://www.anuragshankarmaurya.in/blog/building-ai-powered-android-apps-with-gemini-api): Architectural blueprint and step-by-step guide to integrating multimodal Gemini API capabilities into production Android apps using Kotlin.
+- [Introduction to RAG Systems with LangChain](https://www.anuragshankarmaurya.in/blog/introduction-to-rag-systems-with-langchain): Comprehensive guide covering vector embeddings, retrieval pipelines, semantic chunking, and LLM grounding.
+
+## Resources & Endpoints
+- Sitemap XML: https://www.anuragshankarmaurya.in/sitemap.xml
+- Skills Index: https://www.anuragshankarmaurya.in/skills
+- Experience Timeline: https://www.anuragshankarmaurya.in/experience
+- Education & Credentials: https://www.anuragshankarmaurya.in/education

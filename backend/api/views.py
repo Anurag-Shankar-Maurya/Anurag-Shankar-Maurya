@@ -812,6 +812,111 @@ class SitemapView(APIView):
         return HttpResponse(xml_content, content_type='application/xml')
 
 
+# ============================================
+# LLMS.TXT VIEW
+# ============================================
+
+class LLMsTxtView(APIView):
+    """
+    Generate dynamic llms.txt standard summary for AI agents, crawlers, and LLMs.
+    GET /api/llms.txt/
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        import os
+        profile = Profile.objects.first()
+        base_url = str(getattr(settings, 'SITE_URL', request.build_absolute_uri('/'))).rstrip('/')
+        if 'backend.' in base_url:
+            base_url = base_url.replace('backend.', 'www.') if 'www.' not in base_url else base_url.replace('backend.', '')
+
+        frontend_url = os.environ.get('FRONTEND_URL')
+        if frontend_url:
+            base_url = frontend_url.rstrip('/')
+
+        full_name = profile.full_name if profile else "Anurag Shankar Maurya"
+        headline = (
+            profile.headline
+            if profile and profile.headline
+            else "Android & Full-Stack Developer | AI & Software Developer | Django Backend Architect specializing in Generative AI, React, Kotlin, and scalable distributed systems."
+        )
+
+        lines = [
+            f"# {full_name}",
+            "",
+            f"> {headline}",
+            "",
+            "## Profile Summary",
+            f"- Name: {full_name}",
+            f"- Website: {base_url}",
+            f"- Portfolio API: https://backend.anuragshankarmaurya.in/api/",
+        ]
+
+        # Social links
+        for sl in SocialLink.objects.all():
+            if sl.platform and sl.url:
+                lines.append(f"- {sl.platform.capitalize()}: {sl.url}")
+        lines.append(f"- Contact: {base_url}/contact")
+        lines.append("")
+
+        # Technical skills grouped by category
+        skills = Skill.objects.all().order_by('order', 'name')
+        if skills.exists():
+            lines.append("## Core Technical Capabilities")
+            type_labels = {
+                'language': 'Languages',
+                'backend-dev': 'Backend & Frameworks',
+                'frontend-dev': 'Frontend & UI',
+                'mobile-app-dev': 'Mobile Engineering',
+                'ai-ml': 'AI & LLM Systems',
+                'database': 'Databases & Storage',
+                'devops': 'Cloud & DevOps',
+                'frameworks': 'Frameworks & Libraries',
+                'softwares': 'Tools & Software',
+                'others': 'Other Technical Skills',
+            }
+            grouped = {}
+            for sk in skills:
+                st = sk.skill_type or 'others'
+                grouped.setdefault(st, []).append(sk.name)
+
+            for st, names in grouped.items():
+                label = type_labels.get(st, st.replace('-', ' ').title())
+                lines.append(f"- {label}: {', '.join(names)}")
+            lines.append("")
+
+        # Featured Projects
+        projects = Project.objects.filter(is_visible=True).order_by('-is_featured', 'order', '-id')
+        if projects.exists():
+            lines.append("## Featured Projects")
+            for proj in projects:
+                desc = proj.short_description or (proj.description[:180] + '...' if proj.description else '')
+                lines.append(f"- [{proj.title}]({base_url}/projects/{proj.slug}): {desc}")
+            lines.append("")
+
+        # Blog Articles & Guides
+        blog_posts = BlogPost.objects.filter(status='published').order_by('-published_at', '-id')
+        if blog_posts.exists():
+            lines.append("## Blog Articles & Guides")
+            for post in blog_posts:
+                desc = post.excerpt or post.meta_description or ""
+                lines.append(f"- [{post.title}]({base_url}/blog/{post.slug}): {desc}")
+            lines.append("")
+
+        # Resources & Endpoints
+        lines.append("## Resources & Endpoints")
+        lines.append(f"- Sitemap XML: {base_url}/sitemap.xml")
+        lines.append(f"- Skills Index: {base_url}/skills")
+        lines.append(f"- Experience Timeline: {base_url}/experience")
+        lines.append(f"- Education & Credentials: {base_url}/education")
+        lines.append(f"- All Projects: {base_url}/projects")
+        lines.append(f"- All Articles: {base_url}/blog")
+        lines.append("")
+
+        return HttpResponse("\n".join(lines), content_type='text/markdown; charset=utf-8')
+
+
+
 def clear_portfolio_cache(sender, **kwargs):
     cache.delete(CACHE_KEY)
     print(f"\n>>> [PORTFOLIO-DATA-CACHE] Cache invalidated due to model update: {sender.__name__}\n")

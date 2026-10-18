@@ -80,4 +80,8 @@ urlpatterns = [
 
     # Sitemap
     path('sitemap/', views.SitemapView.as_view(), name='sitemap'),
+
+    # Dynamic llms.txt for AI agents
+    path('llms.txt/', views.LLMsTxtView.as_view(), name='llms_txt'),
+    path('llms.txt', views.LLMsTxtView.as_view(), name='llms_txt_noslash'),
 ]

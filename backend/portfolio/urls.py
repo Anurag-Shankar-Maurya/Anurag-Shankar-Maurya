@@ -9,6 +9,7 @@ from django.urls import path, include
 from django.http import HttpResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from api.admin import portfolio_admin_site
+from api import views
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -23,6 +24,8 @@ def backend_robots_txt(request):
         "Disallow: /admin/",
         "Disallow: /api/",
         "Allow: /api/sitemap/",
+        "Allow: /api/llms.txt/",
+        "Allow: /llms.txt",
         "Allow: /media/",
         "",
         "Sitemap: https://backend.anuragshankarmaurya.in/api/sitemap/",
@@ -32,6 +35,7 @@ def backend_robots_txt(request):
 
 urlpatterns = [
     path('robots.txt', backend_robots_txt, name='backend_robots_txt'),
+    path('llms.txt', views.LLMsTxtView.as_view(), name='root_llms_txt'),
     path('admin/', portfolio_admin_site.urls),
     path('api/', include('api.urls')),
     

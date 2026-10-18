@@ -5,6 +5,32 @@
       "destination": "https://backend.anuragshankarmaurya.in/api/sitemap/"
     },
     {
+      "source": "/llms.txt",
+      "destination": "https://backend.anuragshankarmaurya.in/api/llms.txt/"
+    },
+    {
+      "source": "/blog",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-extended|googlebot|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
+        }
+      ],
+      "destination": "https://backend.anuragshankarmaurya.in/blog"
+    },
+    {
+      "source": "/blog/",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-extended|googlebot|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
+        }
+      ],
+      "destination": "https://backend.anuragshankarmaurya.in/blog"
+    },
+    {
       "source": "/blog/:slug",
       "has": [
         {
@@ -14,6 +40,28 @@
         }
       ],
       "destination": "https://backend.anuragshankarmaurya.in/blog/:slug"
+    },
+    {
+      "source": "/projects",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-extended|googlebot|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
+        }
+      ],
+      "destination": "https://backend.anuragshankarmaurya.in/projects"
+    },
+    {
+      "source": "/projects/",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-extended|googlebot|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
+        }
+      ],
+      "destination": "https://backend.anuragshankarmaurya.in/projects"
     },
     {
       "source": "/projects/:slug",

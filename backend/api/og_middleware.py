@@ -45,6 +45,8 @@ CRAWLER_UA_PATTERNS = re.compile(
 
 BLOG_ROUTE = re.compile(r'^/blog/(?P<slug>[a-z0-9\-]+)/?$')
 PROJECT_ROUTE = re.compile(r'^/projects?/(?P<slug>[a-z0-9\-]+)/?$')
+BLOG_LIST_ROUTE = re.compile(r'^/blog/?$')
+PROJECT_LIST_ROUTE = re.compile(r'^/projects?/?$')
 
 
 def _get_profile():
@@ -277,6 +279,65 @@ def _render_semantic_html(*, headline, title, description, og_image, og_type, ur
 </html>"""
 
 
+def _render_archive_html(
+    title,
+    headline,
+    description,
+    url,
+    site_name,
+    items_html,
+    schema_data=None,
+):
+    safe = escape
+    schema_script = ''
+    if schema_data:
+        schema_script = f'<script type="application/ld+json">\n{json.dumps(schema_data, indent=2)}\n  </script>'
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{safe(title)}</title>
+  <meta name="description" content="{safe(description)}" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="{safe(url)}" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="{safe(title)}" />
+  <meta property="og:description" content="{safe(description)}" />
+  <meta property="og:url" content="{safe(url)}" />
+  <meta property="og:site_name" content="{safe(site_name)}" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{safe(title)}" />
+  <meta name="twitter:description" content="{safe(description)}" />
+
+  <!-- Structured Data -->
+  {schema_script}
+</head>
+<body style="margin:0; padding:20px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background:#ffffff; color:#1a1c1c;">
+  <main style="max-width:860px; margin:40px auto; padding:0 16px;">
+    <header style="margin-bottom:2.5rem; border-bottom:1px solid #e5e5e5; padding-bottom:1.5rem;">
+      <h1 style="font-size:2.2rem; font-weight:800; line-height:1.2; margin:0 0 0.75rem 0; color:#000;">{safe(headline)}</h1>
+      <p style="font-size:1.05rem; color:#555; line-height:1.6; margin:0;">{safe(description)}</p>
+    </header>
+
+    <div class="archive-items" style="display:flex; flex-direction:column; gap:2rem;">
+      {items_html}
+    </div>
+
+    <footer style="margin-top:3.5rem; padding-top:2rem; border-top:1px solid #e5e5e5; font-size:0.95rem; color:#666;">
+      <p style="margin-bottom:0.5rem;">Published by <strong>{safe(site_name)}</strong> on <a href="{safe(url)}" style="color:#000; text-decoration:underline;">{safe(site_name)}</a>.</p>
+      <p><a href="{safe(url)}" style="display:inline-block; margin-top:8px; padding:8px 16px; background:#000; color:#fff; text-decoration:none; border-radius:9999px; font-size:0.85rem; font-weight:600;">Open Interactive Portfolio &rarr;</a></p>
+    </footer>
+  </main>
+</body>
+</html>"""
+
+
 # ──────────────────────────────────────────────
 # Middleware class
 # ──────────────────────────────────────────────
@@ -327,6 +388,125 @@ class OGMetaMiddleware:
             else:
                 # 3. Absolute fallback to the request URI
                 base_url = request.build_absolute_uri('/').rstrip('/')
+
+        # ── Blog list: /blog or /blog/
+        if BLOG_LIST_ROUTE.match(path):
+            posts = BlogPost.objects.filter(status='published').select_related('profile', 'category').order_by('-published_at', '-id')
+            headline = f"Articles & Technical Insights by {site_name}"
+            title = f"Blog & Insights | {site_name}"
+            description = f"Technical guides, architectural blueprints, and deep-dives on Android engineering, Generative AI, and full-stack development by {site_name}."
+            canonical = f"{base_url}/blog"
+
+            items_parts = []
+            item_list_elements = []
+
+            for idx, post in enumerate(posts, start=1):
+                post_url = f"{base_url}/blog/{post.slug}"
+                cat_name = post.category.name if getattr(post, 'category', None) else "Engineering"
+                pub_date = str(post.published_at)[:10] if post.published_at else ""
+                r_time = f"{post.reading_time} min read" if getattr(post, 'reading_time', None) else ""
+                meta_sub = " • ".join(filter(None, [pub_date, r_time, f"Category: {cat_name}"]))
+                excerpt = post.excerpt or post.meta_description or ""
+
+                items_parts.append(f"""
+      <article style="border-bottom:1px solid #f0f0f0; padding-bottom:1.5rem;">
+        <h2 style="font-size:1.4rem; margin:0 0 0.5rem 0; font-weight:700;">
+          <a href="{escape(post_url)}" style="color:#0f172a; text-decoration:none;">{escape(post.title)}</a>
+        </h2>
+        {f'<div style="font-size:0.85rem; color:#64748b; margin-bottom:0.6rem;">{escape(meta_sub)}</div>' if meta_sub else ''}
+        {f'<p style="font-size:1rem; color:#334155; line-height:1.6; margin:0 0 0.8rem 0;">{escape(excerpt)}</p>' if excerpt else ''}
+        <a href="{escape(post_url)}" style="font-size:0.9rem; font-weight:600; color:#0284c7; text-decoration:none;">Read Article &rarr;</a>
+      </article>""")
+
+                item_list_elements.append({
+                    "@type": "ListItem",
+                    "position": idx,
+                    "url": post_url,
+                    "name": post.title,
+                })
+
+            schema_data = {
+                "@context": "https://schema.org",
+                "@type": "CollectionPage",
+                "name": title,
+                "description": description,
+                "url": canonical,
+                "mainEntity": {
+                    "@type": "ItemList",
+                    "itemListElement": item_list_elements,
+                },
+            }
+
+            return HttpResponse(
+                _render_archive_html(
+                    title=title,
+                    headline=headline,
+                    description=description,
+                    url=canonical,
+                    site_name=site_name,
+                    items_html="\n".join(items_parts),
+                    schema_data=schema_data,
+                ),
+                content_type='text/html; charset=utf-8',
+            )
+
+        # ── Projects list: /projects or /projects/
+        if PROJECT_LIST_ROUTE.match(path):
+            projects = Project.objects.filter(is_visible=True).order_by('-is_featured', 'order', '-id')
+            headline = f"Featured Projects by {site_name}"
+            title = f"Projects Portfolio | {site_name}"
+            description = f"Software applications, Android apps, AI systems, and open-source contributions built by {site_name}."
+            canonical = f"{base_url}/projects"
+
+            items_parts = []
+            item_list_elements = []
+
+            for idx, proj in enumerate(projects, start=1):
+                proj_url = f"{base_url}/projects/{proj.slug}"
+                tech = proj.technologies or ""
+                desc = proj.short_description or (proj.description[:200] + '...' if proj.description else '')
+
+                items_parts.append(f"""
+      <article style="border-bottom:1px solid #f0f0f0; padding-bottom:1.5rem;">
+        <h2 style="font-size:1.4rem; margin:0 0 0.5rem 0; font-weight:700;">
+          <a href="{escape(proj_url)}" style="color:#0f172a; text-decoration:none;">{escape(proj.title)}</a>
+        </h2>
+        {f'<div style="font-size:0.85rem; color:#64748b; margin-bottom:0.6rem;">Tech: <strong>{escape(tech)}</strong></div>' if tech else ''}
+        {f'<p style="font-size:1rem; color:#334155; line-height:1.6; margin:0 0 0.8rem 0;">{escape(desc)}</p>' if desc else ''}
+        <a href="{escape(proj_url)}" style="font-size:0.9rem; font-weight:600; color:#0284c7; text-decoration:none;">View Project &rarr;</a>
+      </article>""")
+
+                item_list_elements.append({
+                    "@type": "ListItem",
+                    "position": idx,
+                    "url": proj_url,
+                    "name": proj.title,
+                })
+
+            schema_data = {
+                "@context": "https://schema.org",
+                "@type": "CollectionPage",
+                "name": title,
+                "description": description,
+                "url": canonical,
+                "mainEntity": {
+                    "@type": "ItemList",
+                    "itemListElement": item_list_elements,
+                },
+            }
+
+            return HttpResponse(
+                _render_archive_html(
+                    title=title,
+                    headline=headline,
+                    description=description,
+                    url=canonical,
+                    site_name=site_name,
+                    items_html="\n".join(items_parts),
+                    schema_data=schema_data,
+                ),
+                content_type='text/html; charset=utf-8',
+            )
 
         # ── Blog detail: /blog/<slug>
         m = BLOG_ROUTE.match(path)

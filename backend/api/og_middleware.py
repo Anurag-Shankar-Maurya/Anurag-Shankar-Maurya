@@ -358,8 +358,20 @@ class OGMetaMiddleware:
 
         # Intercept bot/scraper requests for known SPA content routes
         if CRAWLER_UA_PATTERNS.search(ua) or request.GET.get('bot') == '1':
+            cache_key = f"bot_html:{path}"
+            from django.core.cache import cache
+            # Check Redis cache first (unless explicit debug ?bot=1 is requested)
+            if request.GET.get('bot') != '1':
+                cached_html = cache.get(cache_key)
+                if cached_html:
+                    return HttpResponse(cached_html, content_type='text/html; charset=utf-8')
+
             response = self._try_serve_og(request, path)
             if response:
+                try:
+                    cache.set(cache_key, response.content.decode('utf-8'), timeout=86400)
+                except Exception:
+                    pass
                 return response
 
         return self.get_response(request)

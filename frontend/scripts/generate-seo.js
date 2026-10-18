@@ -88,7 +88,6 @@ async function generateSitemap() {
   <url><loc>${SITE_URL}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
   <url><loc>${SITE_URL}/projects</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>${SITE_URL}/blog</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
-  <url><loc>${SITE_URL}/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>${SITE_URL}/contact</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>${SITE_URL}/experience</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>${SITE_URL}/education</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>

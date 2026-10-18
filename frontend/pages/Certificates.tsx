@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { Award, ArrowRight, ArrowLeft, ExternalLink, Loader2, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Award, ArrowRight, ArrowLeft, ExternalLink, HelpCircle } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
@@ -23,7 +23,11 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigat
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-       <MetaTags title="Certificates | Anurag Shankar Maurya" description="Recognitions and professional validations." />
+       <MetaTags 
+         title="Certificates & Badges | Anurag Shankar Maurya" 
+         description="Industry certifications, course credentials, and professional validations achieved by Anurag Shankar Maurya." 
+         canonical="https://www.anuragshankarmaurya.in/certificates"
+       />
        <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Award className="w-8 h-8"/></div>
         <div>
@@ -44,22 +48,31 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigat
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {certificates.map((cert, index) => (
-            <div 
+            <Link 
               key={cert.id} 
-              className="bg-white border border-[#E5E5E5] rounded-[3rem] overflow-hidden hover:border-black transition-all cursor-pointer group shadow-none" 
+              to={`/certificates/${cert.slug || String(cert.id)}`}
               onClick={() => onNavigate({ type: 'CERTIFICATE_DETAIL', slug: cert.slug || String(cert.id) })}
+              className="block bg-white border border-[#E5E5E5] rounded-[3rem] overflow-hidden hover:border-black transition-all cursor-pointer group shadow-none" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
                <div className="h-40 bg-[#F2F2F2] border-b border-[#E5E5E5] relative overflow-hidden">
                  <div className="absolute inset-0 bg-[#1a1c1c]/5 z-10"></div>
-                 {cert.certificate_image && <img onClick={(e) => { e.stopPropagation(); openSingle(cert.certificate_image); }} src={cert.certificate_image} alt={cert.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 cursor-pointer"/>}
+                 {cert.certificate_image && (
+                   <img 
+                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); openSingle(cert.certificate_image, cert.title); }} 
+                     src={cert.certificate_image} 
+                     alt={cert.title} 
+                     loading="lazy"
+                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 cursor-pointer"
+                   />
+                 )}
                </div>
                <div className="p-6">
                    <div className="flex items-start justify-between gap-4 mb-2">
                      <h3 className="font-bold text-black text-lg group-hover:text-black transition-colors leading-snug flex-1">{cert.title}</h3>
                      {cert.organization_logo && (
                        <div className="w-10 h-10 rounded-lg bg-[#f9f9f9] border border-[#E5E5E5] flex items-center justify-center shrink-0 p-1">
-                         <img src={cert.organization_logo} alt={cert.issuing_organization} className="max-w-full max-h-full object-contain" />
+                         <img src={cert.organization_logo} alt={cert.issuing_organization} loading="lazy" className="max-w-full max-h-full object-contain" />
                        </div>
                      )}
                    </div>
@@ -69,7 +82,7 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigat
                       <span className="text-xs font-bold text-black flex items-center opacity-80 group-hover:opacity-100">View <ArrowRight className="w-3 h-3 ml-1 transition-transform group-hover:translate-x-1"/></span>
                    </div>
                </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
@@ -77,7 +90,7 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigat
       <Lightbox images={lbImages} initialIndex={lbIndex} isOpen={lbOpen} onClose={() => setLbOpen(false)} />
     </main>
   );
-}
+};
 
 export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: ViewState) => void }> = ({ slug, onNavigate }) => {
   const [cert, setCert] = useState<Certificate | null>(null);
@@ -106,16 +119,21 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
-      <MetaTags title={cert?.title ? `${cert.title} | Certificate | Anurag Shankar Maurya` : 'Certificates | Anurag Shankar Maurya'} description={cert?.description} ogImage={cert?.certificate_image} />
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'CERTIFICATES' })} className="mb-8 pl-0 hover:pl-2 transition-all">
+      <MetaTags 
+        title={cert?.title ? `${cert.title} | Certificate | Anurag Shankar Maurya` : 'Certificates | Anurag Shankar Maurya'} 
+        description={cert?.description || `Professional certification: ${cert.title} issued by ${cert.issuing_organization}.`} 
+        canonical={`https://www.anuragshankarmaurya.in/certificates/${slug}`}
+        ogImage={cert?.certificate_image} 
+      />
+      <Link to="/certificates" onClick={() => onNavigate({ type: 'CERTIFICATES' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to List
-      </Button>
+      </Link>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
          <div className="order-2 md:order-1">
             <div className="flex items-center gap-4 mb-4">
               {cert.organization_logo && (
                 <div className="w-12 h-12 rounded-xl bg-[#f9f9f9] border border-[#E5E5E5] flex items-center justify-center p-2">
-                  <img src={cert.organization_logo} alt={cert.issuing_organization} className="max-w-full max-h-full object-contain" />
+                  <img src={cert.organization_logo} alt={cert.issuing_organization} loading="lazy" className="max-w-full max-h-full object-contain" />
                 </div>
               )}
               <div className="text-black font-extrabold uppercase tracking-wide text-sm">{cert.issuing_organization}</div>
@@ -148,7 +166,7 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
          </div>
          <div className="bg-white border border-[#E5E5E5] p-2 rounded-[2rem] shadow-none order-1 md:order-2 hover:border-black transition-all">
             <button onClick={() => setLbOpen(true)} className="w-full block">
-              <img src={cert.certificate_image} alt={cert.title} className="w-full rounded-[1.5rem] cursor-pointer"/>
+              <img src={cert.certificate_image} alt={cert.title} loading="lazy" className="w-full rounded-[1.5rem] cursor-pointer"/>
             </button>
          </div>
       </div>

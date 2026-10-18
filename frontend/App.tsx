@@ -71,7 +71,7 @@ const App: React.FC = () => {
     if (pathname === '/' || pathname === '') return { type: 'HOME' };
     if (pathname === '/projects') return { type: 'PROJECTS' };
     if (pathname.startsWith('/projects/')) return { type: 'PROJECT_DETAIL', slug: pathname.split('/')[2] };
-    if (pathname === '/blog') return { type: 'BLOG' };
+    if (pathname === '/blog' || pathname.startsWith('/blog/category/') || pathname.startsWith('/blog/tag/')) return { type: 'BLOG' };
     if (pathname.startsWith('/blog/')) return { type: 'BLOG_DETAIL', slug: pathname.split('/')[2] };
     if (pathname === '/contact') return { type: 'CONTACT' };
     if (pathname === '/experience') return { type: 'EXPERIENCE' };
@@ -124,6 +124,8 @@ const App: React.FC = () => {
             <Route path="/projects" element={<Suspense fallback={<SkeletonLoader type="projects-list" />}><ProjectsView projects={projects} onNavigate={navigateTo} /></Suspense>} />
             <Route path="/projects/:slug" element={<Suspense fallback={<SkeletonLoader type="project-detail" />}><ProjectDetailRoute /></Suspense>} />
             <Route path="/blog" element={<Suspense fallback={<SkeletonLoader type="blog-list" />}><BlogView posts={blogPosts} onNavigate={navigateTo} /></Suspense>} />
+            <Route path="/blog/category/:categorySlug" element={<Suspense fallback={<SkeletonLoader type="blog-list" />}><BlogView posts={blogPosts} onNavigate={navigateTo} /></Suspense>} />
+            <Route path="/blog/tag/:tagSlug" element={<Suspense fallback={<SkeletonLoader type="blog-list" />}><BlogView posts={blogPosts} onNavigate={navigateTo} /></Suspense>} />
             <Route path="/blog/:slug" element={<Suspense fallback={<SkeletonLoader type="blog-detail" />}><BlogDetailRoute /></Suspense>} />
             <Route path="/contact" element={<Suspense fallback={<SkeletonLoader type="contact" />}><Contact profile={profile} /></Suspense>} />
             <Route path="/experience" element={<Suspense fallback={<SkeletonLoader type="experience-list" />}><ExperienceView experience={experience} onNavigate={navigateTo} /></Suspense>} />

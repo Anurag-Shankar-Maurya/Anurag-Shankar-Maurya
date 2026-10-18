@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Loader2, ArrowLeft, Quote, Linkedin, Calendar, Building, User, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Star, ArrowLeft, Quote, Linkedin, Calendar, Building, User, HelpCircle } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { MetaTags } from '../components/MetaTags';
@@ -34,7 +35,11 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-      <MetaTags title="Testimonials | Anurag Shankar Maurya" description="What colleagues and clients say about working with me." />
+      <MetaTags 
+        title="Testimonials & Endorsements | Anurag Shankar Maurya" 
+        description="What colleagues, managers, and clients say about working with Anurag Shankar Maurya." 
+        canonical="https://www.anuragshankarmaurya.in/testimonials"
+      />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none">
           <Quote className="w-8 h-8"/>
@@ -57,10 +62,11 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
       ) : (
         <div className="columns-1 md:columns-2 lg:columns-2 gap-6 space-y-6">
           {testimonials.map((test, index) => (
-            <div 
+            <Link 
               key={test.id} 
-              className="bg-white border border-[#E5E5E5] p-10 rounded-[3rem] break-inside-avoid hover:border-black transition-all cursor-pointer group shadow-none relative overflow-hidden flex flex-col mb-6" 
+              to={`/testimonials/${test.slug || String(test.id)}`}
               onClick={() => onNavigate({ type: 'TESTIMONIAL_DETAIL', slug: test.slug || String(test.id) })}
+              className="block bg-white border border-[#E5E5E5] p-10 rounded-[3rem] break-inside-avoid hover:border-black transition-all cursor-pointer group shadow-none relative overflow-hidden flex flex-col mb-6" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
                {/* Top Row: Stars & Date */}
@@ -81,9 +87,10 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
                <div className="mt-auto pt-5 border-t border-[#E5E5E5] flex items-center gap-3">
                  {test.author_image && (
                    <img 
-                     onClick={(e) => { e.stopPropagation(); openSingle(test.author_image, test.author_name); }} 
+                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); openSingle(test.author_image, test.author_name); }} 
                      src={test.author_image} 
                      alt={test.author_name} 
+                     loading="lazy"
                      className="w-10 h-10 rounded-full object-cover bg-white border border-[#E5E5E5] hover:border-black transition-all cursor-pointer"
                    />
                  )}
@@ -101,7 +108,7 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
                      {test.author_company && <div className="text-xs text-black font-semibold truncate mt-0.5">{test.author_company}</div>}
                  </div>
                </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
@@ -111,14 +118,21 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
   );
 };
 
-export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: ViewState) => void }> = ({ slug, onNavigate }) => {
+export const TestimonialDetailView: React.FC<{ 
+  id?: string;
+  slug?: string;
+  onNavigate: (view: ViewState) => void;
+}> = ({ id, slug, onNavigate }) => {
+  const detailId = id || slug || '';
   const [test, setTest] = useState<Testimonial | null>(null);
   const [loading, setLoading] = useState(true);
   const [lbOpen, setLbOpen] = useState(false);
 
   useEffect(() => {
-    api.getTestimonialDetail(slug).then(setTest).catch(console.error).finally(() => setLoading(false));
-  }, [slug]);
+    if (detailId) {
+      api.getTestimonialDetail(detailId).then(setTest).catch(console.error).finally(() => setLoading(false));
+    }
+  }, [detailId]);
 
   if (loading) return <SkeletonLoader type="testimonials-detail" />;
   if (!test) {
@@ -126,7 +140,7 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
       <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
         <EmptyState
           title="Testimonial Not Found"
-          description="The testimonial record you are looking for may have been moved, renamed, or is currently unavailable."
+          description="The recommendation or endorsement record you are looking for may have been moved, renamed, or is currently unavailable."
           icon={HelpCircle}
           actionText="Back to Testimonials"
           onAction={() => onNavigate({ type: 'TESTIMONIALS' })}
@@ -138,10 +152,15 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
-      <MetaTags title={test?.author_name ? `${test.author_name} • Testimonial | Anurag Shankar Maurya` : 'Testimonials | Anurag Shankar Maurya'} description={test?.content} ogImage={test?.author_image} />
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'TESTIMONIALS' })} className="mb-8 hover:pl-2 transition-all">
+      <MetaTags 
+        title={test?.author_name ? `${test.author_name} • Testimonial | Anurag Shankar Maurya` : 'Testimonials | Anurag Shankar Maurya'} 
+        description={test?.content} 
+        canonical={`https://www.anuragshankarmaurya.in/testimonials/${id}`}
+        ogImage={test?.author_image} 
+      />
+      <Link to="/testimonials" onClick={() => onNavigate({ type: 'TESTIMONIALS' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Testimonials
-      </Button>
+      </Link>
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Left Column: Author Details */}
@@ -149,7 +168,7 @@ export const TestimonialDetailView: React.FC<{ slug: string, onNavigate: (view: 
            <div className="bg-white border border-[#E5E5E5] p-8 rounded-[3rem] text-center relative overflow-hidden group shadow-none">
               
               <div className="relative mx-auto w-32 h-32 rounded-full p-1 bg-[#E5E5E5] mb-6 shadow-none cursor-pointer hover:scale-105 transition-transform" onClick={() => setLbOpen(true)}>
-                 <img src={test.author_image} alt={test.author_name} className="w-full h-full rounded-full object-cover border border-[#E5E5E5] bg-white"/>
+                 <img src={test.author_image} alt={test.author_name} loading="lazy" className="w-full h-full rounded-full object-cover border border-[#E5E5E5] bg-white"/>
               </div>
               
               <h2 className="text-2xl font-extrabold text-black mb-2">{test.author_name}</h2>

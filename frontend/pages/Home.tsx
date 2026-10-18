@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Download, Briefcase, GraduationCap, Award, Star, Image as ImageIcon, Calendar, MapPin, Trophy, Quote, Linkedin, Compass, Sparkles } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import { Button } from '../components/Button';
@@ -65,8 +66,11 @@ export const Home: React.FC<HomeProps> = ({
   const homeAwards = [
     ...certificates.filter(c => c.show_on_home).map(c => ({ ...c, type: 'certificate' as const })),
     ...achievements.filter(a => a.show_on_home).map(a => ({ ...a, type: 'achievement' as const }))
-  ].sort((a, b) => new Date(b.date || (a as any).issue_date).getTime() - new Date(a.date || (b as any).issue_date).getTime())
-   .slice(0, 4);
+  ].sort((a, b) => {
+    const dateA = a.type === 'certificate' ? a.issue_date : a.date;
+    const dateB = b.type === 'certificate' ? b.issue_date : b.date;
+    return new Date(dateB).getTime() - new Date(dateA).getTime();
+  }).slice(0, 4);
 
   const homeGallery = galleryImages.filter(img => img.show_on_home).slice(0, 6);
 
@@ -117,6 +121,7 @@ export const Home: React.FC<HomeProps> = ({
           title={`${profile?.full_name || "Anurag Shankar Maurya"} | Portfolio`}
           description={profile?.bio}
           keywords={`portfolio, ${profile?.full_name}, ${profile?.headline}, developer, projects`}
+          canonical="https://www.anuragshankarmaurya.in/"
           ogImage={profile?.profile_image}
           schemaData={schemaData}
         />
@@ -154,9 +159,11 @@ export const Home: React.FC<HomeProps> = ({
               
               <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
                 <div className="flex flex-wrap gap-4">
-                  <Button variant="primary" rightIcon={<ArrowRight className="w-4 h-4"/>} onClick={() => onNavigate({ type: 'PROJECTS' })}>
-                    Explore Portfolio
-                  </Button>
+                  <Link to="/projects" onClick={() => onNavigate({ type: 'PROJECTS' })}>
+                    <Button variant="primary" rightIcon={<ArrowRight className="w-4 h-4"/>}>
+                      Explore Portfolio
+                    </Button>
+                  </Link>
                   {profile?.resume_url && (
                     <Button variant="secondary" onClick={() => window.open(profile.resume_url, '_blank')}>
                       <Download className="w-4 h-4 mr-2"/> Download Resume
@@ -172,7 +179,7 @@ export const Home: React.FC<HomeProps> = ({
                         key={link.id}
                         href={link.url}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="me noopener noreferrer"
                         className="bg-white border border-[#cfc4c5] hover:border-black flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-[#4c4546] hover:text-black transition-all duration-300 hover:-translate-y-0.5 shadow-none"
                         style={{ animationDelay: `${0.5 + i * 0.05}s` }}
                       >
@@ -242,21 +249,21 @@ export const Home: React.FC<HomeProps> = ({
                  <h2 className="text-3xl font-bold text-black tracking-tight">Featured Work</h2>
                  <p className="text-[#4c4546] text-sm mt-1">A curated showcase of engineering excellence and product design.</p>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'PROJECTS' })}>
-                View All
-              </Button>
+              <Link to="/projects" onClick={() => onNavigate({ type: 'PROJECTS' })}>
+                <Button variant="ghost" size="sm">
+                  View All
+                </Button>
+              </Link>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {homeProjects.map((project, index) => (
-                <div 
+                <Link 
+                  to={`/projects/${project.slug}`}
                   key={project.id} 
                   className="group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black hover:border-[2px] transition-all duration-500 cursor-pointer flex flex-col shadow-none"
                   style={{ animationDelay: `${index * 0.1}s` }}
                   onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => { if (e.key === 'Enter') onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug }); }}
                 >
                   <div className="aspect-video bg-[#F2F2F2] rounded-[2rem] overflow-hidden relative">
                     <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" loading="lazy" />
@@ -323,7 +330,7 @@ export const Home: React.FC<HomeProps> = ({
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
@@ -614,14 +621,17 @@ export const Home: React.FC<HomeProps> = ({
                 <h2 className="text-3xl font-bold text-black tracking-tight">Latest Insights</h2>
                 <p className="text-[#4c4546] text-sm mt-1">Articles, deep dives, and technical investigations.</p>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => onNavigate({ type: 'BLOG' })}>
-                View All
-              </Button>
+              <Link to="/blog" onClick={() => onNavigate({ type: 'BLOG' })}>
+                <Button variant="ghost" size="sm">
+                  View All
+                </Button>
+              </Link>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {homeBlogPosts.map((post) => (
-                <div 
+                <Link 
+                  to={`/blog/${post.slug}`}
                   key={post.id} 
                   className="group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black hover:border-[2px] transition-all duration-300 cursor-pointer flex flex-col shadow-none" 
                   onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
@@ -645,7 +655,7 @@ export const Home: React.FC<HomeProps> = ({
                       <span>{post.reading_time} min read</span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>

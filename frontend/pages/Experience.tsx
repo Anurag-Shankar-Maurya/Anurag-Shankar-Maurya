@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { Briefcase, Loader2, ArrowLeft, MapPin, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Briefcase, ArrowLeft, MapPin, HelpCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
 import Gallery from '../components/Gallery';
@@ -11,7 +11,11 @@ import { EmptyState } from '../components/EmptyState';
 
 export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate: (view: ViewState) => void }> = ({ experience, onNavigate }) => (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-    <MetaTags title="Work Experience | Anurag Shankar Maurya" description="My professional journey and career milestones." />
+    <MetaTags 
+      title="Work Experience | Anurag Shankar Maurya" 
+      description="Professional journey, engineering leadership, and employment history of Anurag Shankar Maurya." 
+      canonical="https://www.anuragshankarmaurya.in/experience"
+    />
     <div className="flex items-center gap-4 mb-12">
       <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Briefcase className="w-8 h-8"/></div>
       <div>
@@ -31,10 +35,11 @@ export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate
     ) : (
       <div className="relative border-l border-[#E5E5E5] ml-6 space-y-16">
         {experience.map((exp, index) => (
-          <div 
+          <Link 
             key={exp.id} 
-            className="relative pl-12 group cursor-pointer" 
+            to={`/experience/${exp.id}`}
             onClick={() => onNavigate({ type: 'EXPERIENCE_DETAIL', id: exp.id })}
+            className="block relative pl-12 group cursor-pointer" 
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <div className="absolute -left-[5px] top-8 w-2.5 h-2.5 rounded-full bg-black ring-4 ring-[#f9f9f9] group-hover:scale-125 transition-all"></div>
@@ -43,7 +48,7 @@ export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
                 <div className="flex items-center gap-5">
                   {exp.company_logo ? (
-                     <img src={exp.company_logo} alt={exp.company_name} className="w-14 h-14 rounded-2xl bg-white object-cover border border-[#E5E5E5]" />
+                     <img src={exp.company_logo} alt={exp.company_name} loading="lazy" className="w-14 h-14 rounded-2xl bg-white object-cover border border-[#E5E5E5]" />
                   ) : (
                      <div className="w-14 h-14 rounded-2xl bg-[#F2F2F2] flex items-center justify-center text-black border border-[#E5E5E5]"><Briefcase className="w-6 h-6"/></div>
                   )}
@@ -64,7 +69,7 @@ export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate
                 {exp.technologies_used?.split(',').length > 5 && <span className="px-2.5 py-1 text-xs font-medium text-[#7e7576]">+{exp.technologies_used.split(',').length - 5} more</span>}
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     )}
@@ -98,16 +103,21 @@ export const ExperienceDetailView: React.FC<{ id: number, onNavigate: (view: Vie
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
-      <MetaTags title={experience?.job_title ? `${experience.job_title} at ${experience.company_name} | Experience | Anurag Shankar Maurya` : 'Work Experience | Anurag Shankar Maurya'} description={experience?.description} />
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'EXPERIENCE' })} className="mb-8 pl-0 hover:pl-2 transition-all">
+      <MetaTags 
+        title={experience?.job_title ? `${experience.job_title} at ${experience.company_name} | Experience | Anurag Shankar Maurya` : 'Work Experience | Anurag Shankar Maurya'} 
+        description={experience?.description} 
+        canonical={`https://www.anuragshankarmaurya.in/experience/${id}`}
+        ogImage={experience.company_logo}
+      />
+      <Link to="/experience" onClick={() => onNavigate({ type: 'EXPERIENCE' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Experience
-      </Button>
+      </Link>
       <div className="bg-white border border-[#E5E5E5] rounded-[3rem] p-10 md:p-12 relative overflow-hidden shadow-none">
         
         <div className="flex flex-col md:flex-row gap-6 items-start justify-between mb-8 border-b border-[#E5E5E5] pb-8 relative z-10">
           <div className="flex items-center gap-6">
             {experience.company_logo ? (
-              <img src={experience.company_logo} alt={experience.company_name} className="w-20 h-20 rounded-[1.5rem] bg-white object-cover border border-[#E5E5E5]" />
+              <img src={experience.company_logo} alt={experience.company_name} loading="lazy" className="w-20 h-20 rounded-[1.5rem] bg-white object-cover border border-[#E5E5E5]" />
             ) : (
               <div className="w-20 h-20 rounded-[1.5rem] bg-[#F2F2F2] flex items-center justify-center text-black border border-[#E5E5E5]"><Briefcase className="w-8 h-8"/></div>
             )}
@@ -137,10 +147,10 @@ export const ExperienceDetailView: React.FC<{ id: number, onNavigate: (view: Vie
         </div>
 
         {experience.images && experience.images.length > 0 && (
-      <div className="mt-8">
-          <h3 className="text-lg font-bold text-black mb-4">Gallery</h3>
-      <Gallery images={experience.images} />
-    </div>
+          <div className="mt-8">
+            <h3 className="text-lg font-bold text-black mb-4">Gallery</h3>
+            <Gallery images={experience.images} />
+          </div>
         )}
       </div>
     </main>

@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { GraduationCap, ArrowRight, ArrowLeft, Calendar, Loader2, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { GraduationCap, ArrowRight, ArrowLeft, HelpCircle } from 'lucide-react';
 import { MetaTags } from '../components/MetaTags';
 import { Button } from '../components/Button';
 import Gallery from '../components/Gallery';
@@ -11,7 +11,11 @@ import { EmptyState } from '../components/EmptyState';
 
 export const EducationView: React.FC<{ education: Education[], onNavigate: (view: ViewState) => void }> = ({ education, onNavigate }) => (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-    <MetaTags title="Education | Anurag Shankar Maurya" description="Academic background and qualifications." />
+    <MetaTags 
+      title="Education & Credentials | Anurag Shankar Maurya" 
+      description="Academic background, degrees, coursework, and qualifications of Anurag Shankar Maurya." 
+      canonical="https://www.anuragshankarmaurya.in/education"
+    />
     <div className="flex items-center gap-4 mb-12">
       <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><GraduationCap className="w-8 h-8"/></div>
       <div>
@@ -31,15 +35,16 @@ export const EducationView: React.FC<{ education: Education[], onNavigate: (view
     ) : (
       <div className="grid grid-cols-1 gap-6">
         {education.map((edu, index) => (
-          <div 
+          <Link 
             key={edu.id} 
-            className="bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black transition-all cursor-pointer group shadow-none" 
+            to={`/education/${edu.slug || String(edu.id)}`}
             onClick={() => onNavigate({ type: 'EDUCATION_DETAIL', slug: edu.slug || String(edu.id) })}
+            className="block bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black transition-all cursor-pointer group shadow-none" 
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <div className="flex items-start gap-6">
                 {edu.logo ? (
-                  <img src={edu.logo} alt={edu.institution} className="w-16 h-16 rounded-[1.5rem] object-cover bg-white border border-[#E5E5E5]"/>
+                  <img src={edu.logo} alt={edu.institution} loading="lazy" className="w-16 h-16 rounded-[1.5rem] object-cover bg-white border border-[#E5E5E5]"/>
                 ) : (
                   <div className="w-16 h-16 rounded-[1.5rem] bg-[#F2F2F2] flex items-center justify-center text-black border border-[#E5E5E5]"><GraduationCap className="w-8 h-8"/></div>
                 )}
@@ -57,7 +62,7 @@ export const EducationView: React.FC<{ education: Education[], onNavigate: (view
                   </div>
                 </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     )}
@@ -90,39 +95,51 @@ export const EducationDetailView: React.FC<{ slug: string, onNavigate: (view: Vi
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
-      <MetaTags title={education?.institution ? `${education.institution} | Education | Anurag Shankar Maurya` : 'Education | Anurag Shankar Maurya'} description={education?.description} />
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'EDUCATION' })} className="mb-8 pl-0 hover:pl-2 transition-all">
+      <MetaTags 
+        title={education?.institution ? `${education.institution} | Education | Anurag Shankar Maurya` : 'Education | Anurag Shankar Maurya'} 
+        description={education?.description} 
+        canonical={`https://www.anuragshankarmaurya.in/education/${slug}`}
+        ogImage={education.logo}
+      />
+      <Link to="/education" onClick={() => onNavigate({ type: 'EDUCATION' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Education
-      </Button>
+      </Link>
       <div className="bg-white border border-[#E5E5E5] rounded-[3rem] overflow-hidden shadow-none">
          <div className="h-48 bg-[#F2F2F2] border-b border-[#E5E5E5] relative">
             <div className="absolute bottom-0 left-8 transform translate-y-1/2 rounded-[1.5rem] bg-white border border-[#E5E5E5]">
               {education.logo ? (
-                <img src={education.logo} alt={education.institution} className="w-24 h-24 rounded-[1.5rem] border border-[#E5E5E5] bg-white object-cover"/>
+                 <img src={education.logo} alt={education.institution} loading="lazy" className="w-24 h-24 rounded-[1.5rem] object-cover bg-white"/>
               ) : (
-                <div className="w-24 h-24 rounded-[1.5rem] border border-[#E5E5E5] bg-white flex items-center justify-center text-black bg-[#F2F2F2]"><GraduationCap className="w-10 h-10"/></div>
+                 <div className="w-24 h-24 rounded-[1.5rem] bg-white flex items-center justify-center text-black"><GraduationCap className="w-12 h-12"/></div>
               )}
             </div>
          </div>
-         <div className="pt-16 pb-12 px-8 md:px-12">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-black mb-2">{education.institution}</h1>
-            <div className="text-xl text-[#4c4546] mb-6 font-semibold">{education.degree}, {education.field_of_study}</div>
-            
-            <div className="flex gap-6 text-sm text-[#4c4546] mb-10 border-b border-[#E5E5E5] pb-8">
-               <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#f9f9f9] border border-[#E5E5E5]"><Calendar className="w-4 h-4"/> {new Date(education.start_date).getFullYear()} - {education.end_date ? new Date(education.end_date).getFullYear() : 'Present'}</div>
+         <div className="pt-16 p-8 md:p-12">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+               <div>
+                  <h1 className="text-3xl font-extrabold text-black mb-1">{education.institution}</h1>
+                  <div className="text-xl text-black font-semibold">{education.degree} in {education.field_of_study}</div>
+               </div>
+               <div className="text-sm font-semibold text-[#4c4546] bg-[#f9f9f9] border border-[#E5E5E5] px-4 py-2 rounded-full w-fit">
+                 {new Date(education.start_date).toLocaleDateString()} - {education.end_date ? new Date(education.end_date).toLocaleDateString() : 'Present'}
+               </div>
+            </div>
+            {education.grade && (
+               <div className="inline-block bg-[#f9f9f9] border border-[#E5E5E5] px-4 py-1.5 rounded-full text-sm font-semibold text-black mb-6">
+                  Grade / CGPA: {education.grade}
+               </div>
+            )}
+            <div className="prose prose-neutral max-w-none text-[#4c4546] mb-8 leading-relaxed">
+              <h3 className="text-black font-bold text-lg mb-2">Academic Highlights</h3>
+              <p className="whitespace-pre-wrap">{education.description}</p>
             </div>
 
-            <div className="prose prose-neutral max-w-none text-[#4c4546]">
-              <h3 className="text-black font-bold text-lg mb-4">Program Overview</h3>
-              <p className="whitespace-pre-wrap leading-relaxed">{education.description}</p>
-            </div>
-
-      {education.images && education.images.length > 0 && (
-        <div className="mt-8">
-          <h3 className="text-lg font-bold text-black mb-4">Gallery</h3>
-          <Gallery images={education.images} />
-        </div>
-      )}
+            {education.images && education.images.length > 0 && (
+              <div className="mt-8 border-t border-[#E5E5E5] pt-8">
+                <h3 className="text-lg font-bold text-black mb-4">Gallery</h3>
+                <Gallery images={education.images} />
+              </div>
+            )}
          </div>
       </div>
     </main>

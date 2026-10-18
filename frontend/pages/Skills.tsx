@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { Zap, Loader2, ArrowLeft, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Zap, ArrowLeft, HelpCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
 import { Skill, ViewState } from '../types';
@@ -21,7 +21,11 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-      <MetaTags title="Skills & Expertise | Anurag Shankar Maurya" description="A comprehensive list of my technical capabilities." />
+      <MetaTags 
+        title="Skills & Expertise | Anurag Shankar Maurya" 
+        description="A comprehensive list of my technical capabilities including Android, Python, Django, React, AI, and cloud architectures." 
+        canonical="https://www.anuragshankarmaurya.in/skills"
+      />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Zap className="w-8 h-8"/></div>
         <div>
@@ -49,10 +53,11 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
 
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {grouped[type].map((skill, index) => (
-                <div 
+                <Link 
                   key={skill.id} 
-                  className="bg-white border border-[#E5E5E5] p-6 rounded-[2.5rem] hover:border-black transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-3 aspect-square group shadow-none"
+                  to={`/skills/${skill.slug}`}
                   onClick={() => onNavigate({ type: 'SKILL_DETAIL', slug: skill.slug })}
+                  className="bg-white border border-[#E5E5E5] p-6 rounded-[2.5rem] hover:border-black transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-3 aspect-square group shadow-none"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
                    <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#f9f9f9] border border-[#E5E5E5] group-hover:scale-110 transition-all duration-300">
@@ -65,7 +70,7 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
                      <div className="font-bold text-black mb-1 group-hover:text-black transition-colors">{skill.name}</div>
                      <div className="text-xs font-semibold text-[#4c4546] capitalize px-3 py-1 rounded-full border border-[#E5E5E5] bg-[#f9f9f9]">{skill.proficiency}</div>
                    </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
@@ -101,10 +106,14 @@ export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSt
 
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto text-center animate-fade-in-up">
-      <MetaTags title={skill?.name ? `${skill.name} | Skills | Anurag Shankar Maurya` : 'Skills | Anurag Shankar Maurya'} description={skill?.description || `Details about ${skill?.name || 'this skill'}.`} />
-      <Button variant="ghost" onClick={() => onNavigate({ type: 'SKILLS' })} className="mb-12 hover:pl-2 transition-all">
+      <MetaTags 
+        title={skill?.name ? `${skill.name} | Skills | Anurag Shankar Maurya` : 'Skills | Anurag Shankar Maurya'} 
+        description={skill?.description || `Details and practical application of ${skill?.name || 'this skill'} in engineering.`}
+        canonical={`https://www.anuragshankarmaurya.in/skills/${slug}`}
+      />
+      <Link to="/skills" onClick={() => onNavigate({ type: 'SKILLS' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-12 hover:pl-2 transition-all">
         <ArrowLeft className="w-4 h-4 mr-2"/> Back to Skills
-      </Button>
+      </Link>
       
       <div className="bg-white border border-[#E5E5E5] rounded-[3rem] p-12 relative overflow-hidden group shadow-none">
          

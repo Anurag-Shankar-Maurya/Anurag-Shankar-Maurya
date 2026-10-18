@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronDown, Briefcase, GraduationCap, Award, Star, Zap, Trophy } from 'lucide-react';
 import { ViewState } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,7 +10,7 @@ interface DesktopNavProps {
   scrolled: boolean;
 }
 
-export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate, scrolled }) => {
+export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate }) => {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
 
   const isViewActive = (type: ViewState['type']) => {
@@ -32,16 +33,17 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
     isViewActive('CERTIFICATES') || 
     isViewActive('ACHIEVEMENTS');
 
-  const handleMegaMenuClick = (view: ViewState) => {
+  const handleLinkClick = (view: ViewState) => {
     onNavigate(view);
     setIsMegaMenuOpen(false);
   };
 
   return (
-    <nav className="hidden md:flex items-center gap-1.5 relative">
+    <nav className="hidden md:flex items-center gap-1.5 relative" aria-label="Main Navigation">
       {/* Home Link */}
-      <button 
-        onClick={() => onNavigate({ type: 'HOME' })}
+      <Link 
+        to="/"
+        onClick={() => handleLinkClick({ type: 'HOME' })}
         className={`relative px-3.5 py-2.5 text-sm font-medium transition-colors duration-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
           isViewActive('HOME') ? 'text-black font-semibold' : 'text-[#4c4546] hover:text-black'
         }`}
@@ -55,11 +57,12 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
           />
         )}
-      </button>
+      </Link>
  
       {/* Projects Link */}
-      <button 
-        onClick={() => onNavigate({ type: 'PROJECTS' })}
+      <Link 
+        to="/projects"
+        onClick={() => handleLinkClick({ type: 'PROJECTS' })}
         className={`relative px-3.5 py-2.5 text-sm font-medium transition-colors duration-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
           isViewActive('PROJECTS') ? 'text-black font-semibold' : 'text-[#4c4546] hover:text-black'
         }`}
@@ -73,11 +76,12 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
           />
         )}
-      </button>
+      </Link>
  
       {/* Blog Link */}
-      <button 
-        onClick={() => onNavigate({ type: 'BLOG' })}
+      <Link 
+        to="/blog"
+        onClick={() => handleLinkClick({ type: 'BLOG' })}
         className={`relative px-3.5 py-2.5 text-sm font-medium transition-colors duration-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
           isViewActive('BLOG') ? 'text-black font-semibold' : 'text-[#4c4546] hover:text-black'
         }`}
@@ -91,11 +95,12 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
           />
         )}
-      </button>
+      </Link>
  
       {/* Gallery Link */}
-      <button 
-        onClick={() => onNavigate({ type: 'GALLERY' })}
+      <Link 
+        to="/gallery"
+        onClick={() => handleLinkClick({ type: 'GALLERY' })}
         className={`relative px-3.5 py-2.5 text-sm font-medium transition-colors duration-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
           isViewActive('GALLERY') ? 'text-black font-semibold' : 'text-[#4c4546] hover:text-black'
         }`}
@@ -109,9 +114,9 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
           />
         )}
-      </button>
+      </Link>
       
-      {/* Reconstructed Dropdown Trigger */}
+      {/* Explore Dropdown Trigger */}
       <div 
         className="relative flex items-center"
         onMouseLeave={() => setIsMegaMenuOpen(false)}
@@ -155,8 +160,9 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                   <div className="space-y-4">
                     <h3 className="text-xs font-bold text-[#7e7576] uppercase tracking-widest pl-3 mb-1">Career & Background</h3>
                     
-                    <div 
-                      onClick={() => handleMegaMenuClick({ type: 'EXPERIENCE' })} 
+                    <Link 
+                      to="/experience"
+                      onClick={() => handleLinkClick({ type: 'EXPERIENCE' })} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -166,10 +172,11 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                         <div className="text-sm font-semibold text-black transition-colors">Work Experience</div>
                         <div className="text-xs text-[#4c4546] mt-0.5 leading-relaxed">Professional path & career history</div>
                       </div>
-                    </div>
+                    </Link>
                     
-                    <div 
-                      onClick={() => handleMegaMenuClick({ type: 'EDUCATION' })} 
+                    <Link 
+                      to="/education"
+                      onClick={() => handleLinkClick({ type: 'EDUCATION' })} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -179,10 +186,11 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                         <div className="text-sm font-semibold text-black transition-colors">Education</div>
                         <div className="text-xs text-[#4c4546] mt-0.5 leading-relaxed">Academic timeline & qualifications</div>
                       </div>
-                    </div>
+                    </Link>
                     
-                    <div 
-                      onClick={() => handleMegaMenuClick({ type: 'TESTIMONIALS' })} 
+                    <Link 
+                      to="/testimonials"
+                      onClick={() => handleLinkClick({ type: 'TESTIMONIALS' })} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -192,15 +200,16 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                         <div className="text-sm font-semibold text-black transition-colors">Testimonials</div>
                         <div className="text-xs text-[#4c4546] mt-0.5 leading-relaxed">Recommendations & feedback</div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
 
                   {/* Right Column: Expertise & Accomplishments */}
                   <div className="space-y-4">
                     <h3 className="text-xs font-bold text-[#7e7576] uppercase tracking-widest pl-3 mb-1">Expertise & Honors</h3>
                     
-                    <div 
-                      onClick={() => handleMegaMenuClick({ type: 'SKILLS' })} 
+                    <Link 
+                      to="/skills"
+                      onClick={() => handleLinkClick({ type: 'SKILLS' })} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -210,10 +219,11 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                         <div className="text-sm font-semibold text-black transition-colors">Skills</div>
                         <div className="text-xs text-[#4c4546] mt-0.5 leading-relaxed">Tech proficiency & framework stack</div>
                       </div>
-                    </div>
+                    </Link>
                     
-                    <div 
-                      onClick={() => handleMegaMenuClick({ type: 'CERTIFICATES' })} 
+                    <Link 
+                      to="/certificates"
+                      onClick={() => handleLinkClick({ type: 'CERTIFICATES' })} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -223,10 +233,11 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                         <div className="text-sm font-semibold text-black transition-colors">Certificates</div>
                         <div className="text-xs text-[#4c4546] mt-0.5 leading-relaxed">Verified professional validations</div>
                       </div>
-                    </div>
+                    </Link>
                     
-                    <div 
-                      onClick={() => handleMegaMenuClick({ type: 'ACHIEVEMENTS' })} 
+                    <Link 
+                      to="/achievements"
+                      onClick={() => handleLinkClick({ type: 'ACHIEVEMENTS' })} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -236,7 +247,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
                         <div className="text-sm font-semibold text-black transition-colors">Achievements</div>
                         <div className="text-xs text-[#4c4546] mt-0.5 leading-relaxed">Honors, hackathons, & records</div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -245,15 +256,16 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate,
         </AnimatePresence>
       </div>
 
-      {/* Primary Monochromatic CTA Button */}
-      <button 
-        onClick={() => onNavigate({ type: 'CONTACT' })}
-        className="relative ml-2 px-6 py-3 text-sm font-medium text-white rounded-full bg-black hover:bg-neutral-800 border border-black transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+      {/* Primary Monochromatic CTA Button as Link */}
+      <Link 
+        to="/contact"
+        onClick={() => handleLinkClick({ type: 'CONTACT' })}
+        className="relative ml-2 px-6 py-3 text-sm font-medium text-white rounded-full bg-black hover:bg-neutral-800 border border-black transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black inline-flex items-center"
       >
         <span className="relative z-10 flex items-center gap-1.5">
           Contact Me
         </span>
-      </button>
+      </Link>
     </nav>
   );
 };

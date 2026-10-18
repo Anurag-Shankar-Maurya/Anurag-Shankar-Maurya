@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Calendar, Loader2, Search, X, List, LayoutGrid, HelpCircle } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
@@ -12,11 +13,17 @@ import { SkeletonLoader } from '../components/SkeletonLoader';
 import { EmptyState } from '../components/EmptyState';
 
 export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewState) => void }> = ({ posts, onNavigate }) => {
+  const { categorySlug, tagSlug } = useParams<{ categorySlug?: string; tagSlug?: string }>();
   const [lbOpen, setLbOpen] = useState(false);
   const [lbImages, setLbImages] = useState<{ src: string; alt?: string }[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(categorySlug || null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(tagSlug || null);
+
+  useEffect(() => {
+    if (categorySlug) setSelectedCategory(categorySlug);
+    if (tagSlug) setSelectedTag(tagSlug);
+  }, [categorySlug, tagSlug]);
   const [showAllTags, setShowAllTags] = useState(false);
   const [tagSearchQuery, setTagSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -98,7 +105,11 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
   if (!loading && posts.length === 0) {
     return (
       <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-        <MetaTags title="Blog & Insights | Anurag Shankar Maurya" description="Thoughts on software engineering, product design, and the tech industry." />
+        <MetaTags 
+          title="Blog & Insights | Anurag Shankar Maurya" 
+          description="Thoughts on software engineering, product design, and the tech industry." 
+          canonical="https://www.anuragshankarmaurya.in/blog"
+        />
         <div className="flex items-center gap-4 mb-12">
           <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><BookOpen className="w-8 h-8"/></div>
           <div>
@@ -118,9 +129,19 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
     );
   }
 
+  const currentCanonical = selectedCategory
+    ? `https://www.anuragshankarmaurya.in/blog/category/${selectedCategory}`
+    : selectedTag
+    ? `https://www.anuragshankarmaurya.in/blog/tag/${selectedTag}`
+    : 'https://www.anuragshankarmaurya.in/blog';
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-      <MetaTags title={pageTitle} description="Thoughts on software engineering, product design, and the tech industry." />
+      <MetaTags 
+        title={pageTitle} 
+        description="Thoughts on software engineering, product design, and the tech industry." 
+        canonical={currentCanonical}
+      />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><BookOpen className="w-8 h-8"/></div>
         <div>
@@ -249,7 +270,8 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
         <>
           <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-8'} mb-8`}>
             {paginatedData.results.map((post, index) => (
-              <div 
+              <Link 
+                to={`/blog/${post.slug}`}
                 key={post.id} 
                 className={`group bg-white border border-[#E5E5E5] rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-10 hover:border-black hover:border-[2px] transition-all duration-300 cursor-pointer shadow-none ${viewMode === 'list' ? 'flex flex-row gap-4 sm:gap-8' : 'flex flex-col'}`}
                 onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
@@ -279,7 +301,7 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
                     <span>{post.reading_time} min read</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -445,7 +467,7 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
       {post.featured_image && post.featured_image.trim() !== '' && (
         <div className="w-full rounded-[3rem] overflow-hidden bg-white border border-[#E5E5E5] p-4 mb-12 shadow-none">
            <button onClick={() => { setLbImages([{ src: post.featured_image, alt: post.title }]); setLbOpen(true); }} className="w-full block">
-             <img src={post.featured_image} alt={post.title} className="w-full h-auto max-h-[550px] object-contain rounded-[2rem] cursor-pointer mx-auto" />
+             <img src={post.featured_image} alt={post.title} loading="lazy" className="w-full h-auto max-h-[550px] object-contain rounded-[2rem] cursor-pointer mx-auto" />
            </button>
         </div>
       )}

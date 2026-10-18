@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Loader2, Search, X, LayoutGrid, List, FolderOpen, HelpCircle } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
@@ -94,6 +95,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
           title="Portfolio Projects | Anurag Shankar Maurya"
           description="A complete archive of my open source contributions, client work, and side projects."
           keywords="projects, portfolio, software development, open source"
+          canonical="https://www.anuragshankarmaurya.in/projects"
         />
         <div className="flex items-center gap-4 mb-12">
           <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><FolderOpen className="w-8 h-8"/></div>
@@ -120,6 +122,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
         title="Portfolio Projects | Anurag Shankar Maurya"
         description="A complete archive of my open source contributions, client work, and side projects."
         keywords="projects, portfolio, software development, open source"
+        canonical="https://www.anuragshankarmaurya.in/projects"
       />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><FolderOpen className="w-8 h-8"/></div>
@@ -249,23 +252,21 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
         <>
           <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-8 mb-8`}>
             {displayedProjects.map((project, index) => (
-              <div 
+              <Link 
+                to={`/projects/${project.slug}`}
                 key={project.id} 
                 className={`group bg-white border border-[#E5E5E5] rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-10 hover:border-black hover:border-[2px] transition-all duration-500 cursor-pointer shadow-none ${viewMode === 'list' ? 'flex flex-row gap-4 sm:gap-8' : 'flex flex-col'}`}
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === 'Enter') onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug }); }}
               >
                 <div className={`${viewMode === 'list' ? 'w-24 min-w-24 sm:w-[320px] sm:min-w-[320px] mb-0' : 'mb-6'} aspect-video bg-[#F2F2F2] rounded-[1rem] sm:rounded-[2rem] overflow-hidden relative`}>
-                  <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" />
+                  <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" loading="lazy" />
 
                   {/* Overlay icons: Live, Source, Demo, Gallery (hidden in mobile list mode to prevent crowding) */}
                   <div className={`absolute top-3 right-3 z-30 ${viewMode === 'list' ? 'hidden sm:flex' : 'flex'} items-center gap-2`}>
                     {project.live_url && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); window.open(project.live_url, '_blank'); }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(project.live_url, '_blank'); }}
                         className="p-2 rounded-full bg-white/90 text-black border border-[#cfc4c5] hover:bg-black hover:text-white transition-all"
                         aria-label={`Open live site for ${project.title}`}
                       >
@@ -275,7 +276,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
 
                     {project.github_url && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); window.open(project.github_url, '_blank'); }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(project.github_url, '_blank'); }}
                         className="p-2 rounded-full bg-white/90 text-black border border-[#cfc4c5] hover:bg-black hover:text-white transition-all"
                         aria-label={`Open source for ${project.title}`}
                       >
@@ -285,7 +286,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
 
                     {project.demo_url && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); window.open(project.demo_url, '_blank'); }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(project.demo_url, '_blank'); }}
                         className="p-2 rounded-full bg-white/90 text-black border border-[#cfc4c5] hover:bg-black hover:text-white transition-all"
                         aria-label={`Open demo for ${project.title}`}
                       >
@@ -295,7 +296,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
 
                     {project.images && project.images.length > 0 && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); handleOpenGallery(project); }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenGallery(project); }}
                         className="p-2 rounded-full bg-white/90 text-black border border-[#cfc4c5] hover:bg-black hover:text-white transition-all"
                         aria-label={`Open gallery for ${project.title}`}
                       >
@@ -324,7 +325,7 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -473,7 +474,7 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
       
       <div className="bg-white border border-[#E5E5E5] p-4 rounded-[3rem] mb-12 shadow-none">
         <button onClick={() => openGallery(0)} className="w-full block">
-          <img src={project.featured_image} alt={project.title} className="w-full aspect-video object-cover rounded-[2rem] cursor-pointer" />
+          <img src={project.featured_image} alt={project.title} loading="lazy" className="w-full aspect-video object-cover rounded-[2rem] cursor-pointer" />
         </button>
       </div>
 

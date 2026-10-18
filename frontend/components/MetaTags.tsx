@@ -33,21 +33,28 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
   const ownerName = "Anurag Shankar Maurya";
   const defaultSkills = ["Django", "Python", "AI", "Generative AI", "React", "Django REST Framework"];
   const currentTitle = title || ownerName;
-  const currentDescription = description || `${ownerName} — ${defaultSkills.join(', ')}. Professional portfolio showcasing projects, projects, and expertise.`;
+  const currentDescription = description || `${ownerName} — ${defaultSkills.join(', ')}. Professional portfolio showcasing projects, articles, and technical expertise.`;
 
   const defaultSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": ownerName,
-    "jobTitle": author || undefined,
+    "jobTitle": author || "Android & Full-Stack Developer | AI Engineer",
     "description": currentDescription,
-    "skills": defaultSkills,
-    "url": canonical || (typeof window !== 'undefined' ? window.location.origin : undefined),
-    "sameAs": []
+    "knowsAbout": defaultSkills,
+    "url": canonical || (typeof window !== 'undefined' ? window.location.origin : "https://www.anuragshankarmaurya.in"),
+    "sameAs": [
+      "https://linkedin.com/in/anurag-shankar-maurya",
+      "https://github.com/Anurag-Shankar-Maurya",
+      "https://twitter.com/AnuragSMaurya"
+    ]
   };
 
-  // Merge any provided schemaData (e.g., pages can pass sameAs/social links)
-  const finalSchema = { ...defaultSchema, ...(schemaData || {}) };
+  // If page provides schemaData (e.g., BlogPosting, CreativeWork, or customized Person), use it directly with @context.
+  // Otherwise, fallback to the rich Person defaultSchema.
+  const finalSchema = schemaData
+    ? (Array.isArray(schemaData) ? schemaData : { "@context": "https://schema.org", ...schemaData })
+    : defaultSchema;
 
   return (
     <Helmet>
@@ -62,9 +69,12 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
       <meta property="og:title" content={ogTitle || currentTitle} />
       <meta property="og:description" content={ogDescription || currentDescription} />
       {ogImage && <meta property="og:image" content={ogImage} />}
+      {canonical && <meta property="og:url" content={canonical} />}
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@AnuragSMaurya" />
+      <meta name="twitter:creator" content="@AnuragSMaurya" />
       <meta name="twitter:title" content={ogTitle || currentTitle} />
       <meta name="twitter:description" content={ogDescription || currentDescription} />
       {ogImage && <meta name="twitter:image" content={ogImage} />}

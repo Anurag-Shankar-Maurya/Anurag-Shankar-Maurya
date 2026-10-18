@@ -90,9 +90,6 @@ export const Footer: React.FC<FooterProps> = ({ profile }) => {
                 <li>
                   <Link to="/gallery" className="text-[#4c4546] hover:text-black transition-colors">Media Gallery</Link>
                 </li>
-                <li>
-                  <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="text-[#4c4546] hover:text-black transition-colors">Sitemap XML</a>
-                </li>
               </ul>
             </div>
           </div>

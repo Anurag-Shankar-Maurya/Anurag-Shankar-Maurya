@@ -66,8 +66,11 @@ export const Home: React.FC<HomeProps> = ({
   const homeAwards = [
     ...certificates.filter(c => c.show_on_home).map(c => ({ ...c, type: 'certificate' as const })),
     ...achievements.filter(a => a.show_on_home).map(a => ({ ...a, type: 'achievement' as const }))
-  ].sort((a, b) => new Date(b.date || (a as any).issue_date).getTime() - new Date(a.date || (b as any).issue_date).getTime())
-   .slice(0, 4);
+  ].sort((a, b) => {
+    const dateA = a.type === 'certificate' ? a.issue_date : a.date;
+    const dateB = b.type === 'certificate' ? b.issue_date : b.date;
+    return new Date(dateB).getTime() - new Date(dateA).getTime();
+  }).slice(0, 4);
 
   const homeGallery = galleryImages.filter(img => img.show_on_home).slice(0, 6);
 

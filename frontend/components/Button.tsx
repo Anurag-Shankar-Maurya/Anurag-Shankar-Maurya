@@ -1,11 +1,12 @@
-
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'danger' | 'ghost';
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+  size?: ButtonSize | string;
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
@@ -14,6 +15,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
+  size = 'md',
   isLoading = false,
   leftIcon,
   rightIcon,
@@ -21,8 +23,15 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = "inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:pointer-events-none active:scale-95";
+  const baseStyles = "inline-flex items-center justify-center rounded-full font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:pointer-events-none active:scale-95";
   
+  const sizeStyles: Record<string, string> = {
+    sm: "px-4 py-2 text-xs",
+    md: "px-6 py-3 text-sm",
+    lg: "px-8 py-4 text-base",
+  };
+  const currentSize = sizeStyles[size] || sizeStyles.md;
+
   const variants: Record<ButtonVariant, string> = {
     primary: "bg-black text-white hover:bg-neutral-800 border border-black shadow-none",
     secondary: "bg-transparent text-black border border-black hover:bg-neutral-100/50 shadow-none",
@@ -33,7 +42,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={`${baseStyles} ${variants[variant]} ${className}`}
+      className={`${baseStyles} ${currentSize} ${variants[variant]} ${className}`}
       disabled={isLoading || disabled}
       {...props}
     >

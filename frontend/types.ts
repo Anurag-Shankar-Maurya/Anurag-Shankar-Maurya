@@ -31,6 +31,7 @@ export interface Skill {
   skill_type: string;
   proficiency: string;
   icon?: string;
+  description?: string;
   show_on_home?: boolean;
 }
 
@@ -146,6 +147,8 @@ export interface Education {
   end_date?: string;
   is_current: boolean;
   logo: string;
+  grade?: string;
+  location?: string;
   description: string;
   slug: string;
   images?: Image[];

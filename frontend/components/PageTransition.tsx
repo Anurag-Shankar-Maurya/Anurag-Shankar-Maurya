@@ -28,7 +28,7 @@ const pageTransition = {
   type: 'tween',
   ease: [0.25, 0.1, 0.25, 1],
   duration: 0.35,
-};
+} as const;
 
 export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   const location = useLocation();

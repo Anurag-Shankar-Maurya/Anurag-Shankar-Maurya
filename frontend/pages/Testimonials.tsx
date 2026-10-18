@@ -118,16 +118,23 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
   );
 };
 
-export const TestimonialDetailView: React.FC<{ id: string, onNavigate: (view: ViewState) => void }> = ({ id, onNavigate }) => {
+export const TestimonialDetailView: React.FC<{ 
+  id?: string;
+  slug?: string;
+  onNavigate: (view: ViewState) => void;
+}> = ({ id, slug, onNavigate }) => {
+  const detailId = id || slug || '';
   const [test, setTest] = useState<Testimonial | null>(null);
   const [loading, setLoading] = useState(true);
   const [lbOpen, setLbOpen] = useState(false);
 
   useEffect(() => {
-    api.getTestimonialDetail(id).then(setTest).catch(console.error).finally(() => setLoading(false));
-  }, [id]);
+    if (detailId) {
+      api.getTestimonialDetail(detailId).then(setTest).catch(console.error).finally(() => setLoading(false));
+    }
+  }, [detailId]);
 
-  if (loading) return <SkeletonLoader type="testimonial-detail" />;
+  if (loading) return <SkeletonLoader type="testimonials-detail" />;
   if (!test) {
     return (
       <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">

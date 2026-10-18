@@ -1,234 +1,234 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://0.0.0.0:3000/</loc>
+    <loc>https://www.anuragshankarmaurya.in/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/projects</loc>
+    <loc>https://www.anuragshankarmaurya.in/projects</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/about</loc>
+    <loc>https://www.anuragshankarmaurya.in/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/contact</loc>
+    <loc>https://www.anuragshankarmaurya.in/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/experience</loc>
+    <loc>https://www.anuragshankarmaurya.in/experience</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/education</loc>
+    <loc>https://www.anuragshankarmaurya.in/education</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/skills</loc>
+    <loc>https://www.anuragshankarmaurya.in/skills</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/certificates</loc>
+    <loc>https://www.anuragshankarmaurya.in/certificates</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/achievements</loc>
+    <loc>https://www.anuragshankarmaurya.in/achievements</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/testimonials</loc>
+    <loc>https://www.anuragshankarmaurya.in/testimonials</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/gallery</loc>
+    <loc>https://www.anuragshankarmaurya.in/gallery</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/projects/gda-enterprise-django-cms</loc>
+    <loc>https://www.anuragshankarmaurya.in/projects/gda-enterprise-django-cms</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-08-06</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/projects/julia-english-kids-talk</loc>
+    <loc>https://www.anuragshankarmaurya.in/projects/julia-english-kids-talk</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-06</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/projects/deeptranscribe</loc>
+    <loc>https://www.anuragshankarmaurya.in/projects/deeptranscribe</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-06</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/how-to-maximize-your-ai-coworker-with-minimal-token-usage</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/how-to-maximize-your-ai-coworker-with-minimal-token-usage</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-08-17</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/deploying-django-on-openlitespeed-the-complete-production-guide</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/deploying-django-on-openlitespeed-the-complete-production-guide</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-08-13</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/architecting-an-enterprise-grade-cms-with-django-beyond-the-basics</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/architecting-an-enterprise-grade-cms-with-django-beyond-the-basics</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-07-09</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/individual-contributor-or-manager-choosing-your-engineering-path</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/individual-contributor-or-manager-choosing-your-engineering-path</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-07-02</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/seo-checklist-before-after-deployment</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/seo-checklist-before-after-deployment</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-08-13</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/software-engineering-efficiency-vs-effectiveness</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/software-engineering-efficiency-vs-effectiveness</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-08-13</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/diffusiongemma-breaking-the-autoregressive-bottleneck-with-discrete-text-diffusion</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/diffusiongemma-breaking-the-autoregressive-bottleneck-with-discrete-text-diffusion</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-17</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/understanding-ai-vs-ai-agents-vs-agentic-ai</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/understanding-ai-vs-ai-agents-vs-agentic-ai</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-08-13</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/why-and-how-to-use-an-apps-directory-in-django-when-you-have-multiple-apps</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/why-and-how-to-use-an-apps-directory-in-django-when-you-have-multiple-apps</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-21</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/how-to-start-a-django-project-step-by-step-guide-for-beginners</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/how-to-start-a-django-project-step-by-step-guide-for-beginners</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-21</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/nginx-configuration-django-production</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/nginx-configuration-django-production</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-08-13</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/containerizing-django-applications-complete</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/containerizing-django-applications-complete</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-06</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/dockerizing-django-applications</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/dockerizing-django-applications</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-06</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/real-time-django-websocket</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/real-time-django-websocket</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-08-13</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/django-react-full-stack-architecture</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/django-react-full-stack-architecture</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-06</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/building-rag-systems-from-scratch</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/building-rag-systems-from-scratch</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-08-13</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/introduction-prompt-engineering-best-practices</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/introduction-prompt-engineering-best-practices</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-06</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/django-wsgi-vs-asgi-when-to-use</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/django-wsgi-vs-asgi-when-to-use</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-06</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/building-restful-apis-django-rest-framework</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/building-restful-apis-django-rest-framework</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-06-06</lastmod>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/category/django-backend-development</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/category/django-backend-development</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/category/generative-ai-llm-integration</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/category/generative-ai-llm-integration</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/category/full-stack-ai-applications</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/category/full-stack-ai-applications</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/category/devops-deployment</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/category/devops-deployment</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/category/database-performance</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/category/database-performance</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/category/software-engineering-best-practices</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/category/software-engineering-best-practices</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/blog/category/career-professional-development</loc>
+    <loc>https://www.anuragshankarmaurya.in/blog/category/career-professional-development</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://0.0.0.0:3000/certificates/android-app-development-training</loc>
+    <loc>https://www.anuragshankarmaurya.in/certificates/android-app-development-training</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <lastmod>2023-08-17</lastmod>

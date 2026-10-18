@@ -667,7 +667,7 @@ class SitemapView(APIView):
     
     def get(self, request, *args, **kwargs):
         # Get base URL from settings (SITE_URL)
-        base_url = getattr(settings, 'SITE_URL', request.build_absolute_uri('/').rstrip('/'))
+        base_url = str(getattr(settings, 'SITE_URL', request.build_absolute_uri('/'))).rstrip('/')
         
         # Static pages
         static_pages = [

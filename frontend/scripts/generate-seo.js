@@ -5,9 +5,33 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Helper to load .env files if not already populated in process.env
+function loadEnvFile(envPath) {
+  if (fs.existsSync(envPath)) {
+    const lines = fs.readFileSync(envPath, 'utf8').split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const match = trimmed.match(/^([^=]+)=(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        let val = match[2].trim();
+        val = val.replace(/^['"](.*)['"]$/, '$1').split('#')[0].trim();
+        if (!process.env[key]) {
+          process.env[key] = val;
+        }
+      }
+    }
+  }
+}
+
+// Try loading local env files if available
+loadEnvFile(path.resolve(__dirname, '../.env.local'));
+loadEnvFile(path.resolve(__dirname, '../.env'));
+
 // This script generates robots.txt and sitemap.xml with the correct domain
-const SITE_URL = process.env.VITE_SITE_URL || 'https://0.0.0.0:3000';
-const API_URL = process.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const SITE_URL = (process.env.VITE_SITE_URL || 'https://www.anuragshankarmaurya.in').replace(/\/+$/, '');
+const API_URL = (process.env.VITE_API_URL || 'https://backend.anuragshankarmaurya.in').replace(/\/+$/, '');
 const API_BASE_PATH = process.env.VITE_API_BASE_PATH || '/api';
 
 const robotsContent = `User-agent: *
@@ -37,20 +61,26 @@ async function generateSitemap() {
     
     let sitemapContent = await response.text();
     
-    // Replace the base URL in the sitemap with the frontend site URL
-    // The backend generates URLs with its SITE_URL setting (default: http://localhost:8000)
-    // We need to replace both common localhost variants with the frontend URL
-    const backendBaseUrl = API_URL.replace(/\/+$/, '');
-    const backendLocalhostUrl = backendBaseUrl.replace('127.0.0.1', 'localhost');
-    
-    // Replace both variants
-    sitemapContent = sitemapContent.replace(new RegExp(backendBaseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), SITE_URL);
-    sitemapContent = sitemapContent.replace(new RegExp(backendLocalhostUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), SITE_URL);
+    // Replace any base URLs inside <loc> tags with the frontend SITE_URL
+    sitemapContent = sitemapContent.replace(/<loc>https?:\/\/[^\/]+(\/?[^<]*)<\/loc>/g, `<loc>${SITE_URL}$1</loc>`);
     
     fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapContent);
     console.log(`Generated dynamic sitemap.xml for ${SITE_URL}`);
   } catch (error) {
-    console.error('Failed to fetch dynamic sitemap, falling back to static:', error.message);
+    console.error('Failed to fetch dynamic sitemap, falling back to static/existing:', error.message);
+    
+    // Check if sitemap.xml already exists with valid content
+    const sitemapPath = path.join(publicDir, 'sitemap.xml');
+    if (fs.existsSync(sitemapPath)) {
+      let existingContent = fs.readFileSync(sitemapPath, 'utf8');
+      if (existingContent.includes('<urlset')) {
+        // Update domain on existing sitemap
+        existingContent = existingContent.replace(/<loc>https?:\/\/[^\/]+(\/?[^<]*)<\/loc>/g, `<loc>${SITE_URL}$1</loc>`);
+        fs.writeFileSync(sitemapPath, existingContent);
+        console.log(`Updated URLs in existing sitemap.xml for ${SITE_URL}`);
+        return;
+      }
+    }
     
     // Fallback to static sitemap
     const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>

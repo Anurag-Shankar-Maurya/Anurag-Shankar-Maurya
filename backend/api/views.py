@@ -648,6 +648,144 @@ class PortfolioDataView(APIView):
 # CACHE INVALIDATION SIGNALS
 # ============================================
 
+# ============================================
+# SITEMAP VIEW
+# ============================================
+
+from rest_framework.views import APIView
+from django.http import HttpResponse
+from django.utils import timezone
+from django.conf import settings
+
+
+class SitemapView(APIView):
+    """
+    Generate dynamic sitemap.xml based on backend data.
+    GET /api/sitemap/
+    """
+    permission_classes = [AllowAny]
+    
+    def get(self, request, *args, **kwargs):
+        # Get base URL from settings (SITE_URL)
+        base_url = getattr(settings, 'SITE_URL', request.build_absolute_uri('/').rstrip('/'))
+        
+        # Static pages
+        static_pages = [
+            {'url': '/', 'changefreq': 'daily', 'priority': '1.0'},
+            {'url': '/projects', 'changefreq': 'weekly', 'priority': '0.8'},
+            {'url': '/blog', 'changefreq': 'daily', 'priority': '0.8'},
+            {'url': '/about', 'changefreq': 'monthly', 'priority': '0.7'},
+            {'url': '/contact', 'changefreq': 'monthly', 'priority': '0.7'},
+            {'url': '/experience', 'changefreq': 'monthly', 'priority': '0.6'},
+            {'url': '/education', 'changefreq': 'monthly', 'priority': '0.6'},
+            {'url': '/skills', 'changefreq': 'monthly', 'priority': '0.6'},
+            {'url': '/certificates', 'changefreq': 'monthly', 'priority': '0.6'},
+            {'url': '/achievements', 'changefreq': 'monthly', 'priority': '0.6'},
+            {'url': '/testimonials', 'changefreq': 'monthly', 'priority': '0.6'},
+            {'url': '/gallery', 'changefreq': 'weekly', 'priority': '0.5'},
+        ]
+        
+        # Dynamic pages from database
+        dynamic_urls = []
+        
+        # Projects
+        projects = Project.objects.filter(is_visible=True).only('slug', 'updated_at')
+        for project in projects:
+            dynamic_urls.append({
+                'url': f'/projects/{project.slug}',
+                'changefreq': 'weekly',
+                'priority': '0.7',
+                'lastmod': project.updated_at.date().isoformat() if project.updated_at else None
+            })
+        
+        # Blog posts
+        blog_posts = BlogPost.objects.filter(status='published').only('slug', 'updated_at', 'published_at')
+        for post in blog_posts:
+            lastmod = post.updated_at or post.published_at
+            dynamic_urls.append({
+                'url': f'/blog/{post.slug}',
+                'changefreq': 'weekly',
+                'priority': '0.7',
+                'lastmod': lastmod.date().isoformat() if lastmod else None
+            })
+        
+        # Blog categories
+        categories = BlogCategory.objects.all().only('slug')
+        for cat in categories:
+            dynamic_urls.append({
+                'url': f'/blog/category/{cat.slug}',
+                'changefreq': 'weekly',
+                'priority': '0.5'
+            })
+        
+        # Blog tags
+        tags = BlogTag.objects.all().only('slug')
+        for tag in tags:
+            dynamic_urls.append({
+                'url': f'/blog/tag/{tag.slug}',
+                'changefreq': 'weekly',
+                'priority': '0.4'
+            })
+        
+        # Certificates
+        certificates = Certificate.objects.all().only('slug', 'issue_date')
+        for cert in certificates:
+            dynamic_urls.append({
+                'url': f'/certificates/{cert.slug}',
+                'changefreq': 'monthly',
+                'priority': '0.6',
+                'lastmod': cert.issue_date.isoformat() if cert.issue_date else None
+            })
+        
+        # Achievements
+        achievements = Achievement.objects.all().only('slug', 'date')
+        for ach in achievements:
+            dynamic_urls.append({
+                'url': f'/achievements/{ach.slug}',
+                'changefreq': 'monthly',
+                'priority': '0.6',
+                'lastmod': ach.date.isoformat() if ach.date else None
+            })
+        
+        # Testimonials
+        testimonials = Testimonial.objects.filter(is_visible=True).only('slug', 'date')
+        for test in testimonials:
+            dynamic_urls.append({
+                'url': f'/testimonials/{test.slug}',
+                'changefreq': 'monthly',
+                'priority': '0.5',
+                'lastmod': test.date.isoformat() if test.date else None
+            })
+        
+        # Build XML
+        xml_parts = ['<?xml version="1.0" encoding="UTF-8"?>']
+        xml_parts.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+        
+        # Add static pages
+        for page in static_pages:
+            xml_parts.append('  <url>')
+            xml_parts.append(f'    <loc>{base_url}{page["url"]}</loc>')
+            xml_parts.append(f'    <changefreq>{page["changefreq"]}</changefreq>')
+            xml_parts.append(f'    <priority>{page["priority"]}</priority>')
+            xml_parts.append('  </url>')
+        
+        # Add dynamic pages
+        for page in dynamic_urls:
+            xml_parts.append('  <url>')
+            xml_parts.append(f'    <loc>{base_url}{page["url"]}</loc>')
+            xml_parts.append(f'    <changefreq>{page["changefreq"]}</changefreq>')
+            xml_parts.append(f'    <priority>{page["priority"]}</priority>')
+            if page.get('lastmod'):
+                xml_parts.append(f'    <lastmod>{page["lastmod"]}</lastmod>')
+            xml_parts.append('  </url>')
+        
+        xml_parts.append('</urlset>')
+        
+        xml_content = '\n'.join(xml_parts)
+        
+        return HttpResponse(xml_content, content_type='application/xml')
+
+
 def clear_portfolio_cache(sender, **kwargs):
     cache.delete(CACHE_KEY)
     print(f"\n>>> [PORTFOLIO-DATA-CACHE] Cache invalidated due to model update: {sender.__name__}\n")

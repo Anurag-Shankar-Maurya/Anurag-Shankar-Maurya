@@ -77,4 +77,7 @@ urlpatterns = [
     # Site configuration
     path('config/', views.SiteConfigurationViewSet.as_view({'get': 'list'}), name='config-list'),
     path('config/current/', views.SiteConfigurationViewSet.as_view({'get': 'current'}), name='config-current'),
+
+    # Sitemap
+    path('sitemap/', views.SitemapView.as_view(), name='sitemap'),
 ]

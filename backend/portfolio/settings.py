@@ -34,7 +34,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Site URL for sitemap generation and absolute URLs
-SITE_URL = os.getenv('SITE_URL', 'http://localhost:8000')
+SITE_URL = os.getenv('SITE_URL', 'https://www.anuragshankarmaurya.in')
 
 # ============================================
 # CORS CONFIGURATION

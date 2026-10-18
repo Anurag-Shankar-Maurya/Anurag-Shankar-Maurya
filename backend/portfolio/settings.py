@@ -242,6 +242,40 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # ============================================
+# CACHE CONFIGURATION (REDIS with Local Fallback)
+# ============================================
+
+REDIS_URL = os.getenv('REDIS_URL')
+
+_redis_available = False
+if REDIS_URL:
+    try:
+        import redis  # noqa: F401
+        _redis_available = True
+    except ImportError:
+        _redis_available = False
+
+if _redis_available and REDIS_URL:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,
+            'TIMEOUT': None,  # Cache persists until invalidated by signals
+            'KEY_PREFIX': 'portfolio',
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'portfolio-memory-cache',
+            'TIMEOUT': None,
+            'KEY_PREFIX': 'portfolio',
+        }
+    }
+
+
+# ============================================
 # REST FRAMEWORK CONFIGURATION
 # ============================================
 

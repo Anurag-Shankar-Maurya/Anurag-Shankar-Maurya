@@ -666,6 +666,10 @@ class SitemapView(APIView):
     permission_classes = [AllowAny]
     
     def get(self, request, *args, **kwargs):
+        cached_xml = cache.get('sitemap_xml_payload')
+        if cached_xml:
+            return HttpResponse(cached_xml, content_type='application/xml')
+
         # Get base URL from settings (SITE_URL)
         base_url = str(getattr(settings, 'SITE_URL', request.build_absolute_uri('/'))).rstrip('/')
         
@@ -808,7 +812,7 @@ class SitemapView(APIView):
         xml_parts.append('</urlset>')
         
         xml_content = '\n'.join(xml_parts)
-        
+        cache.set('sitemap_xml_payload', xml_content, timeout=86400)
         return HttpResponse(xml_content, content_type='application/xml')
 
 
@@ -824,6 +828,10 @@ class LLMsTxtView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
+        cached_txt = cache.get('llms_txt_payload')
+        if cached_txt:
+            return HttpResponse(cached_txt, content_type='text/markdown; charset=utf-8')
+
         import os
         profile = Profile.objects.first()
         base_url = str(getattr(settings, 'SITE_URL', request.build_absolute_uri('/'))).rstrip('/')
@@ -913,12 +921,30 @@ class LLMsTxtView(APIView):
         lines.append(f"- All Articles: {base_url}/blog")
         lines.append("")
 
-        return HttpResponse("\n".join(lines), content_type='text/markdown; charset=utf-8')
+        output_txt = "\n".join(lines) + "\n"
+        cache.set('llms_txt_payload', output_txt, timeout=86400)
+        return HttpResponse(output_txt, content_type='text/markdown; charset=utf-8')
 
 
 
 def clear_portfolio_cache(sender, **kwargs):
     cache.delete(CACHE_KEY)
+    cache.delete('sitemap_xml_payload')
+    cache.delete('llms_txt_payload')
+    cache.delete('bot_html:/blog')
+    cache.delete('bot_html:/blog/')
+    cache.delete('bot_html:/projects')
+    cache.delete('bot_html:/projects/')
+
+    instance = kwargs.get('instance')
+    if instance and hasattr(instance, 'slug') and instance.slug:
+        if sender.__name__ == 'BlogPost':
+            cache.delete(f'bot_html:/blog/{instance.slug}')
+            cache.delete(f'bot_html:/blog/{instance.slug}/')
+        elif sender.__name__ == 'Project':
+            cache.delete(f'bot_html:/projects/{instance.slug}')
+            cache.delete(f'bot_html:/projects/{instance.slug}/')
+
     print(f"\n>>> [PORTFOLIO-DATA-CACHE] Cache invalidated due to model update: {sender.__name__}\n")
 
 # Auto-clear cache when any model that constructs the homepage payload is edited/deleted

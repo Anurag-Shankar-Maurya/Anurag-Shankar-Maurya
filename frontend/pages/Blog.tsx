@@ -430,7 +430,7 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
         title={`${post.meta_title || post.title} | Anurag Shankar Maurya`}
         description={post.meta_description || post.excerpt}
         keywords={post.meta_keywords}
-        canonical={post.canonical_url || window.location.href}
+        canonical={post.canonical_url || `https://www.anuragshankarmaurya.in/blog/${post.slug || slug}`}
         ogTitle={post.og_title || post.title}
         ogDescription={post.og_description || post.excerpt}
         ogImage={post.og_image || post.featured_image}

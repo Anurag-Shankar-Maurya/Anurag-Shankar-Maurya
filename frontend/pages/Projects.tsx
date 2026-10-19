@@ -460,7 +460,7 @@ export const ProjectDetailView: React.FC<{ slug: string, onNavigate: (view: View
         title={`${project.meta_title || project.title} | Projects | Anurag Shankar Maurya`}
         description={project.meta_description || project.short_description}
         keywords={project.meta_keywords || project.technologies}
-        canonical={project.canonical_url || window.location.href}
+        canonical={project.canonical_url || `https://www.anuragshankarmaurya.in/projects/${project.slug || slug}`}
         ogTitle={project.og_title || project.title}
         ogDescription={project.og_description || project.short_description}
         ogImage={project.og_image || project.featured_image}

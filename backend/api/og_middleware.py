@@ -30,6 +30,7 @@ from api.models import BlogPost, Project, Profile
 CRAWLER_UA_PATTERNS = re.compile(
     r'(facebookexternalhit|facebot|twitterbot|whatsapp|telegrambot|'
     r'linkedinbot|slackbot|discordbot|applebot|bingbot|googlebot|'
+    r'google-inspectiontool|googleother|chrome-lighthouse|lighthouse|'
     r'rogerbot|embedly|quora link preview|showyoubot|outbrain|'
     r'pinterest|vkshare|w3c_validator|redditbot|msnbot|skypeuripreview|'
     r'nuzzel|flipboard|tumblr|bitlybot|iframely|semrushbot|'
@@ -386,11 +387,12 @@ class OGMetaMiddleware:
         profile = _get_profile()
         site_name = profile.full_name if profile else 'Anurag Shankar Maurya'
 
-        # 1. Prioritize explicit FRONTEND_URL from environment variables
-        frontend_url = os.environ.get('FRONTEND_URL')
+        # 1. Prioritize explicit FRONTEND_URL or settings.SITE_URL
+        from django.conf import settings
+        frontend_url = os.environ.get('FRONTEND_URL') or getattr(settings, 'SITE_URL', None)
 
         if frontend_url:
-            base_url = frontend_url.rstrip('/')
+            base_url = str(frontend_url).rstrip('/')
         else:
             # 2. Fall back to X-Forwarded-Host if proxying through Vercel/Nginx
             forwarded_host = request.META.get('HTTP_X_FORWARDED_HOST')
@@ -400,6 +402,10 @@ class OGMetaMiddleware:
             else:
                 # 3. Absolute fallback to the request URI
                 base_url = request.build_absolute_uri('/').rstrip('/')
+
+        # Ensure base_url is always the public frontend URL, never backend domain
+        if 'backend.' in base_url:
+            base_url = base_url.replace('backend.', 'www.') if 'www.' not in base_url else base_url.replace('backend.', '')
 
         # ── Blog list: /blog or /blog/
         if BLOG_LIST_ROUTE.match(path):

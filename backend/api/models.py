@@ -1112,8 +1112,8 @@ class BlogPost(models.Model):
         return self.title
 
     def increment_views(self):
+        BlogPost.objects.filter(pk=self.pk).update(views_count=models.F('views_count') + 1)
         self.views_count += 1
-        self.save(update_fields=['views_count'])
 
 
 # ============================================

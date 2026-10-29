@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Calendar, Loader2, Search, X, List, LayoutGrid, HelpCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, Calendar, Loader2, Search, X, List, LayoutGrid, HelpCircle } from 'lucide-react';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
@@ -355,11 +355,17 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
   );
 };
 
-export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewState) => void }> = ({ slug, onNavigate }) => {
+export const BlogDetailView: React.FC<{ 
+  slug: string; 
+  onNavigate: (view: ViewState) => void;
+  posts?: BlogPost[];
+}> = ({ slug, onNavigate, posts }) => {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [lbOpen, setLbOpen] = useState(false);
   const [lbImages, setLbImages] = useState<{ src: string; alt?: string }[]>([]);
+  const [prevPost, setPrevPost] = useState<{ title: string; slug: string } | null>(null);
+  const [nextPost, setNextPost] = useState<{ title: string; slug: string } | null>(null);
 
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [expanded, setExpanded] = useState(false);
@@ -367,8 +373,56 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
 
   useEffect(() => {
-    api.getBlogPostDetail(slug).then(setPost).catch(console.error).finally(() => setLoading(false));
-  }, [slug]);
+    let isMounted = true;
+    setLoading(true);
+    setExpanded(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    api.getBlogPostDetail(slug)
+      .then(async (fetchedPost) => {
+        if (!isMounted) return;
+        setPost(fetchedPost);
+
+        if (fetchedPost.previous_post !== undefined && fetchedPost.next_post !== undefined) {
+          setPrevPost(fetchedPost.previous_post);
+          setNextPost(fetchedPost.next_post);
+        } else {
+          try {
+            let allPosts = posts;
+            if (!allPosts || allPosts.length === 0) {
+              const res = await api.getBlogPosts({ limit: 100 });
+              allPosts = res.results || [];
+            }
+            if (isMounted && allPosts && allPosts.length > 0) {
+              const sorted = [...allPosts].sort((a, b) => {
+                const timeA = new Date(a.published_at).getTime();
+                const timeB = new Date(b.published_at).getTime();
+                return timeB - timeA;
+              });
+              const idx = sorted.findIndex(p => p.slug === slug);
+              if (idx !== -1) {
+                const older = idx + 1 < sorted.length ? { title: sorted[idx + 1].title, slug: sorted[idx + 1].slug } : null;
+                const newer = idx - 1 >= 0 ? { title: sorted[idx - 1].title, slug: sorted[idx - 1].slug } : null;
+                setPrevPost(older);
+                setNextPost(newer);
+              }
+            }
+          } catch (e) {
+            console.error('Failed to compute adjacent posts', e);
+          }
+        }
+      })
+      .catch((err) => {
+        if (isMounted) console.error(err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [slug, posts]);
 
   useEffect(() => {
     if (!post) return;
@@ -500,6 +554,99 @@ export const BlogDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSta
           <Gallery images={post.images} />
         </div>
       )}
+
+      {/* Bottom Navigation: Previous & Next Post Buttons */}
+      <nav aria-label="Article navigation" className="mt-14 pt-8 border-t border-[#E5E5E5]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {prevPost ? (
+            <Link
+              to={`/blog/${prevPost.slug}`}
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                onNavigate({ type: 'BLOG_DETAIL', slug: prevPost.slug });
+              }}
+              className="group flex items-center gap-4 p-4 sm:p-5 rounded-[1.5rem] bg-white border border-[#E5E5E5] hover:border-black transition-all text-left shadow-none"
+            >
+              <div className="w-10 h-10 rounded-full bg-[#F2F2F2] group-hover:bg-black group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
+                <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] text-[#7e7576] font-bold uppercase tracking-widest block mb-0.5">
+                  Previous Post
+                </span>
+                <span className="text-sm font-bold text-black group-hover:text-black line-clamp-1 transition-colors">
+                  {prevPost.title}
+                </span>
+              </div>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-4 p-4 sm:p-5 rounded-[1.5rem] bg-[#fcfcfc] border border-[#E5E5E5]/60 opacity-40 cursor-not-allowed">
+              <div className="w-10 h-10 rounded-full bg-[#F2F2F2] flex items-center justify-center shrink-0">
+                <ArrowLeft className="w-5 h-5 text-[#7e7576]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] text-[#7e7576] font-bold uppercase tracking-widest block mb-0.5">
+                  Previous Post
+                </span>
+                <span className="text-sm font-semibold text-[#7e7576]">
+                  No earlier post
+                </span>
+              </div>
+            </div>
+          )}
+
+          {nextPost ? (
+            <Link
+              to={`/blog/${nextPost.slug}`}
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                onNavigate({ type: 'BLOG_DETAIL', slug: nextPost.slug });
+              }}
+              className="group flex items-center justify-end gap-4 p-4 sm:p-5 rounded-[1.5rem] bg-white border border-[#E5E5E5] hover:border-black transition-all text-right shadow-none"
+            >
+              <div className="min-w-0 flex-1 order-1">
+                <span className="text-[10px] text-[#7e7576] font-bold uppercase tracking-widest block mb-0.5">
+                  Next Post
+                </span>
+                <span className="text-sm font-bold text-black group-hover:text-black line-clamp-1 transition-colors">
+                  {nextPost.title}
+                </span>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-[#F2F2F2] group-hover:bg-black group-hover:text-white flex items-center justify-center shrink-0 order-2 transition-colors">
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
+              </div>
+            </Link>
+          ) : (
+            <div className="flex items-center justify-end gap-4 p-4 sm:p-5 rounded-[1.5rem] bg-[#fcfcfc] border border-[#E5E5E5]/60 opacity-40 cursor-not-allowed text-right">
+              <div className="min-w-0 flex-1 order-1">
+                <span className="text-[10px] text-[#7e7576] font-bold uppercase tracking-widest block mb-0.5">
+                  Next Post
+                </span>
+                <span className="text-sm font-semibold text-[#7e7576]">
+                  No newer post
+                </span>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-[#F2F2F2] flex items-center justify-center shrink-0 order-2">
+                <ArrowRight className="w-5 h-5 text-[#7e7576]" />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-8 flex justify-center">
+          <Link
+            to="/blog"
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              onNavigate({ type: 'BLOG' });
+            }}
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] text-xs font-bold text-[#4c4546] hover:text-black hover:border-black transition-all"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>All Articles</span>
+          </Link>
+        </div>
+      </nav>
     </main>
   );
 };

@@ -5,3 +5,8 @@
 {{ block.super }}
 <script src="{% static 'admin/js/webp-converter.js' %}"></script>
 {% endblock %}
+
+{% block userlinks %}
+<a href="{% url 'load_test_gui' %}" style="display: inline-flex; align-items: center; gap: 4px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); padding: 2px 8px; border-radius: 4px; font-weight: 600; text-decoration: none; margin-right: 10px; font-size: 0.85rem;" title="Run API capacity and OpenLiteSpeed stress tests">⚡ Load Tester</a> / 
+{{ block.super }}
+{% endblock %}

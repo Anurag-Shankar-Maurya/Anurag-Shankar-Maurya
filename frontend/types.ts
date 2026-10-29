@@ -119,6 +119,8 @@ export interface BlogPost {
   og_image?: string;
   schema_type?: string;
   updated_at?: string;
+  previous_post?: { title: string; slug: string } | null;
+  next_post?: { title: string; slug: string } | null;
 }
 
 export interface WorkExperience {

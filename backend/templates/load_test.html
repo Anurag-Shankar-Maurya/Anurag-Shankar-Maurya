@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Server Capacity & Load Tester | Portfolio Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-gradient-top: #1e1b4b;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --card-border-focus: rgba(56, 189, 248, 0.4);
+      --accent-blue: #38bdf8;
+      --accent-purple: #818cf8;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-red: #f87171;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-sub: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: radial-gradient(circle at top left, var(--bg-gradient-top), var(--bg-dark));
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Top Navigation Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .nav-btn.admin-back {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.3);
+      color: var(--accent-blue);
+    }
+
+    .nav-btn.admin-back:hover {
+      background: rgba(56, 189, 248, 0.25);
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .badge-status::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .card-title .icon-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Form Inputs */
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(10, 15, 29, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    optgroup {
+      background: #111827;
+      color: var(--accent-blue);
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    option {
+      background: #0f172a;
+      color: var(--text-main);
+      font-weight: normal;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    .field-hint {
+      color: var(--text-sub);
+      font-size: 0.75rem;
+      display: block;
+      margin-top: 0.35rem;
+      line-height: 1.35;
+    }
+
+    .field-hint code {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-blue);
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      color: white;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
+    }
+
+    .btn-start:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+    }
+
+    .btn-stop {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.35);
+    }
+
+    .btn-stop:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+      padding: 0.5rem 0.9rem;
+      font-size: 0.82rem;
+      width: auto;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--accent-blue);
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      display: none;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+      transition: width 0.3s ease;
+      border-radius: 999px;
+    }
+
+    /* Metrics Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 1100px) {
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-box {
+      background: rgba(10, 15, 29, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 0.9rem 0.75rem;
+      text-align: center;
+      transition: border-color 0.2s ease;
+    }
+
+    .stat-box:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stat-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .value-green { color: var(--accent-green); }
+    .value-blue { color: var(--accent-blue); }
+    .value-purple { color: var(--accent-purple); }
+    .value-amber { color: var(--accent-amber); }
+    .value-red { color: var(--accent-red); }
+
+    /* HTTP Status Badges */
+    .status-codes-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 1rem;
+      background: rgba(10, 15, 29, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      flex-wrap: wrap;
+    }
+
+    .status-code-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    .dot-2xx { background: var(--accent-green); }
+    .dot-3xx { background: var(--accent-blue); }
+    .dot-4xx { background: var(--accent-amber); }
+    .dot-5xx { background: var(--accent-red); }
+
+    /* Chart Container */
+    .chart-container {
+      position: relative;
+      height: 260px;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Terminal Console */
+    .console-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .console-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .console-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .console-btn {
+      background: none;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .console-btn:hover {
+      color: var(--text-main);
+      border-color: var(--text-muted);
+    }
+
+    .log-container {
+      background: #060910;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      height: 160px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .log-line {
+      margin-bottom: 0.25rem;
+      line-height: 1.45;
+      word-break: break-all;
+    }
+
+    .log-time {
+      color: var(--text-sub);
+      margin-right: 0.5rem;
+    }
+
+    .log-info { color: var(--accent-blue); }
+    .log-success { color: var(--accent-green); }
+    .log-hit { color: #10b981; }
+    .log-miss { color: var(--accent-purple); }
+    .log-warn { color: var(--accent-amber); }
+    .log-error { color: var(--accent-red); }
+
+    /* Summary Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal-box {
+      background: #111827;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
+      max-width: 580px;
+      width: 100%;
+      padding: 1.75rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      animation: modalFadeIn 0.25s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent-blue);
+    }
+
+    .modal-body {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    .summary-table td {
+      padding: 0.45rem 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .summary-table td:first-child {
+      color: var(--text-muted);
+    }
+
+    .summary-table td:last-child {
+      color: var(--text-main);
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .verdict-box {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--text-main);
+      font-size: 0.88rem;
+      margin-top: 0.75rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Top Bar Navigation -->
+    <div class="top-bar">
+      <div class="nav-links">
+        <a href="/admin/" class="nav-btn admin-back">
+          <span>←</span> Back to Django Admin
+        </a>
+        <a href="/api/swagger/" target="_blank" class="nav-btn">
+          <span>📖</span> Swagger API
+        </a>
+        <a href="/api/redoc/" target="_blank" class="nav-btn">
+          <span>📄</span> ReDoc
+        </a>
+      </div>
+      <div class="nav-links">
+        <span class="badge-status">API Server Active</span>
+        <button id="viewSummaryBtn" class="nav-btn" onclick="openSummaryModal()" style="display: none;">
+          <span>📋</span> View Last Summary
+        </button>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+      <h1>⚡ API Server Capacity & Load Tester</h1>
+      <p>Benchmark your Django API throughput and test OpenLiteSpeed LSCache hit speed directly in real time.</p>
+    </header>
+
+    <div class="grid">
+      <!-- Test Configuration Panel -->
+      <div class="card">
+        <div class="card-title">
+          <div class="icon-heading">
+            <span>⚙️</span> Test Configuration
+          </div>
+        </div>
+
+        <!-- Target Endpoint Selection -->
+        <div class="form-group">
+          <label for="endpointSelect">Target API Endpoint</label>
+          <select id="endpointSelect" onchange="handleEndpointChange()">
+            <optgroup label="Portfolio & Bios">
+              <option value="/api/portfolio-data/" selected>GET /api/portfolio-data/ (Unified Portfolio)</option>
+              <option value="/api/profiles/">GET /api/profiles/ (Profile Details)</option>
+              <option value="/api/skills/">GET /api/skills/ (Skills Directory)</option>
+              <option value="/api/education/">GET /api/education/ (Education Records)</option>
+              <option value="/api/work-experience/">GET /api/work-experience/ (Work History)</option>
+              <option value="/api/social-links/">GET /api/social-links/ (Social Media)</option>
+            </optgroup>
+            <optgroup label="Blog Articles">
+              <option value="/api/blog/?page_size=20">GET /api/blog/?page_size=20 (Blog Catalog)</option>
+              <option value="/api/blog/categories/">GET /api/blog/categories/ (Blog Categories)</option>
+              <option value="/api/blog/tags/">GET /api/blog/tags/ (Blog Tags)</option>
+              <option value="/api/blog/featured/">GET /api/blog/featured/ (Featured Posts)</option>
+            </optgroup>
+            <optgroup label="Projects & Showcase">
+              <option value="/api/projects/?page_size=20">GET /api/projects/?page_size=20 (Projects Catalog)</option>
+              <option value="/api/projects/featured/">GET /api/projects/featured/ (Featured Projects)</option>
+            </optgroup>
+            <optgroup label="Credentials & Social Proof">
+              <option value="/api/certificates/">GET /api/certificates/ (Certifications)</option>
+              <option value="/api/achievements/">GET /api/achievements/ (Achievements)</option>
+              <option value="/api/testimonials/">GET /api/testimonials/ (Testimonials)</option>
+            </optgroup>
+            <optgroup label="Media & System Discovery">
+              <option value="/api/images/">GET /api/images/ (Media Assets)</option>
+              <option value="/api/config/current/">GET /api/config/current/ (Site Configuration)</option>
+              <option value="/api/sitemap/">GET /api/sitemap/ (Sitemap Index)</option>
+              <option value="/llms.txt">GET /llms.txt (LLM Summary Document)</option>
+            </optgroup>
+            <optgroup label="Custom URL">
+              <option value="__custom__">Custom API URL...</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Custom URL Input (Hidden unless Custom is selected) -->
+        <div class="form-group" id="customUrlGroup" style="display: none;">
+          <label for="customUrlInput">Custom API Path or Full URL</label>
+          <input type="text" id="customUrlInput" placeholder="/api/blog/?category=python" value="/api/portfolio-data/">
+        </div>
+
+        <!-- OpenLiteSpeed Cache Mode -->
+        <div class="form-group">
+          <label for="cacheMode">OpenLiteSpeed Cache Mode</label>
+          <select id="cacheMode">
+            <option value="cached" selected>⚡ Cached (Test OpenLiteSpeed LSCache RAM Speed)</option>
+            <option value="bypassed">🐢 Not Cached (Bypass Cache / Test Live Django DB & CPU)</option>
+          </select>
+          <small class="field-hint">
+            <b>Cached:</b> Omits session cookies (<code>credentials: 'omit'</code>) so OpenLiteSpeed serves public RAM cache hits (~2ms).<br>
+            <b>Not Cached:</b> Appends unique timestamps (<code>_t</code>) &amp; bypass headers to force full Django views and DB execution.
+          </small>
+        </div>
+
+        <!-- HTTP Method -->
+        <div class="form-group">
+          <label for="httpMethod">HTTP Method</label>
+          <select id="httpMethod">
+            <option value="GET" selected>GET (Standard Data Fetch)</option>
+            <option value="HEAD">HEAD (Headers Only / Ultra-Fast Probe)</option>
+          </select>
+        </div>
+
+        <!-- Virtual Users -->
+        <div class="form-group">
+          <label for="concurrency">Concurrent Virtual Users</label>
+          <input type="number" id="concurrency" value="10" min="1" max="100">
+          <small class="field-hint">Simultaneous parallel worker threads sending requests.</small>
+        </div>
+
+        <!-- Duration -->
+        <div class="form-group">
+          <label for="duration">Duration (seconds)</label>
+          <input type="number" id="duration" value="15" min="5" max="120">
+        </div>
+
+        <!-- Delay -->
+        <div class="form-group">
+          <label for="delay">Delay between worker requests (ms)</label>
+          <input type="number" id="delay" value="50" min="0" step="25">
+          <small class="field-hint">Set to <code>0</code> for max stress/throughput, or <code>50-100ms</code> for standard traffic simulation.</small>
+        </div>
+
+        <!-- Live Progress Bar -->
+        <div id="progressContainer" class="progress-container">
+          <div class="progress-labels">
+            <span id="progressText">Testing...</span>
+            <span id="progressTime">0s / 15s</span>
+          </div>
+          <div class="progress-track">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+        </div>
+
+        <!-- Start / Stop Buttons -->
+        <button id="startBtn" class="btn btn-start" onclick="startLoadTest()">
+          <span>▶</span> Run Capacity Test
+        </button>
+        <button id="stopBtn" class="btn btn-stop" onclick="stopLoadTest()" style="display: none;">
+          <span>⏹</span> Stop Test Immediately
+        </button>
+      </div>
+
+      <!-- Real-Time Metrics & Charts Panel -->
+      <div class="card">
+        <div class="card-title">
+          <div class="icon-heading">
+            <span>📊</span> Real-Time Performance Dashboard
+          </div>
+          <span id="liveIndicator" style="font-size: 0.75rem; color: var(--text-sub); font-family: 'JetBrains Mono', monospace;">IDLE</span>
+        </div>
+
+        <!-- High-level Metric Stat Boxes -->
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Total Requests</div>
+            <div id="statTotal" class="stat-value value-blue">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Requests / Sec</div>
+            <div id="statRps" class="stat-value value-purple">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Avg Latency</div>
+            <div id="statLatency" class="stat-value value-green">0 ms</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">P95 Latency</div>
+            <div id="statP95" class="stat-value value-amber">0 ms</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Cache Ratio</div>
+            <div id="statCache" class="stat-value value-green">-</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Error Rate</div>
+            <div id="statErrors" class="stat-value value-green">0%</div>
+          </div>
+        </div>
+
+        <!-- Status Codes Breakdown Pill Bar -->
+        <div class="status-codes-bar">
+          <span style="color: var(--text-muted); margin-right: 0.25rem;">HTTP Status:</span>
+          <div class="status-code-item">
+            <span class="status-dot dot-2xx"></span>
+            <span>2xx OK:</span>
+            <strong id="stat2xx" class="value-green">0</strong>
+          </div>
+          <div class="status-code-item">
+            <span class="status-dot dot-3xx"></span>
+            <span>3xx Redir:</span>
+            <strong id="stat3xx" class="value-blue">0</strong>
+          </div>
+          <div class="status-code-item">
+            <span class="status-dot dot-4xx"></span>
+            <span>4xx Client:</span>
+            <strong id="stat4xx" class="value-amber">0</strong>
+          </div>
+          <div class="status-code-item">
+            <span class="status-dot dot-5xx"></span>
+            <span>5xx Server:</span>
+            <strong id="stat5xx" class="value-red">0</strong>
+          </div>
+        </div>
+
+        <!-- Live Latency Chart -->
+        <div class="chart-container">
+          <canvas id="latencyChart"></canvas>
+        </div>
+
+        <!-- Terminal Logs -->
+        <div class="console-header">
+          <div class="console-title">
+            <span>💻</span> Execution Event Log
+          </div>
+          <div class="console-actions">
+            <label style="display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; color: var(--text-sub); cursor: pointer;">
+              <input type="checkbox" id="autoScrollToggle" checked style="width: auto; margin: 0;"> Auto-scroll
+            </label>
+            <button class="console-btn" onclick="clearConsole()">Clear</button>
+          </div>
+        </div>
+        <div id="logConsole" class="log-container">
+          <div class="log-line">
+            <span class="log-time">[Ready]</span>
+            <span class="log-info">Select target API parameters and click 'Run Capacity Test' to begin benchmarking.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Summary Modal -->
+  <div id="summaryModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-title">
+        <span>🏁</span> Test Benchmark Summary
+      </div>
+      <div class="modal-body">
+        <p id="summaryEndpointDesc" style="margin-bottom: 0.75rem; font-weight: 500;"></p>
+        <table class="summary-table">
+          <tbody>
+            <tr>
+              <td>Duration Executed:</td>
+              <td id="sumDuration">0s</td>
+            </tr>
+            <tr>
+              <td>Total Requests:</td>
+              <td id="sumTotal">0</td>
+            </tr>
+            <tr>
+              <td>Average Throughput:</td>
+              <td id="sumRps">0 req/s</td>
+            </tr>
+            <tr>
+              <td>Peak Throughput:</td>
+              <td id="sumPeakRps">0 req/s</td>
+            </tr>
+            <tr>
+              <td>Average Latency:</td>
+              <td id="sumAvgLatency">0 ms</td>
+            </tr>
+            <tr>
+              <td>Min / Max Latency:</td>
+              <td id="sumMinMaxLatency">0 ms / 0 ms</td>
+            </tr>
+            <tr>
+              <td>95th Percentile (P95):</td>
+              <td id="sumP95Latency">0 ms</td>
+            </tr>
+            <tr>
+              <td>Cache Mode &amp; Hits:</td>
+              <td id="sumCacheRatio">0%</td>
+            </tr>
+            <tr>
+              <td>HTTP 2xx Successes:</td>
+              <td id="sum2xx">0</td>
+            </tr>
+            <tr>
+              <td>Errors (4xx / 5xx / Network):</td>
+              <td id="sumErrors">0 (0%)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div id="summaryVerdict" class="verdict-box">
+          Analyzing performance characteristics...
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="copySummaryText()">
+          📋 Copy Report
+        </button>
+        <button class="btn btn-secondary" onclick="closeSummaryModal()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isRunning = false;
+    let totalRequests = 0;
+    let successfulRequests = 0;
+    let failedRequests = 0;
+    let cacheHits = 0;
+    let cacheMisses = 0;
+    let count2xx = 0;
+    let count3xx = 0;
+    let count4xx = 0;
+    let count5xx = 0;
+    let responseTimes = [];
+    let startTime = null;
+    let chart = null;
+    let peakRps = 0;
+    let progressTimer = null;
+    let lastSummaryData = null;
+
+    // Initialize Chart.js
+    const ctx = document.getElementById('latencyChart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 240);
+    gradient.addColorStop(0, 'rgba(56, 189, 248, 0.35)');
+    gradient.addColorStop(1, 'rgba(56, 189, 248, 0.01)');
+
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Avg Latency (ms)',
+          borderColor: '#38bdf8',
+          borderWidth: 2,
+          pointRadius: 2,
+          pointHoverRadius: 4,
+          pointBackgroundColor: '#38bdf8',
+          backgroundColor: gradient,
+          fill: true,
+          tension: 0.3,
+          data: []
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 0 },
+        scales: {
+          x: {
+            ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+          },
+          y: {
+            ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            beginAtZero: true
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: '#f8fafc', font: { family: 'Inter', size: 12 } }
+          },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#38bdf8',
+            bodyColor: '#f8fafc',
+            borderColor: 'rgba(255,255,255,0.1)',
+            borderWidth: 1,
+            padding: 8
+          }
+        }
+      }
+    });
+
+    function handleEndpointChange() {
+      const select = document.getElementById('endpointSelect');
+      const customGroup = document.getElementById('customUrlGroup');
+      const customInput = document.getElementById('customUrlInput');
+
+      if (select.value === '__custom__') {
+        customGroup.style.display = 'block';
+        customInput.focus();
+      } else {
+        customGroup.style.display = 'none';
+        customInput.value = select.value;
+      }
+    }
+
+    function getTargetUrl() {
+      const select = document.getElementById('endpointSelect');
+      if (select.value === '__custom__') {
+        const val = document.getElementById('customUrlInput').value.trim();
+        return val || '/api/portfolio-data/';
+      }
+      return select.value;
+    }
+
+    function logMessage(text, type = 'info') {
+      const consoleNode = document.getElementById('logConsole');
+      const line = document.createElement('div');
+      line.className = 'log-line';
+
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'log-time';
+      timeSpan.textContent = `[${new Date().toLocaleTimeString()}]`;
+
+      const textSpan = document.createElement('span');
+      textSpan.className = `log-${type}`;
+      textSpan.textContent = text;
+
+      line.appendChild(timeSpan);
+      line.appendChild(textSpan);
+      consoleNode.appendChild(line);
+
+      // Keep console DOM clean (max 200 lines)
+      if (consoleNode.children.length > 200) {
+        consoleNode.removeChild(consoleNode.firstChild);
+      }
+
+      if (document.getElementById('autoScrollToggle').checked) {
+        consoleNode.scrollTop = consoleNode.scrollHeight;
+      }
+    }
+
+    function clearConsole() {
+      const consoleNode = document.getElementById('logConsole');
+      consoleNode.innerHTML = '';
+      logMessage('Console logs cleared.', 'info');
+    }
+
+    async function sendWorkerRequest(targetUrl, delay) {
+      if (!isRunning) return;
+
+      const cacheMode = document.getElementById('cacheMode').value;
+      const httpMethod = document.getElementById('httpMethod').value;
+      let fetchUrl = targetUrl;
+
+      if (cacheMode === 'bypassed') {
+        const sep = fetchUrl.includes('?') ? '&' : '?';
+        fetchUrl += `${sep}_t=${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      }
+
+      const reqStart = performance.now();
+      try {
+        // credentials: 'omit' ensures session cookies are NOT sent,
+        // allowing OpenLiteSpeed to serve real public cached responses!
+        const response = await fetch(fetchUrl, {
+          method: httpMethod,
+          credentials: 'omit',
+          headers: cacheMode === 'bypassed'
+            ? { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+            : {}
+        });
+        const reqEnd = performance.now();
+        const duration = Math.round(reqEnd - reqStart);
+
+        // Status code counting
+        const status = response.status;
+        if (status >= 200 && status < 300) count2xx++;
+        else if (status >= 300 && status < 400) count3xx++;
+        else if (status >= 400 && status < 500) count4xx++;
+        else if (status >= 500) count5xx++;
+
+        // OpenLiteSpeed / CDN Cache Header Inspection
+        const lscache = (response.headers.get('x-litespeed-cache') || '').toLowerCase();
+        const cfcache = (response.headers.get('cf-cache-status') || '').toLowerCase();
+        const xcache = (response.headers.get('x-cache') || '').toLowerCase();
+
+        let isHit = false;
+        if (lscache.includes('hit') || cfcache.includes('hit') || xcache.includes('hit')) {
+          cacheHits++;
+          isHit = true;
+        } else {
+          cacheMisses++;
+        }
+
+        totalRequests++;
+        if (response.ok) {
+          successfulRequests++;
+          responseTimes.push(duration);
+        } else {
+          failedRequests++;
+        }
+
+        if (totalRequests <= 5 || totalRequests % 50 === 0) {
+          const cacheTag = isHit ? 'HIT (OLS Cache)' : (cacheMode === 'bypassed' ? 'BYPASS' : 'MISS');
+          const logType = response.ok ? (isHit ? 'hit' : 'success') : 'error';
+          logMessage(`${httpMethod} ${response.status} ${targetUrl} - ${duration}ms [${cacheTag}]`, logType);
+        }
+      } catch (err) {
+        totalRequests++;
+        failedRequests++;
+        count5xx++;
+        if (failedRequests <= 3) {
+          logMessage(`Network Error: ${err.message || 'Connection refused or blocked'}`, 'error');
+        }
+      }
+
+      updateMetrics();
+
+      if (isRunning) {
+        if (delay > 0) {
+          setTimeout(() => sendWorkerRequest(targetUrl, delay), delay);
+        } else {
+          // Zero-delay maximum throughput
+          sendWorkerRequest(targetUrl, 0);
+        }
+      }
+    }
+
+    function calculatePercentile(arr, p) {
+      if (arr.length === 0) return 0;
+      const sorted = [...arr].sort((a, b) => a - b);
+      const index = Math.ceil((p / 100) * sorted.length) - 1;
+      return sorted[Math.max(0, index)];
+    }
+
+    function updateMetrics() {
+      const elapsedSec = (Date.now() - startTime) / 1000;
+      const rps = elapsedSec > 0 ? (totalRequests / elapsedSec).toFixed(1) : 0;
+      if (parseFloat(rps) > peakRps) peakRps = parseFloat(rps);
+
+      const avgLatency = responseTimes.length > 0
+        ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length)
+        : 0;
+      const p95Latency = calculatePercentile(responseTimes, 95);
+      const errorRate = totalRequests > 0 ? ((failedRequests / totalRequests) * 100).toFixed(1) : 0;
+
+      document.getElementById('statTotal').textContent = totalRequests.toLocaleString();
+      document.getElementById('statRps').textContent = rps;
+      document.getElementById('statLatency').textContent = `${avgLatency} ms`;
+      document.getElementById('statP95').textContent = `${p95Latency} ms`;
+
+      // Latency color dynamically shifts
+      const latencyElem = document.getElementById('statLatency');
+      latencyElem.className = 'stat-value ' + (avgLatency < 50 ? 'value-green' : avgLatency < 250 ? 'value-blue' : avgLatency < 600 ? 'value-amber' : 'value-red');
+
+      // Error rate color
+      const errorElem = document.getElementById('statErrors');
+      errorElem.textContent = `${errorRate}%`;
+      errorElem.className = 'stat-value ' + (parseFloat(errorRate) === 0 ? 'value-green' : parseFloat(errorRate) < 5 ? 'value-amber' : 'value-red');
+
+      // Cache ratio
+      const cacheMode = document.getElementById('cacheMode').value;
+      if (cacheMode === 'cached') {
+        const hitPct = totalRequests > 0 ? Math.round((cacheHits / totalRequests) * 100) : 0;
+        document.getElementById('statCache').innerHTML = `<span class="${hitPct >= 70 ? 'value-green' : 'value-amber'}">HIT ${hitPct}%</span>`;
+      } else {
+        document.getElementById('statCache').innerHTML = `<span class="value-purple">BYPASS</span>`;
+      }
+
+      // Status codes counters
+      document.getElementById('stat2xx').textContent = count2xx;
+      document.getElementById('stat3xx').textContent = count3xx;
+      document.getElementById('stat4xx').textContent = count4xx;
+      document.getElementById('stat5xx').textContent = count5xx;
+
+      // Update Chart every 6 requests
+      if (totalRequests % 6 === 0 && isRunning) {
+        const label = `${Math.round(elapsedSec)}s`;
+        chart.data.labels.push(label);
+        chart.data.datasets[0].data.push(avgLatency);
+        if (chart.data.labels.length > 25) {
+          chart.data.labels.shift();
+          chart.data.datasets[0].data.shift();
+        }
+        chart.update();
+      }
+    }
+
+    function startLoadTest() {
+      const targetUrl = getTargetUrl();
+      const concurrency = parseInt(document.getElementById('concurrency').value) || 10;
+      const duration = parseInt(document.getElementById('duration').value) || 15;
+      const delay = parseInt(document.getElementById('delay').value) || 0;
+      const cacheMode = document.getElementById('cacheMode').value;
+      const httpMethod = document.getElementById('httpMethod').value;
+
+      isRunning = true;
+      totalRequests = 0;
+      successfulRequests = 0;
+      failedRequests = 0;
+      cacheHits = 0;
+      cacheMisses = 0;
+      count2xx = 0;
+      count3xx = 0;
+      count4xx = 0;
+      count5xx = 0;
+      responseTimes = [];
+      peakRps = 0;
+      startTime = Date.now();
+
+      chart.data.labels = [];
+      chart.data.datasets[0].data = [];
+      chart.update();
+
+      document.getElementById('startBtn').style.display = 'none';
+      document.getElementById('stopBtn').style.display = 'flex';
+      document.getElementById('liveIndicator').textContent = 'RUNNING ⚡';
+      document.getElementById('liveIndicator').style.color = '#38bdf8';
+
+      // Setup Progress Bar
+      const progressContainer = document.getElementById('progressContainer');
+      const progressBar = document.getElementById('progressBar');
+      const progressTime = document.getElementById('progressTime');
+      progressContainer.style.display = 'block';
+      progressBar.style.width = '0%';
+
+      if (progressTimer) clearInterval(progressTimer);
+      progressTimer = setInterval(() => {
+        if (!isRunning) {
+          clearInterval(progressTimer);
+          return;
+        }
+        const elapsed = (Date.now() - startTime) / 1000;
+        const pct = Math.min(100, Math.round((elapsed / duration) * 100));
+        progressBar.style.width = `${pct}%`;
+        progressTime.textContent = `${Math.round(elapsed)}s / ${duration}s`;
+      }, 250);
+
+      logMessage(`--- Initiating Load Test ---`, 'info');
+      logMessage(`Target: ${httpMethod} ${targetUrl} [Mode: ${cacheMode.toUpperCase()}]`, 'info');
+      logMessage(`Concurrency: ${concurrency} virtual users | Duration: ${duration}s | Delay: ${delay}ms`, 'info');
+
+      // Spawn virtual workers
+      for (let i = 0; i < concurrency; i++) {
+        sendWorkerRequest(targetUrl, delay);
+      }
+
+      // Schedule automated stop
+      setTimeout(() => {
+        if (isRunning) {
+          stopLoadTest(true);
+        }
+      }, duration * 1000);
+    }
+
+    function stopLoadTest(naturalEnd = false) {
+      if (!isRunning) return;
+      isRunning = false;
+
+      if (progressTimer) {
+        clearInterval(progressTimer);
+        progressTimer = null;
+      }
+
+      document.getElementById('startBtn').style.display = 'flex';
+      document.getElementById('stopBtn').style.display = 'none';
+      document.getElementById('progressBar').style.width = '100%';
+      document.getElementById('liveIndicator').textContent = 'COMPLETED';
+      document.getElementById('liveIndicator').style.color = '#34d399';
+
+      const durationSec = Math.max(0.1, (Date.now() - startTime) / 1000);
+      const rps = (totalRequests / durationSec).toFixed(1);
+      const avgLatency = responseTimes.length > 0
+        ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length)
+        : 0;
+      const minLatency = responseTimes.length > 0 ? Math.min(...responseTimes) : 0;
+      const maxLatency = responseTimes.length > 0 ? Math.max(...responseTimes) : 0;
+      const p95Latency = calculatePercentile(responseTimes, 95);
+      const errorRate = totalRequests > 0 ? ((failedRequests / totalRequests) * 100).toFixed(1) : 0;
+      const hitPct = totalRequests > 0 ? Math.round((cacheHits / totalRequests) * 100) : 0;
+      const cacheMode = document.getElementById('cacheMode').value;
+      const targetUrl = getTargetUrl();
+
+      logMessage(`Test finished: ${totalRequests} requests completed in ${durationSec.toFixed(1)}s (Avg ${rps} req/s).`, 'success');
+
+      // Save summary data
+      lastSummaryData = {
+        endpoint: targetUrl,
+        cacheMode: cacheMode,
+        duration: durationSec.toFixed(1),
+        total: totalRequests,
+        rps: rps,
+        peakRps: peakRps.toFixed(1),
+        avgLatency: avgLatency,
+        minLatency: minLatency,
+        maxLatency: maxLatency,
+        p95Latency: p95Latency,
+        cacheRatio: cacheMode === 'cached' ? `${hitPct}% (${cacheHits} hits / ${cacheMisses} misses)` : 'BYPASS (Raw DB)',
+        success2xx: count2xx,
+        errors: `${failedRequests} (${errorRate}%)`
+      };
+
+      document.getElementById('viewSummaryBtn').style.display = 'inline-flex';
+      openSummaryModal();
+    }
+
+    function openSummaryModal() {
+      if (!lastSummaryData) return;
+
+      document.getElementById('summaryEndpointDesc').innerHTML = `
+        <span style="color: var(--accent-blue);">Target:</span> <code>${lastSummaryData.endpoint}</code>
+        <span style="margin-left: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">(${lastSummaryData.cacheMode === 'cached' ? 'OpenLiteSpeed LSCache' : 'Bypass / Live DB'})</span>
+      `;
+      document.getElementById('sumDuration').textContent = `${lastSummaryData.duration}s`;
+      document.getElementById('sumTotal').textContent = lastSummaryData.total.toLocaleString();
+      document.getElementById('sumRps').textContent = `${lastSummaryData.rps} req/sec`;
+      document.getElementById('sumPeakRps').textContent = `${lastSummaryData.peakRps} req/sec`;
+      document.getElementById('sumAvgLatency').textContent = `${lastSummaryData.avgLatency} ms`;
+      document.getElementById('sumMinMaxLatency').textContent = `${lastSummaryData.minLatency} ms / ${lastSummaryData.maxLatency} ms`;
+      document.getElementById('sumP95Latency').textContent = `${lastSummaryData.p95Latency} ms`;
+      document.getElementById('sumCacheRatio').textContent = lastSummaryData.cacheRatio;
+      document.getElementById('sum2xx').textContent = lastSummaryData.success2xx.toLocaleString();
+      document.getElementById('sumErrors').textContent = lastSummaryData.errors;
+
+      // Generate qualitative verdict
+      const verdictBox = document.getElementById('summaryVerdict');
+      if (lastSummaryData.cacheMode === 'cached' && lastSummaryData.avgLatency <= 10) {
+        verdictBox.innerHTML = `<strong>⚡ Lightning Fast:</strong> OpenLiteSpeed LSCache is serving responses from RAM at sub-10ms latency! Edge caching is working optimally.`;
+        verdictBox.style.borderColor = 'rgba(52, 211, 153, 0.4)';
+        verdictBox.style.background = 'rgba(52, 211, 153, 0.1)';
+      } else if (lastSummaryData.avgLatency <= 120) {
+        verdictBox.innerHTML = `<strong>🚀 High Performance:</strong> Average response time (${lastSummaryData.avgLatency}ms) and error rate (${lastSummaryData.errors}) indicate strong server capacity.`;
+        verdictBox.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+        verdictBox.style.background = 'rgba(56, 189, 248, 0.1)';
+      } else {
+        verdictBox.innerHTML = `<strong>⚠️ Latency Observed:</strong> Average response time is ${lastSummaryData.avgLatency}ms. If testing in 'Not Cached' mode, consider optimizing database queries or index lookups.`;
+        verdictBox.style.borderColor = 'rgba(251, 191, 36, 0.4)';
+        verdictBox.style.background = 'rgba(251, 191, 36, 0.1)';
+      }
+
+      document.getElementById('summaryModal').style.display = 'flex';
+    }
+
+    function closeSummaryModal() {
+      document.getElementById('summaryModal').style.display = 'none';
+    }
+
+    function copySummaryText() {
+      if (!lastSummaryData) return;
+      const text = `
+=== API Capacity & Load Test Report ===
+Endpoint: ${lastSummaryData.endpoint}
+Cache Mode: ${lastSummaryData.cacheMode}
+Duration: ${lastSummaryData.duration}s
+Total Requests: ${lastSummaryData.total}
+Avg Throughput: ${lastSummaryData.rps} req/s (Peak: ${lastSummaryData.peakRps} req/s)
+Latency: Avg ${lastSummaryData.avgLatency}ms | Min ${lastSummaryData.minLatency}ms | Max ${lastSummaryData.maxLatency}ms | P95 ${lastSummaryData.p95Latency}ms
+Cache Stats: ${lastSummaryData.cacheRatio}
+HTTP 2xx: ${lastSummaryData.success2xx} | Errors: ${lastSummaryData.errors}
+Generated via Django Admin Load Testing Console.
+      `.trim();
+
+      navigator.clipboard.writeText(text).then(() => {
+        logMessage('Report copied to clipboard.', 'success');
+        alert('Benchmark report copied to clipboard!');
+      }).catch(err => {
+        console.error('Could not copy text: ', err);
+      });
+    }
+
+    // Close modal on backdrop click
+    window.onclick = function(event) {
+      const modal = document.getElementById('summaryModal');
+      if (event.target === modal) {
+        closeSummaryModal();
+      }
+    };
+  </script>
+</body>
+</html>

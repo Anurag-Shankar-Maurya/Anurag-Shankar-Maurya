@@ -350,13 +350,15 @@ class BlogPostDetailSerializer(BlogPostSerializer):
     """Detailed blog post serializer with SEO data"""
     images = ImageSerializer(many=True, read_only=True)
     og_image = serializers.SerializerMethodField()
+    previous_post = serializers.SerializerMethodField()
+    next_post = serializers.SerializerMethodField()
     
     class Meta(BlogPostSerializer.Meta):
         fields = BlogPostSerializer.Meta.fields + [
             'images', 'allow_comments',
             'meta_title', 'meta_description', 'meta_keywords',
             'canonical_url', 'og_title', 'og_description', 'og_image',
-            'schema_type'
+            'schema_type', 'previous_post', 'next_post'
         ]
     
     def get_og_image(self, obj):
@@ -365,6 +367,40 @@ class BlogPostDetailSerializer(BlogPostSerializer):
             return obj.og_image_file.url
         if getattr(obj, 'og_image_url', None):
             return obj.og_image_url
+        return None
+
+    def get_previous_post(self, obj):
+        """Return chronologically previous (older) published post"""
+        from django.db.models import Q
+        if not obj.published_at:
+            prev_obj = BlogPost.objects.filter(status='published', id__lt=obj.id).order_by('-id').first()
+        else:
+            prev_obj = BlogPost.objects.filter(
+                status='published'
+            ).filter(
+                Q(published_at__lt=obj.published_at) |
+                Q(published_at=obj.published_at, id__lt=obj.id)
+            ).order_by('-published_at', '-id').first()
+
+        if prev_obj:
+            return {'title': prev_obj.title, 'slug': prev_obj.slug}
+        return None
+
+    def get_next_post(self, obj):
+        """Return chronologically next (newer) published post"""
+        from django.db.models import Q
+        if not obj.published_at:
+            next_obj = BlogPost.objects.filter(status='published', id__gt=obj.id).order_by('id').first()
+        else:
+            next_obj = BlogPost.objects.filter(
+                status='published'
+            ).filter(
+                Q(published_at__gt=obj.published_at) |
+                Q(published_at=obj.published_at, id__gt=obj.id)
+            ).order_by('published_at', 'id').first()
+
+        if next_obj:
+            return {'title': next_obj.title, 'slug': next_obj.slug}
         return None
 
 

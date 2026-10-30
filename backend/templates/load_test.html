@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,6 +61,7 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
     .nav-btn {
@@ -74,6 +76,7 @@
       color: var(--text-main);
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--card-border);
+      cursor: pointer;
       transition: all 0.2s ease;
     }
 
@@ -134,7 +137,7 @@
     header p {
       color: var(--text-muted);
       font-size: 1rem;
-      max-width: 650px;
+      max-width: 680px;
       margin: 0 auto;
       line-height: 1.5;
     }
@@ -183,7 +186,13 @@
 
     /* Form Inputs */
     .form-group {
-      margin-bottom: 1.1rem;
+      margin-bottom: 1.05rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
     }
 
     label {
@@ -196,12 +205,12 @@
 
     input, select, textarea {
       width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 0.7rem 0.9rem;
       background: rgba(10, 15, 29, 0.8);
       border: 1px solid var(--card-border);
       border-radius: 8px;
       color: var(--text-main);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-family: inherit;
       outline: none;
       transition: all 0.2s ease;
@@ -223,6 +232,22 @@
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent-blue);
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+      accent-color: var(--accent-blue);
     }
 
     .field-hint {
@@ -248,7 +273,7 @@
       border: none;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 0.98rem;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
@@ -263,10 +288,15 @@
       box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
     }
 
-    .btn-start:hover {
+    .btn-start:hover:not(:disabled) {
       opacity: 0.95;
       transform: translateY(-1px);
       box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+    }
+
+    .btn-start:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .btn-stop {
@@ -296,8 +326,8 @@
 
     /* Progress Bar */
     .progress-container {
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
       display: none;
     }
 
@@ -322,7 +352,7 @@
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
-      transition: width 0.3s ease;
+      transition: width 0.25s linear;
       border-radius: 999px;
     }
 
@@ -334,7 +364,7 @@
       margin-bottom: 1.25rem;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1150px) {
       .stats-grid {
         grid-template-columns: repeat(3, 1fr);
       }
@@ -371,7 +401,7 @@
     }
 
     .stat-value {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 700;
       font-family: 'JetBrains Mono', monospace;
     }
@@ -382,10 +412,11 @@
     .value-amber { color: var(--accent-amber); }
     .value-red { color: var(--accent-red); }
 
-    /* HTTP Status Badges */
+    /* HTTP Status & Bandwidth Bar */
     .status-codes-bar {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 0.75rem;
       padding: 0.6rem 1rem;
       background: rgba(10, 15, 29, 0.5);
@@ -394,6 +425,13 @@
       margin-bottom: 1.25rem;
       font-size: 0.75rem;
       font-family: 'JetBrains Mono', monospace;
+      flex-wrap: wrap;
+    }
+
+    .status-group {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
       flex-wrap: wrap;
     }
 
@@ -467,7 +505,7 @@
       padding: 0.85rem 1rem;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
-      height: 160px;
+      height: 165px;
       overflow-y: auto;
       scroll-behavior: smooth;
     }
@@ -584,13 +622,13 @@
     <!-- Top Bar Navigation -->
     <div class="top-bar">
       <div class="nav-links">
-        <a href="/admin/" class="nav-btn admin-back">
+        <a href="{% url 'admin:index' %}" class="nav-btn admin-back">
           <span>←</span> Back to Django Admin
         </a>
-        <a href="/api/swagger/" target="_blank" class="nav-btn">
+        <a href="/api/swagger/" target="_blank" rel="noopener" class="nav-btn">
           <span>📖</span> Swagger API
         </a>
-        <a href="/api/redoc/" target="_blank" class="nav-btn">
+        <a href="/api/redoc/" target="_blank" rel="noopener" class="nav-btn">
           <span>📄</span> ReDoc
         </a>
       </div>
@@ -604,8 +642,8 @@
 
     <!-- Header -->
     <header>
-      <h1>⚡ API Server Capacity & Load Tester</h1>
-      <p>Benchmark your Django API throughput and test OpenLiteSpeed LSCache hit speed directly in real time.</p>
+      <h1>⚡ API Server Capacity &amp; Load Tester</h1>
+      <p>Benchmark your Django API throughput, P95 latency, and OpenLiteSpeed LSCache RAM hit rates in real time.</p>
     </header>
 
     <div class="grid">
@@ -667,42 +705,47 @@
           <label for="cacheMode">OpenLiteSpeed Cache Mode</label>
           <select id="cacheMode">
             <option value="cached" selected>⚡ Cached (Test OpenLiteSpeed LSCache RAM Speed)</option>
-            <option value="bypassed">🐢 Not Cached (Bypass Cache / Test Live Django DB & CPU)</option>
+            <option value="bypassed">🐢 Not Cached (Bypass Cache / Test Live Django DB &amp; CPU)</option>
           </select>
+          <label class="checkbox-group" id="warmCacheWrapper">
+            <input type="checkbox" id="warmCacheToggle" checked>
+            <span>Pre-warm edge cache with 1 probe request before spawning workers</span>
+          </label>
           <small class="field-hint">
-            <b>Cached:</b> Omits session cookies (<code>credentials: 'omit'</code>) so OpenLiteSpeed serves public RAM cache hits (~2ms).<br>
-            <b>Not Cached:</b> Appends unique timestamps (<code>_t</code>) &amp; bypass headers to force full Django views and DB execution.
+            <b>Cached:</b> Uses <code>cache: 'no-store'</code> locally &amp; omits cookies so OpenLiteSpeed serves real RAM hits without browser-disk spoofing.<br>
+            <b>Not Cached:</b> Appends unique <code>_t</code> timestamps to force full Django ORM &amp; view execution.
           </small>
         </div>
 
-        <!-- HTTP Method -->
-        <div class="form-group">
-          <label for="httpMethod">HTTP Method</label>
-          <select id="httpMethod">
-            <option value="GET" selected>GET (Standard Data Fetch)</option>
-            <option value="HEAD">HEAD (Headers Only / Ultra-Fast Probe)</option>
-          </select>
+        <!-- HTTP Method & Concurrency -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="httpMethod">HTTP Method</label>
+            <select id="httpMethod">
+              <option value="GET" selected>GET (Full Body)</option>
+              <option value="HEAD">HEAD (Headers)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="concurrency">Virtual Users</label>
+            <input type="number" id="concurrency" value="10" min="1" max="100">
+          </div>
         </div>
 
-        <!-- Virtual Users -->
-        <div class="form-group">
-          <label for="concurrency">Concurrent Virtual Users</label>
-          <input type="number" id="concurrency" value="10" min="1" max="100">
-          <small class="field-hint">Simultaneous parallel worker threads sending requests.</small>
+        <!-- Duration & Delay -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="duration">Duration (sec)</label>
+            <input type="number" id="duration" value="15" min="5" max="120">
+          </div>
+          <div class="form-group">
+            <label for="delay">Worker Delay (ms)</label>
+            <input type="number" id="delay" value="50" min="0" step="25">
+          </div>
         </div>
-
-        <!-- Duration -->
-        <div class="form-group">
-          <label for="duration">Duration (seconds)</label>
-          <input type="number" id="duration" value="15" min="5" max="120">
-        </div>
-
-        <!-- Delay -->
-        <div class="form-group">
-          <label for="delay">Delay between worker requests (ms)</label>
-          <input type="number" id="delay" value="50" min="0" step="25">
-          <small class="field-hint">Set to <code>0</code> for max stress/throughput, or <code>50-100ms</code> for standard traffic simulation.</small>
-        </div>
+        <small class="field-hint" style="margin-top: -0.5rem; margin-bottom: 1rem;">
+          Set Delay to <code>0</code> for max throughput stress test, or <code>50ms</code> for realistic user pacing.
+        </small>
 
         <!-- Live Progress Bar -->
         <div id="progressContainer" class="progress-container">
@@ -761,28 +804,34 @@
           </div>
         </div>
 
-        <!-- Status Codes Breakdown Pill Bar -->
+        <!-- Status Codes Breakdown & Data Transferred Pill Bar -->
         <div class="status-codes-bar">
-          <span style="color: var(--text-muted); margin-right: 0.25rem;">HTTP Status:</span>
-          <div class="status-code-item">
-            <span class="status-dot dot-2xx"></span>
-            <span>2xx OK:</span>
-            <strong id="stat2xx" class="value-green">0</strong>
+          <div class="status-group">
+            <span style="color: var(--text-muted);">HTTP Status:</span>
+            <div class="status-code-item">
+              <span class="status-dot dot-2xx"></span>
+              <span>2xx OK:</span>
+              <strong id="stat2xx" class="value-green">0</strong>
+            </div>
+            <div class="status-code-item">
+              <span class="status-dot dot-3xx"></span>
+              <span>3xx Redir:</span>
+              <strong id="stat3xx" class="value-blue">0</strong>
+            </div>
+            <div class="status-code-item">
+              <span class="status-dot dot-4xx"></span>
+              <span>4xx Client:</span>
+              <strong id="stat4xx" class="value-amber">0</strong>
+            </div>
+            <div class="status-code-item">
+              <span class="status-dot dot-5xx"></span>
+              <span>5xx Server:</span>
+              <strong id="stat5xx" class="value-red">0</strong>
+            </div>
           </div>
-          <div class="status-code-item">
-            <span class="status-dot dot-3xx"></span>
-            <span>3xx Redir:</span>
-            <strong id="stat3xx" class="value-blue">0</strong>
-          </div>
-          <div class="status-code-item">
-            <span class="status-dot dot-4xx"></span>
-            <span>4xx Client:</span>
-            <strong id="stat4xx" class="value-amber">0</strong>
-          </div>
-          <div class="status-code-item">
-            <span class="status-dot dot-5xx"></span>
-            <span>5xx Server:</span>
-            <strong id="stat5xx" class="value-red">0</strong>
+          <div class="status-code-item" style="color: var(--text-muted);">
+            <span>Payload Downloaded:</span>
+            <strong id="statBytes" class="value-blue">0 KB</strong>
           </div>
         </div>
 
@@ -797,7 +846,7 @@
             <span>💻</span> Execution Event Log
           </div>
           <div class="console-actions">
-            <label style="display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; color: var(--text-sub); cursor: pointer;">
+            <label style="display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; color: var(--text-sub); cursor: pointer; margin: 0;">
               <input type="checkbox" id="autoScrollToggle" checked style="width: auto; margin: 0;"> Auto-scroll
             </label>
             <button class="console-btn" onclick="clearConsole()">Clear</button>
@@ -836,7 +885,7 @@
               <td id="sumRps">0 req/s</td>
             </tr>
             <tr>
-              <td>Peak Throughput:</td>
+              <td>Peak Throughput (1s window):</td>
               <td id="sumPeakRps">0 req/s</td>
             </tr>
             <tr>
@@ -856,6 +905,10 @@
               <td id="sumCacheRatio">0%</td>
             </tr>
             <tr>
+              <td>Total Data Transferred:</td>
+              <td id="sumBytes">0 KB</td>
+            </tr>
+            <tr>
               <td>HTTP 2xx Successes:</td>
               <td id="sum2xx">0</td>
             </tr>
@@ -871,7 +924,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="copySummaryText()">
+        <button id="copyReportBtn" class="btn btn-secondary" onclick="copySummaryText()">
           📋 Copy Report
         </button>
         <button class="btn btn-secondary" onclick="closeSummaryModal()">
@@ -883,9 +936,12 @@
 
   <script>
     let isRunning = false;
+    let isDraining = false;
+    let inFlightRequests = 0;
     let totalRequests = 0;
     let successfulRequests = 0;
     let failedRequests = 0;
+    let totalBytes = 0;
     let cacheHits = 0;
     let cacheMisses = 0;
     let count2xx = 0;
@@ -893,39 +949,60 @@
     let count4xx = 0;
     let count5xx = 0;
     let responseTimes = [];
+    let intervalTimes = [];
     let startTime = null;
     let chart = null;
     let peakRps = 0;
+    let lastTickRequests = 0;
     let progressTimer = null;
+    let stopTimeout = null;
+    let drainTimeout = null;
+    let abortController = null;
     let lastSummaryData = null;
 
-    // Initialize Chart.js
+    // Initialize Dual-Line Chart.js (Interval Avg + P95)
     const ctx = document.getElementById('latencyChart').getContext('2d');
-    const gradient = ctx.createLinearGradient(0, 0, 0, 240);
-    gradient.addColorStop(0, 'rgba(56, 189, 248, 0.35)');
-    gradient.addColorStop(1, 'rgba(56, 189, 248, 0.01)');
+    const blueGradient = ctx.createLinearGradient(0, 0, 0, 240);
+    blueGradient.addColorStop(0, 'rgba(56, 189, 248, 0.30)');
+    blueGradient.addColorStop(1, 'rgba(56, 189, 248, 0.01)');
 
     chart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: [],
-        datasets: [{
-          label: 'Avg Latency (ms)',
-          borderColor: '#38bdf8',
-          borderWidth: 2,
-          pointRadius: 2,
-          pointHoverRadius: 4,
-          pointBackgroundColor: '#38bdf8',
-          backgroundColor: gradient,
-          fill: true,
-          tension: 0.3,
-          data: []
-        }]
+        datasets: [
+          {
+            label: '1s Rolling Avg (ms)',
+            borderColor: '#38bdf8',
+            borderWidth: 2,
+            pointRadius: 2,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#38bdf8',
+            backgroundColor: blueGradient,
+            fill: true,
+            tension: 0.3,
+            data: []
+          },
+          {
+            label: 'P95 Latency (ms)',
+            borderColor: '#fbbf24',
+            borderWidth: 1.5,
+            borderDash: [4, 4],
+            pointRadius: 0,
+            fill: false,
+            tension: 0.3,
+            data: []
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         animation: { duration: 0 },
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
         scales: {
           x: {
             ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
@@ -976,6 +1053,14 @@
       return select.value;
     }
 
+    function formatBytes(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      const kb = bytes / 1024;
+      if (kb < 1024) return `${kb.toFixed(1)} KB`;
+      const mb = kb / 1024;
+      return `${mb.toFixed(2)} MB`;
+    }
+
     function logMessage(text, type = 'info') {
       const consoleNode = document.getElementById('logConsole');
       const line = document.createElement('div');
@@ -993,7 +1078,6 @@
       line.appendChild(textSpan);
       consoleNode.appendChild(line);
 
-      // Keep console DOM clean (max 200 lines)
       if (consoleNode.children.length > 200) {
         consoleNode.removeChild(consoleNode.firstChild);
       }
@@ -1009,8 +1093,9 @@
       logMessage('Console logs cleared.', 'info');
     }
 
-    async function sendWorkerRequest(targetUrl, delay) {
-      if (!isRunning) return;
+    async function sendWorkerRequest(targetUrl, delay, signal) {
+      // Do not start a new request if the timer has ended or was aborted
+      if (!isRunning || isDraining || signal.aborted) return;
 
       const cacheMode = document.getElementById('cacheMode').value;
       const httpMethod = document.getElementById('httpMethod').value;
@@ -1021,28 +1106,37 @@
         fetchUrl += `${sep}_t=${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
       }
 
+      inFlightRequests++;
       const reqStart = performance.now();
+
       try {
-        // credentials: 'omit' ensures session cookies are NOT sent,
-        // allowing OpenLiteSpeed to serve real public cached responses!
         const response = await fetch(fetchUrl, {
           method: httpMethod,
           credentials: 'omit',
+          cache: 'no-store',
+          signal: signal,
           headers: cacheMode === 'bypassed'
             ? { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
             : {}
         });
-        const reqEnd = performance.now();
-        const duration = Math.round(reqEnd - reqStart);
 
-        // Status code counting
+        let byteLength = 0;
+        if (httpMethod !== 'HEAD') {
+          const buffer = await response.arrayBuffer();
+          byteLength = buffer.byteLength;
+        }
+
+        if (signal.aborted) return;
+
+        const duration = Math.round(performance.now() - reqStart);
+        totalBytes += byteLength;
+
         const status = response.status;
         if (status >= 200 && status < 300) count2xx++;
         else if (status >= 300 && status < 400) count3xx++;
         else if (status >= 400 && status < 500) count4xx++;
         else if (status >= 500) count5xx++;
 
-        // OpenLiteSpeed / CDN Cache Header Inspection
         const lscache = (response.headers.get('x-litespeed-cache') || '').toLowerCase();
         const cfcache = (response.headers.get('cf-cache-status') || '').toLowerCase();
         const xcache = (response.headers.get('x-cache') || '').toLowerCase();
@@ -1059,33 +1153,41 @@
         if (response.ok) {
           successfulRequests++;
           responseTimes.push(duration);
+          intervalTimes.push(duration);
         } else {
           failedRequests++;
         }
 
-        if (totalRequests <= 5 || totalRequests % 50 === 0) {
+        if (totalRequests <= 5 || totalRequests % 50 === 0 || isDraining) {
           const cacheTag = isHit ? 'HIT (OLS Cache)' : (cacheMode === 'bypassed' ? 'BYPASS' : 'MISS');
           const logType = response.ok ? (isHit ? 'hit' : 'success') : 'error';
-          logMessage(`${httpMethod} ${response.status} ${targetUrl} - ${duration}ms [${cacheTag}]`, logType);
+          logMessage(`${httpMethod} ${response.status} ${targetUrl} — ${duration}ms [${cacheTag}]`, logType);
         }
       } catch (err) {
-        totalRequests++;
-        failedRequests++;
-        count5xx++;
-        if (failedRequests <= 3) {
-          logMessage(`Network Error: ${err.message || 'Connection refused or blocked'}`, 'error');
+        if (err.name !== 'AbortError' && !signal.aborted) {
+          totalRequests++;
+          failedRequests++;
+          count5xx++;
+          if (failedRequests <= 5) {
+            logMessage(`Network Error: ${err.message || 'Connection refused or blocked'}`, 'error');
+          }
+        }
+      } finally {
+        inFlightRequests = Math.max(0, inFlightRequests - 1);
+
+        // If we are waiting for in-flight requests to finish at the end of the test:
+        if (isDraining) {
+          document.getElementById('liveIndicator').textContent = `DRAINING (${inFlightRequests} left)...`;
+          if (inFlightRequests === 0) {
+            finalizeLoadTest();
+          }
+          return;
         }
       }
 
-      updateMetrics();
-
-      if (isRunning) {
-        if (delay > 0) {
-          setTimeout(() => sendWorkerRequest(targetUrl, delay), delay);
-        } else {
-          // Zero-delay maximum throughput
-          sendWorkerRequest(targetUrl, 0);
-        }
+      // Schedule next request only if test is still actively running
+      if (isRunning && !isDraining && !signal.aborted) {
+        setTimeout(() => sendWorkerRequest(targetUrl, delay, signal), Math.max(0, delay));
       }
     }
 
@@ -1096,10 +1198,19 @@
       return sorted[Math.max(0, index)];
     }
 
-    function updateMetrics() {
-      const elapsedSec = (Date.now() - startTime) / 1000;
-      const rps = elapsedSec > 0 ? (totalRequests / elapsedSec).toFixed(1) : 0;
-      if (parseFloat(rps) > peakRps) peakRps = parseFloat(rps);
+    function getMinMax(arr) {
+      if (arr.length === 0) return { min: 0, max: 0 };
+      let min = arr[0], max = arr[0];
+      for (let i = 1; i < arr.length; i++) {
+        if (arr[i] < min) min = arr[i];
+        if (arr[i] > max) max = arr[i];
+      }
+      return { min, max };
+    }
+
+    function updateMetrics(isOneSecondTick = false) {
+      const elapsedSec = Math.max(0.1, (Date.now() - startTime) / 1000);
+      const rps = (totalRequests / elapsedSec).toFixed(1);
 
       const avgLatency = responseTimes.length > 0
         ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length)
@@ -1111,17 +1222,15 @@
       document.getElementById('statRps').textContent = rps;
       document.getElementById('statLatency').textContent = `${avgLatency} ms`;
       document.getElementById('statP95').textContent = `${p95Latency} ms`;
+      document.getElementById('statBytes').textContent = formatBytes(totalBytes);
 
-      // Latency color dynamically shifts
       const latencyElem = document.getElementById('statLatency');
       latencyElem.className = 'stat-value ' + (avgLatency < 50 ? 'value-green' : avgLatency < 250 ? 'value-blue' : avgLatency < 600 ? 'value-amber' : 'value-red');
 
-      // Error rate color
       const errorElem = document.getElementById('statErrors');
       errorElem.textContent = `${errorRate}%`;
       errorElem.className = 'stat-value ' + (parseFloat(errorRate) === 0 ? 'value-green' : parseFloat(errorRate) < 5 ? 'value-amber' : 'value-red');
 
-      // Cache ratio
       const cacheMode = document.getElementById('cacheMode').value;
       if (cacheMode === 'cached') {
         const hitPct = totalRequests > 0 ? Math.round((cacheHits / totalRequests) * 100) : 0;
@@ -1130,37 +1239,54 @@
         document.getElementById('statCache').innerHTML = `<span class="value-purple">BYPASS</span>`;
       }
 
-      // Status codes counters
       document.getElementById('stat2xx').textContent = count2xx;
       document.getElementById('stat3xx').textContent = count3xx;
       document.getElementById('stat4xx').textContent = count4xx;
       document.getElementById('stat5xx').textContent = count5xx;
 
-      // Update Chart every 6 requests
-      if (totalRequests % 6 === 0 && isRunning) {
+      if (isOneSecondTick && (isRunning || isDraining)) {
+        const currentSecondRequests = totalRequests - lastTickRequests;
+        lastTickRequests = totalRequests;
+        if (currentSecondRequests > peakRps) {
+          peakRps = currentSecondRequests;
+        }
+
+        const intervalAvg = intervalTimes.length > 0
+          ? Math.round(intervalTimes.reduce((a, b) => a + b, 0) / intervalTimes.length)
+          : avgLatency;
+        intervalTimes = [];
+
         const label = `${Math.round(elapsedSec)}s`;
         chart.data.labels.push(label);
-        chart.data.datasets[0].data.push(avgLatency);
-        if (chart.data.labels.length > 25) {
+        chart.data.datasets[0].data.push(intervalAvg);
+        chart.data.datasets[1].data.push(p95Latency);
+
+        if (chart.data.labels.length > 30) {
           chart.data.labels.shift();
           chart.data.datasets[0].data.shift();
+          chart.data.datasets[1].data.shift();
         }
         chart.update();
       }
     }
 
-    function startLoadTest() {
+    async function startLoadTest() {
       const targetUrl = getTargetUrl();
-      const concurrency = parseInt(document.getElementById('concurrency').value) || 10;
-      const duration = parseInt(document.getElementById('duration').value) || 15;
-      const delay = parseInt(document.getElementById('delay').value) || 0;
+      const concurrency = Math.max(1, parseInt(document.getElementById('concurrency').value, 10) || 10);
+      const duration = Math.max(1, parseInt(document.getElementById('duration').value, 10) || 15);
+      const parsedDelay = parseInt(document.getElementById('delay').value, 10);
+      const delay = Number.isNaN(parsedDelay) ? 50 : Math.max(0, parsedDelay);
       const cacheMode = document.getElementById('cacheMode').value;
       const httpMethod = document.getElementById('httpMethod').value;
+      const shouldWarmCache = document.getElementById('warmCacheToggle').checked;
 
       isRunning = true;
+      isDraining = false;
+      inFlightRequests = 0;
       totalRequests = 0;
       successfulRequests = 0;
       failedRequests = 0;
+      totalBytes = 0;
       cacheHits = 0;
       cacheMisses = 0;
       count2xx = 0;
@@ -1168,11 +1294,16 @@
       count4xx = 0;
       count5xx = 0;
       responseTimes = [];
+      intervalTimes = [];
       peakRps = 0;
-      startTime = Date.now();
+      lastTickRequests = 0;
+
+      if (abortController) abortController.abort();
+      abortController = new AbortController();
 
       chart.data.labels = [];
       chart.data.datasets[0].data = [];
+      chart.data.datasets[1].data = [];
       chart.update();
 
       document.getElementById('startBtn').style.display = 'none';
@@ -1180,36 +1311,65 @@
       document.getElementById('liveIndicator').textContent = 'RUNNING ⚡';
       document.getElementById('liveIndicator').style.color = '#38bdf8';
 
-      // Setup Progress Bar
       const progressContainer = document.getElementById('progressContainer');
       const progressBar = document.getElementById('progressBar');
       const progressTime = document.getElementById('progressTime');
+      const progressText = document.getElementById('progressText');
       progressContainer.style.display = 'block';
       progressBar.style.width = '0%';
+      progressText.textContent = 'Testing...';
 
       if (progressTimer) clearInterval(progressTimer);
-      progressTimer = setInterval(() => {
-        if (!isRunning) {
-          clearInterval(progressTimer);
-          return;
-        }
-        const elapsed = (Date.now() - startTime) / 1000;
-        const pct = Math.min(100, Math.round((elapsed / duration) * 100));
-        progressBar.style.width = `${pct}%`;
-        progressTime.textContent = `${Math.round(elapsed)}s / ${duration}s`;
-      }, 250);
+      if (stopTimeout) clearTimeout(stopTimeout);
+      if (drainTimeout) clearTimeout(drainTimeout);
 
       logMessage(`--- Initiating Load Test ---`, 'info');
       logMessage(`Target: ${httpMethod} ${targetUrl} [Mode: ${cacheMode.toUpperCase()}]`, 'info');
-      logMessage(`Concurrency: ${concurrency} virtual users | Duration: ${duration}s | Delay: ${delay}ms`, 'info');
 
-      // Spawn virtual workers
-      for (let i = 0; i < concurrency; i++) {
-        sendWorkerRequest(targetUrl, delay);
+      if (cacheMode === 'cached' && shouldWarmCache) {
+        logMessage(`Pre-warming OpenLiteSpeed LSCache with 1 probe request...`, 'info');
+        try {
+          const warmRes = await fetch(targetUrl, {
+            method: httpMethod,
+            credentials: 'omit',
+            cache: 'no-store',
+            signal: abortController.signal
+          });
+          if (httpMethod !== 'HEAD') await warmRes.arrayBuffer();
+          const olsHeader = warmRes.headers.get('x-litespeed-cache') || 'none';
+          logMessage(`Warm-up probe completed (Status ${warmRes.status}, x-litespeed-cache: ${olsHeader}).`, 'hit');
+        } catch (e) {
+          if (e.name === 'AbortError') return;
+          logMessage(`Warm-up probe failed: ${e.message}`, 'warn');
+        }
       }
 
-      // Schedule automated stop
-      setTimeout(() => {
+      if (!isRunning) return;
+
+      startTime = Date.now();
+      logMessage(`Spawning ${concurrency} concurrent workers for ${duration}s (Delay: ${delay}ms)...`, 'info');
+
+      let tickCount = 0;
+      progressTimer = setInterval(() => {
+        if (!isRunning && !isDraining) {
+          clearInterval(progressTimer);
+          return;
+        }
+        tickCount++;
+        const elapsed = (Date.now() - startTime) / 1000;
+        const pct = Math.min(100, Math.round((elapsed / duration) * 100));
+        progressBar.style.width = `${pct}%`;
+        progressTime.textContent = `${Math.min(duration, Math.round(elapsed))}s / ${duration}s`;
+
+        updateMetrics(tickCount % 4 === 0);
+      }, 250);
+
+      for (let i = 0; i < concurrency; i++) {
+        sendWorkerRequest(targetUrl, delay, abortController.signal);
+      }
+
+      // Natural timer end -> gracefully wait for in-flight requests
+      stopTimeout = setTimeout(() => {
         if (isRunning) {
           stopLoadTest(true);
         }
@@ -1217,17 +1377,59 @@
     }
 
     function stopLoadTest(naturalEnd = false) {
-      if (!isRunning) return;
+      if (!isRunning && !isDraining) return;
       isRunning = false;
+
+      if (stopTimeout) {
+        clearTimeout(stopTimeout);
+        stopTimeout = null;
+      }
+
+      // If natural timer expired and requests are still in-flight, wait for them gracefully
+      if (naturalEnd && inFlightRequests > 0) {
+        isDraining = true;
+        document.getElementById('progressText').textContent = `Waiting for ${inFlightRequests} in-flight responses...`;
+        document.getElementById('liveIndicator').textContent = `DRAINING (${inFlightRequests} left)...`;
+        document.getElementById('liveIndicator').style.color = '#fbbf24';
+        logMessage(`Timer elapsed. Waiting for ${inFlightRequests} in-flight requests to finish...`, 'warn');
+
+        // Safety timeout: wait max 5 seconds for stragglers before hard-aborting
+        drainTimeout = setTimeout(() => {
+          if (isDraining) {
+            logMessage(`Drain timeout (5s) reached. Aborting ${inFlightRequests} slow stragglers.`, 'warn');
+            if (abortController) abortController.abort();
+            finalizeLoadTest();
+          }
+        }, 5000);
+        return;
+      }
+
+      // Otherwise (Manual stop clicked OR 0 requests in flight), abort immediately
+      if (abortController) {
+        abortController.abort();
+      }
+      finalizeLoadTest();
+    }
+
+    function finalizeLoadTest() {
+      isRunning = false;
+      isDraining = false;
 
       if (progressTimer) {
         clearInterval(progressTimer);
         progressTimer = null;
       }
+      if (drainTimeout) {
+        clearTimeout(drainTimeout);
+        drainTimeout = null;
+      }
+
+      updateMetrics(true);
 
       document.getElementById('startBtn').style.display = 'flex';
       document.getElementById('stopBtn').style.display = 'none';
       document.getElementById('progressBar').style.width = '100%';
+      document.getElementById('progressText').textContent = 'Completed';
       document.getElementById('liveIndicator').textContent = 'COMPLETED';
       document.getElementById('liveIndicator').style.color = '#34d399';
 
@@ -1236,8 +1438,7 @@
       const avgLatency = responseTimes.length > 0
         ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length)
         : 0;
-      const minLatency = responseTimes.length > 0 ? Math.min(...responseTimes) : 0;
-      const maxLatency = responseTimes.length > 0 ? Math.max(...responseTimes) : 0;
+      const { min: minLatency, max: maxLatency } = getMinMax(responseTimes);
       const p95Latency = calculatePercentile(responseTimes, 95);
       const errorRate = totalRequests > 0 ? ((failedRequests / totalRequests) * 100).toFixed(1) : 0;
       const hitPct = totalRequests > 0 ? Math.round((cacheHits / totalRequests) * 100) : 0;
@@ -1246,18 +1447,18 @@
 
       logMessage(`Test finished: ${totalRequests} requests completed in ${durationSec.toFixed(1)}s (Avg ${rps} req/s).`, 'success');
 
-      // Save summary data
       lastSummaryData = {
         endpoint: targetUrl,
         cacheMode: cacheMode,
         duration: durationSec.toFixed(1),
         total: totalRequests,
         rps: rps,
-        peakRps: peakRps.toFixed(1),
+        peakRps: Math.max(parseFloat(rps), peakRps).toFixed(1),
         avgLatency: avgLatency,
         minLatency: minLatency,
         maxLatency: maxLatency,
         p95Latency: p95Latency,
+        bytesFormatted: formatBytes(totalBytes),
         cacheRatio: cacheMode === 'cached' ? `${hitPct}% (${cacheHits} hits / ${cacheMisses} misses)` : 'BYPASS (Raw DB)',
         success2xx: count2xx,
         errors: `${failedRequests} (${errorRate}%)`
@@ -1270,10 +1471,10 @@
     function openSummaryModal() {
       if (!lastSummaryData) return;
 
-      document.getElementById('summaryEndpointDesc').innerHTML = `
-        <span style="color: var(--accent-blue);">Target:</span> <code>${lastSummaryData.endpoint}</code>
-        <span style="margin-left: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">(${lastSummaryData.cacheMode === 'cached' ? 'OpenLiteSpeed LSCache' : 'Bypass / Live DB'})</span>
-      `;
+      const descEl = document.getElementById('summaryEndpointDesc');
+      descEl.innerHTML = `<span style="color: var(--accent-blue);">Target:</span> <code id="safeTargetCode"></code> <span style="margin-left: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">(${lastSummaryData.cacheMode === 'cached' ? 'OpenLiteSpeed LSCache' : 'Bypass / Live DB'})</span>`;
+      document.getElementById('safeTargetCode').textContent = lastSummaryData.endpoint;
+
       document.getElementById('sumDuration').textContent = `${lastSummaryData.duration}s`;
       document.getElementById('sumTotal').textContent = lastSummaryData.total.toLocaleString();
       document.getElementById('sumRps').textContent = `${lastSummaryData.rps} req/sec`;
@@ -1282,21 +1483,21 @@
       document.getElementById('sumMinMaxLatency').textContent = `${lastSummaryData.minLatency} ms / ${lastSummaryData.maxLatency} ms`;
       document.getElementById('sumP95Latency').textContent = `${lastSummaryData.p95Latency} ms`;
       document.getElementById('sumCacheRatio').textContent = lastSummaryData.cacheRatio;
+      document.getElementById('sumBytes').textContent = lastSummaryData.bytesFormatted;
       document.getElementById('sum2xx').textContent = lastSummaryData.success2xx.toLocaleString();
       document.getElementById('sumErrors').textContent = lastSummaryData.errors;
 
-      // Generate qualitative verdict
       const verdictBox = document.getElementById('summaryVerdict');
-      if (lastSummaryData.cacheMode === 'cached' && lastSummaryData.avgLatency <= 10) {
-        verdictBox.innerHTML = `<strong>⚡ Lightning Fast:</strong> OpenLiteSpeed LSCache is serving responses from RAM at sub-10ms latency! Edge caching is working optimally.`;
+      if (lastSummaryData.cacheMode === 'cached' && lastSummaryData.avgLatency <= 15) {
+        verdictBox.innerHTML = `<strong>⚡ Lightning Fast:</strong> OpenLiteSpeed LSCache is serving responses from RAM at ${lastSummaryData.avgLatency}ms average latency! Edge caching is working optimally.`;
         verdictBox.style.borderColor = 'rgba(52, 211, 153, 0.4)';
         verdictBox.style.background = 'rgba(52, 211, 153, 0.1)';
       } else if (lastSummaryData.avgLatency <= 120) {
-        verdictBox.innerHTML = `<strong>🚀 High Performance:</strong> Average response time (${lastSummaryData.avgLatency}ms) and error rate (${lastSummaryData.errors}) indicate strong server capacity.`;
+        verdictBox.innerHTML = `<strong>🚀 High Performance:</strong> Average response time (${lastSummaryData.avgLatency}ms) and error rate (${lastSummaryData.errors}) indicate healthy server capacity.`;
         verdictBox.style.borderColor = 'rgba(56, 189, 248, 0.4)';
         verdictBox.style.background = 'rgba(56, 189, 248, 0.1)';
       } else {
-        verdictBox.innerHTML = `<strong>⚠️ Latency Observed:</strong> Average response time is ${lastSummaryData.avgLatency}ms. If testing in 'Not Cached' mode, consider optimizing database queries or index lookups.`;
+        verdictBox.innerHTML = `<strong>⚠️ Latency Observed:</strong> Average response time is ${lastSummaryData.avgLatency}ms (P95: ${lastSummaryData.p95Latency}ms). If testing in 'Not Cached' mode, consider optimizing database queries with <code>select_related</code> / <code>prefetch_related</code>.`;
         verdictBox.style.borderColor = 'rgba(251, 191, 36, 0.4)';
         verdictBox.style.background = 'rgba(251, 191, 36, 0.1)';
       }
@@ -1316,22 +1517,24 @@ Endpoint: ${lastSummaryData.endpoint}
 Cache Mode: ${lastSummaryData.cacheMode}
 Duration: ${lastSummaryData.duration}s
 Total Requests: ${lastSummaryData.total}
-Avg Throughput: ${lastSummaryData.rps} req/s (Peak: ${lastSummaryData.peakRps} req/s)
+Avg Throughput: ${lastSummaryData.rps} req/s (Peak 1s: ${lastSummaryData.peakRps} req/s)
 Latency: Avg ${lastSummaryData.avgLatency}ms | Min ${lastSummaryData.minLatency}ms | Max ${lastSummaryData.maxLatency}ms | P95 ${lastSummaryData.p95Latency}ms
 Cache Stats: ${lastSummaryData.cacheRatio}
+Data Transferred: ${lastSummaryData.bytesFormatted}
 HTTP 2xx: ${lastSummaryData.success2xx} | Errors: ${lastSummaryData.errors}
 Generated via Django Admin Load Testing Console.
       `.trim();
 
+      const copyBtn = document.getElementById('copyReportBtn');
       navigator.clipboard.writeText(text).then(() => {
         logMessage('Report copied to clipboard.', 'success');
-        alert('Benchmark report copied to clipboard!');
+        copyBtn.innerHTML = '✅ Copied!';
+        setTimeout(() => { copyBtn.innerHTML = '📋 Copy Report'; }, 2000);
       }).catch(err => {
         console.error('Could not copy text: ', err);
       });
     }
 
-    // Close modal on backdrop click
     window.onclick = function(event) {
       const modal = document.getElementById('summaryModal');
       if (event.target === modal) {

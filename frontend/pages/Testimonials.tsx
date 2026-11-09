@@ -4,6 +4,7 @@ import { Star, ArrowLeft, Quote, Linkedin, Calendar, Building, User, HelpCircle 
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { MetaTags } from '../components/MetaTags';
+import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { Button } from '../components/Button';
 import { Testimonial, ViewState } from '../types';
 import { api } from '../services/api';
@@ -33,12 +34,21 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
     setLbOpen(true);
   };
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Testimonials & Endorsements | Anurag Shankar Maurya",
+    "description": "What colleagues, managers, and clients say about working with Anurag Shankar Maurya.",
+    "url": "https://www.anuragshankarmaurya.in/testimonials"
+  };
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
       <MetaTags 
         title="Testimonials & Endorsements | Anurag Shankar Maurya" 
         description="What colleagues, managers, and clients say about working with Anurag Shankar Maurya." 
         canonical="https://www.anuragshankarmaurya.in/testimonials"
+        schemaData={schemaData}
       />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none">
@@ -150,17 +160,41 @@ export const TestimonialDetailView: React.FC<{
     );
   }
 
+  const schemaData = test ? {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "name": `Testimonial from ${test.author_name}`,
+    "reviewBody": test.content,
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": test.rating,
+      "bestRating": "5"
+    },
+    "author": {
+      "@type": "Person",
+      "name": test.author_name,
+      "jobTitle": test.author_title
+    },
+    "itemReviewed": {
+      "@type": "Person",
+      "name": "Anurag Shankar Maurya"
+    },
+    "url": `https://www.anuragshankarmaurya.in/testimonials/${test.slug || detailId}`
+  } : undefined;
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
       <MetaTags 
         title={test?.author_name ? `${test.author_name} • Testimonial | Anurag Shankar Maurya` : 'Testimonials | Anurag Shankar Maurya'} 
         description={test?.content} 
-        canonical={`https://www.anuragshankarmaurya.in/testimonials/${id}`}
+        canonical={`https://www.anuragshankarmaurya.in/testimonials/${test?.slug || detailId}`}
         ogImage={test?.author_image} 
+        schemaData={schemaData}
       />
-      <Link to="/testimonials" onClick={() => onNavigate({ type: 'TESTIMONIALS' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
-        <ArrowLeft className="w-4 h-4 mr-2"/> Back to Testimonials
-      </Link>
+      <Breadcrumb 
+        items={generateBreadcrumbs({ type: 'TESTIMONIAL_DETAIL', slug: test?.slug || detailId }, test?.author_name)} 
+        onNavigate={onNavigate} 
+      />
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Left Column: Author Details */}

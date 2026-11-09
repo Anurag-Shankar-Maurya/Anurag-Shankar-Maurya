@@ -5,6 +5,7 @@ import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
+import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { Certificate, ViewState } from '../types';
 import { api } from '../services/api';
 import { SkeletonLoader } from '../components/SkeletonLoader';
@@ -21,12 +22,21 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigat
     setLbOpen(true);
   };
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Certificates & Badges | Anurag Shankar Maurya",
+    "description": "Industry certifications, course credentials, and professional validations achieved by Anurag Shankar Maurya.",
+    "url": "https://www.anuragshankarmaurya.in/certificates"
+  };
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
        <MetaTags 
          title="Certificates & Badges | Anurag Shankar Maurya" 
          description="Industry certifications, course credentials, and professional validations achieved by Anurag Shankar Maurya." 
          canonical="https://www.anuragshankarmaurya.in/certificates"
+         schemaData={schemaData}
        />
        <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Award className="w-8 h-8"/></div>
@@ -117,17 +127,33 @@ export const CertificateDetailView: React.FC<{ slug: string, onNavigate: (view: 
     );
   }
 
+  const schemaData = cert ? {
+    "@context": "https://schema.org",
+    "@type": "EducationalOccupationalCredential",
+    "name": cert.title,
+    "description": cert.description || `Professional certification: ${cert.title} issued by ${cert.issuing_organization}.`,
+    "credentialCategory": "Certificate",
+    "recognizedBy": {
+      "@type": "Organization",
+      "name": cert.issuing_organization
+    },
+    "url": cert.credential_url || `https://www.anuragshankarmaurya.in/certificates/${cert.slug || slug}`,
+    "validIn": cert.credential_id || undefined
+  } : undefined;
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto animate-fade-in-up">
       <MetaTags 
         title={cert?.title ? `${cert.title} | Certificate | Anurag Shankar Maurya` : 'Certificates | Anurag Shankar Maurya'} 
         description={cert?.description || `Professional certification: ${cert.title} issued by ${cert.issuing_organization}.`} 
-        canonical={`https://www.anuragshankarmaurya.in/certificates/${slug}`}
+        canonical={`https://www.anuragshankarmaurya.in/certificates/${cert?.slug || slug}`}
         ogImage={cert?.certificate_image} 
+        schemaData={schemaData}
       />
-      <Link to="/certificates" onClick={() => onNavigate({ type: 'CERTIFICATES' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
-        <ArrowLeft className="w-4 h-4 mr-2"/> Back to List
-      </Link>
+      <Breadcrumb 
+        items={generateBreadcrumbs({ type: 'CERTIFICATE_DETAIL', slug: cert?.slug || slug }, cert?.title)} 
+        onNavigate={onNavigate} 
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
          <div className="order-2 md:order-1">
             <div className="flex items-center gap-4 mb-4">

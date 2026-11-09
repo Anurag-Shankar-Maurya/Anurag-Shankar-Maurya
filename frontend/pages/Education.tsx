@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { GraduationCap, ArrowRight, ArrowLeft, HelpCircle } from 'lucide-react';
 import { MetaTags } from '../components/MetaTags';
+import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { Button } from '../components/Button';
 import Gallery from '../components/Gallery';
 import { Education, ViewState } from '../types';
@@ -9,12 +10,22 @@ import { api } from '../services/api';
 import { SkeletonLoader } from '../components/SkeletonLoader';
 import { EmptyState } from '../components/EmptyState';
 
-export const EducationView: React.FC<{ education: Education[], onNavigate: (view: ViewState) => void }> = ({ education, onNavigate }) => (
+export const EducationView: React.FC<{ education: Education[], onNavigate: (view: ViewState) => void }> = ({ education, onNavigate }) => {
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Education & Credentials | Anurag Shankar Maurya",
+    "description": "Academic background, degrees, coursework, and qualifications of Anurag Shankar Maurya.",
+    "url": "https://www.anuragshankarmaurya.in/education"
+  };
+
+  return (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
     <MetaTags 
       title="Education & Credentials | Anurag Shankar Maurya" 
       description="Academic background, degrees, coursework, and qualifications of Anurag Shankar Maurya." 
       canonical="https://www.anuragshankarmaurya.in/education"
+      schemaData={schemaData}
     />
     <div className="flex items-center gap-4 mb-12">
       <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><GraduationCap className="w-8 h-8"/></div>
@@ -67,7 +78,8 @@ export const EducationView: React.FC<{ education: Education[], onNavigate: (view
       </div>
     )}
   </main>
-);
+  );
+};
 
 export const EducationDetailView: React.FC<{ slug: string, onNavigate: (view: ViewState) => void }> = ({ slug, onNavigate }) => {
   const [education, setEducation] = useState<Education | null>(null);
@@ -93,17 +105,32 @@ export const EducationDetailView: React.FC<{ slug: string, onNavigate: (view: Vi
     );
   }
 
+  const schemaData = education ? {
+    "@context": "https://schema.org",
+    "@type": "EducationalOccupationalCredential",
+    "name": `${education.degree} in ${education.field_of_study}`,
+    "description": education.description,
+    "credentialCategory": "degree",
+    "recognizedBy": {
+      "@type": "EducationalOrganization",
+      "name": education.institution
+    },
+    "url": `https://www.anuragshankarmaurya.in/education/${education.slug || slug}`
+  } : undefined;
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
       <MetaTags 
         title={education?.institution ? `${education.institution} | Education | Anurag Shankar Maurya` : 'Education | Anurag Shankar Maurya'} 
         description={education?.description} 
-        canonical={`https://www.anuragshankarmaurya.in/education/${slug}`}
+        canonical={`https://www.anuragshankarmaurya.in/education/${education?.slug || slug}`}
         ogImage={education.logo}
+        schemaData={schemaData}
       />
-      <Link to="/education" onClick={() => onNavigate({ type: 'EDUCATION' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
-        <ArrowLeft className="w-4 h-4 mr-2"/> Back to Education
-      </Link>
+      <Breadcrumb 
+        items={generateBreadcrumbs({ type: 'EDUCATION_DETAIL', slug: education.slug || slug }, education.degree)} 
+        onNavigate={onNavigate} 
+      />
       <div className="bg-white border border-[#E5E5E5] rounded-[3rem] overflow-hidden shadow-none">
          <div className="h-48 bg-[#F2F2F2] border-b border-[#E5E5E5] relative">
             <div className="absolute bottom-0 left-8 transform translate-y-1/2 rounded-[1.5rem] bg-white border border-[#E5E5E5]">

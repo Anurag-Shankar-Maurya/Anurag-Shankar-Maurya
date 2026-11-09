@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Zap, ArrowLeft, HelpCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
+import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { Skill, ViewState } from '../types';
 import { api } from '../services/api';
 import { Icons, IconName } from '../components/Icons';
@@ -19,12 +20,21 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
 
   const groupKeys = Object.keys(grouped).sort();
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Skills & Expertise | Anurag Shankar Maurya",
+    "description": "A comprehensive list of my technical capabilities including Android, Python, Django, React, AI, and cloud architectures.",
+    "url": "https://www.anuragshankarmaurya.in/skills"
+  };
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
       <MetaTags 
         title="Skills & Expertise | Anurag Shankar Maurya" 
         description="A comprehensive list of my technical capabilities including Android, Python, Django, React, AI, and cloud architectures." 
         canonical="https://www.anuragshankarmaurya.in/skills"
+        schemaData={schemaData}
       />
       <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Zap className="w-8 h-8"/></div>
@@ -104,16 +114,27 @@ export const SkillDetailView: React.FC<{ slug: string, onNavigate: (view: ViewSt
     );
   }
 
+  const schemaData = skill ? {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": skill.name,
+    "description": skill.description || `Technical competency: ${skill.name} (${skill.proficiency}) in ${skill.skill_type}`,
+    "inDefinedTermSet": "Technical Skills & Competencies",
+    "url": `https://www.anuragshankarmaurya.in/skills/${skill.slug || slug}`
+  } : undefined;
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto text-center animate-fade-in-up">
       <MetaTags 
         title={skill?.name ? `${skill.name} | Skills | Anurag Shankar Maurya` : 'Skills | Anurag Shankar Maurya'} 
         description={skill?.description || `Details and practical application of ${skill?.name || 'this skill'} in engineering.`}
-        canonical={`https://www.anuragshankarmaurya.in/skills/${slug}`}
+        canonical={`https://www.anuragshankarmaurya.in/skills/${skill?.slug || slug}`}
+        schemaData={schemaData}
       />
-      <Link to="/skills" onClick={() => onNavigate({ type: 'SKILLS' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-12 hover:pl-2 transition-all">
-        <ArrowLeft className="w-4 h-4 mr-2"/> Back to Skills
-      </Link>
+      <Breadcrumb 
+        items={generateBreadcrumbs({ type: 'SKILL_DETAIL', slug: skill?.slug || slug }, skill?.name)} 
+        onNavigate={onNavigate} 
+      />
       
       <div className="bg-white border border-[#E5E5E5] rounded-[3rem] p-12 relative overflow-hidden group shadow-none">
          

@@ -86,9 +86,22 @@ export const GalleryView: React.FC<{ onNavigate: (view: ViewState) => void }> = 
     { label: 'Blog Posts', value: 'blogpost' },
   ], []);
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    "name": "Visual Gallery | Anurag Shankar Maurya",
+    "description": "Explore the visual narrative of my journey.",
+    "url": "https://www.anuragshankarmaurya.in/gallery"
+  };
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
-      <MetaTags title="Visual Gallery | Anurag Shankar Maurya" description="Explore the visual narrative of my journey." />
+      <MetaTags 
+        title="Visual Gallery | Anurag Shankar Maurya" 
+        description="Explore the visual narrative of my journey." 
+        canonical="https://www.anuragshankarmaurya.in/gallery"
+        schemaData={schemaData}
+      />
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><ImageIcon className="w-8 h-8"/></div>

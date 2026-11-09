@@ -1,6 +1,6 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { Loader2 } from 'lucide-react';
-import { ViewState } from './types';
+import { ViewState, BlogPost } from './types';
 import { usePortfolioData } from './hooks/usePortfolioData';
 import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 
@@ -31,6 +31,59 @@ const TestimonialDetailView = lazy(() => import('./pages/Testimonials').then(m =
 const GalleryView = lazy(() => import('./pages/Gallery').then(m => ({ default: m.GalleryView })));
 
 const LoadingFallback = () => <SkeletonLoader type="home" />;
+
+interface RouteWrapperProps {
+  onNavigate: (view: ViewState) => void;
+}
+
+// Stable detail route wrappers declared outside App so they don't remount on render
+const ProjectDetailRoute: React.FC<RouteWrapperProps> = ({ onNavigate }) => {
+  const { slug } = useParams();
+  if (!slug) return <div>Project not found</div>;
+  return <ProjectDetailView slug={slug} onNavigate={onNavigate} />;
+};
+
+const BlogDetailRoute: React.FC<RouteWrapperProps & { posts: BlogPost[] }> = ({ onNavigate, posts }) => {
+  const { slug } = useParams();
+  if (!slug) return <div>Post not found</div>;
+  return <BlogDetailView slug={slug} onNavigate={onNavigate} posts={posts} />;
+};
+
+const ExperienceDetailRoute: React.FC<RouteWrapperProps> = ({ onNavigate }) => {
+  const { id } = useParams();
+  if (!id) return <div>Not found</div>;
+  return <ExperienceDetailView id={Number(id)} onNavigate={onNavigate} />;
+};
+
+const EducationDetailRoute: React.FC<RouteWrapperProps> = ({ onNavigate }) => {
+  const { slug } = useParams();
+  if (!slug) return <div>Not found</div>;
+  return <EducationDetailView slug={slug} onNavigate={onNavigate} />;
+};
+
+const SkillDetailRoute: React.FC<RouteWrapperProps> = ({ onNavigate }) => {
+  const { slug } = useParams();
+  if (!slug) return <div>Not found</div>;
+  return <SkillDetailView slug={slug} onNavigate={onNavigate} />;
+};
+
+const CertificateDetailRoute: React.FC<RouteWrapperProps> = ({ onNavigate }) => {
+  const { slug } = useParams();
+  if (!slug) return <div>Not found</div>;
+  return <CertificateDetailView slug={slug} onNavigate={onNavigate} />;
+};
+
+const AchievementDetailRoute: React.FC<RouteWrapperProps> = ({ onNavigate }) => {
+  const { slug } = useParams();
+  if (!slug) return <div>Not found</div>;
+  return <AchievementDetailView slug={slug} onNavigate={onNavigate} />;
+};
+
+const TestimonialDetailRoute: React.FC<RouteWrapperProps> = ({ onNavigate }) => {
+  const { slug } = useParams();
+  if (!slug) return <div>Not found</div>;
+  return <TestimonialDetailView slug={slug} onNavigate={onNavigate} />;
+};
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>({ type: 'HOME' });
@@ -91,55 +144,48 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setView(getViewFromPath(location.pathname));
   }, [location.pathname]);
 
-  const navigateTo = (newView: ViewState) => {
+  const navigateTo = useCallback((newView: ViewState) => {
     const path = pathFromView(newView);
-    navigateHook(path);
+    if (location.pathname !== path) {
+      navigateHook(path);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setView(newView);
-  };
+  }, [location.pathname, navigateHook]);
 
   if (loading && !profile) {
     return <LoadingFallback />;
   }
 
-  // small wrappers to extract params for detail routes
-  const ProjectDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Project not found</div>; return <ProjectDetailView slug={slug} onNavigate={navigateTo} />; };
-  const BlogDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Post not found</div>; return <BlogDetailView slug={slug} onNavigate={navigateTo} posts={blogPosts} />; };
-  const ExperienceDetailRoute = () => { const { id } = useParams(); if (!id) return <div>Not found</div>; return <ExperienceDetailView id={Number(id)} onNavigate={navigateTo} />; };
-  const EducationDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <EducationDetailView slug={slug} onNavigate={navigateTo} />; };
-  const SkillDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <SkillDetailView slug={slug} onNavigate={navigateTo} />; };
-  const CertificateDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <CertificateDetailView slug={slug} onNavigate={navigateTo} />; };
-  const AchievementDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <AchievementDetailView slug={slug} onNavigate={navigateTo} />; };
-  const TestimonialDetailRoute = () => { const { slug } = useParams(); if (!slug) return <div>Not found</div>; return <TestimonialDetailView slug={slug} onNavigate={navigateTo} />; };
-
   return (
     <Layout view={view} onNavigate={navigateTo} profile={profile}>
       <ReducedMotionWrapper>
         <Suspense fallback={<SkeletonLoader type="home" />}>
-          <Routes>
+          <Routes location={location}>
             <Route path="/" element={<Suspense fallback={<SkeletonLoader type="home" />}><Home profile={profile} featuredProjects={featuredProjects} blogPosts={blogPosts} skills={skills} experience={experience} education={education} certificates={certificates} achievements={achievements} testimonials={testimonials} galleryImages={images} onNavigate={navigateTo} /></Suspense>} />
             <Route path="/projects" element={<Suspense fallback={<SkeletonLoader type="projects-list" />}><ProjectsView projects={projects} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/projects/:slug" element={<Suspense fallback={<SkeletonLoader type="project-detail" />}><ProjectDetailRoute /></Suspense>} />
+            <Route path="/projects/:slug" element={<Suspense fallback={<SkeletonLoader type="project-detail" />}><ProjectDetailRoute onNavigate={navigateTo} /></Suspense>} />
             <Route path="/blog" element={<Suspense fallback={<SkeletonLoader type="blog-list" />}><BlogView posts={blogPosts} onNavigate={navigateTo} /></Suspense>} />
             <Route path="/blog/category/:categorySlug" element={<Suspense fallback={<SkeletonLoader type="blog-list" />}><BlogView posts={blogPosts} onNavigate={navigateTo} /></Suspense>} />
             <Route path="/blog/tag/:tagSlug" element={<Suspense fallback={<SkeletonLoader type="blog-list" />}><BlogView posts={blogPosts} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/blog/:slug" element={<Suspense fallback={<SkeletonLoader type="blog-detail" />}><BlogDetailRoute /></Suspense>} />
+            <Route path="/blog/:slug" element={<Suspense fallback={<SkeletonLoader type="blog-detail" />}><BlogDetailRoute onNavigate={navigateTo} posts={blogPosts} /></Suspense>} />
             <Route path="/contact" element={<Suspense fallback={<SkeletonLoader type="contact" />}><Contact profile={profile} /></Suspense>} />
             <Route path="/experience" element={<Suspense fallback={<SkeletonLoader type="experience-list" />}><ExperienceView experience={experience} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/experience/:id" element={<Suspense fallback={<SkeletonLoader type="experience-detail" />}><ExperienceDetailRoute /></Suspense>} />
+            <Route path="/experience/:id" element={<Suspense fallback={<SkeletonLoader type="experience-detail" />}><ExperienceDetailRoute onNavigate={navigateTo} /></Suspense>} />
             <Route path="/education" element={<Suspense fallback={<SkeletonLoader type="education-list" />}><EducationView education={education} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/education/:slug" element={<Suspense fallback={<SkeletonLoader type="education-detail" />}><EducationDetailRoute /></Suspense>} />
+            <Route path="/education/:slug" element={<Suspense fallback={<SkeletonLoader type="education-detail" />}><EducationDetailRoute onNavigate={navigateTo} /></Suspense>} />
             <Route path="/skills" element={<Suspense fallback={<SkeletonLoader type="skills-list" />}><SkillsView skills={skills} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/skills/:slug" element={<Suspense fallback={<SkeletonLoader type="skill-detail" />}><SkillDetailRoute /></Suspense>} />
+            <Route path="/skills/:slug" element={<Suspense fallback={<SkeletonLoader type="skill-detail" />}><SkillDetailRoute onNavigate={navigateTo} /></Suspense>} />
             <Route path="/certificates" element={<Suspense fallback={<SkeletonLoader type="certificates-list" />}><CertificatesView certificates={certificates} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/certificates/:slug" element={<Suspense fallback={<SkeletonLoader type="certificate-detail" />}><CertificateDetailRoute /></Suspense>} />
+            <Route path="/certificates/:slug" element={<Suspense fallback={<SkeletonLoader type="certificate-detail" />}><CertificateDetailRoute onNavigate={navigateTo} /></Suspense>} />
             <Route path="/achievements" element={<Suspense fallback={<SkeletonLoader type="achievements-list" />}><AchievementsView achievements={achievements} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/achievements/:slug" element={<Suspense fallback={<SkeletonLoader type="achievement-detail" />}><AchievementDetailRoute /></Suspense>} />
+            <Route path="/achievements/:slug" element={<Suspense fallback={<SkeletonLoader type="achievement-detail" />}><AchievementDetailRoute onNavigate={navigateTo} /></Suspense>} />
             <Route path="/testimonials" element={<Suspense fallback={<SkeletonLoader type="testimonials-list" />}><TestimonialsView testimonials={testimonials} onNavigate={navigateTo} /></Suspense>} />
-            <Route path="/testimonials/:slug" element={<Suspense fallback={<SkeletonLoader type="testimonials-detail" />}><TestimonialDetailRoute /></Suspense>} />
+            <Route path="/testimonials/:slug" element={<Suspense fallback={<SkeletonLoader type="testimonials-detail" />}><TestimonialDetailRoute onNavigate={navigateTo} /></Suspense>} />
             <Route path="/gallery" element={<Suspense fallback={<SkeletonLoader type="gallery" />}><GalleryView onNavigate={navigateTo} /></Suspense>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

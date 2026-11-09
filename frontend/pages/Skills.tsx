@@ -66,7 +66,6 @@ export const SkillsView: React.FC<{ skills: Skill[], onNavigate: (view: ViewStat
                 <Link 
                   key={skill.id} 
                   to={`/skills/${skill.slug}`}
-                  onClick={() => onNavigate({ type: 'SKILL_DETAIL', slug: skill.slug })}
                   className="bg-white border border-[#E5E5E5] p-6 rounded-[2.5rem] hover:border-black transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-3 aspect-square group shadow-none"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >

@@ -159,7 +159,7 @@ export const Home: React.FC<HomeProps> = ({
               
               <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
                 <div className="flex flex-wrap gap-4">
-                  <Link to="/projects" onClick={() => onNavigate({ type: 'PROJECTS' })}>
+                  <Link to="/projects">
                     <Button variant="primary" rightIcon={<ArrowRight className="w-4 h-4"/>}>
                       Explore Portfolio
                     </Button>
@@ -249,7 +249,7 @@ export const Home: React.FC<HomeProps> = ({
                  <h2 className="text-3xl font-bold text-black tracking-tight">Featured Work</h2>
                  <p className="text-[#4c4546] text-sm mt-1">A curated showcase of engineering excellence and product design.</p>
               </div>
-              <Link to="/projects" onClick={() => onNavigate({ type: 'PROJECTS' })}>
+              <Link to="/projects">
                 <Button variant="ghost" size="sm">
                   View All
                 </Button>
@@ -263,7 +263,6 @@ export const Home: React.FC<HomeProps> = ({
                   key={project.id} 
                   className="group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black hover:border-[2px] transition-all duration-500 cursor-pointer flex flex-col shadow-none"
                   style={{ animationDelay: `${index * 0.1}s` }}
-                  onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}
                 >
                   <div className="aspect-video bg-[#F2F2F2] rounded-[2rem] overflow-hidden relative">
                     <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" loading="lazy" />
@@ -621,7 +620,7 @@ export const Home: React.FC<HomeProps> = ({
                 <h2 className="text-3xl font-bold text-black tracking-tight">Latest Insights</h2>
                 <p className="text-[#4c4546] text-sm mt-1">Articles, deep dives, and technical investigations.</p>
               </div>
-              <Link to="/blog" onClick={() => onNavigate({ type: 'BLOG' })}>
+              <Link to="/blog">
                 <Button variant="ghost" size="sm">
                   View All
                 </Button>
@@ -634,7 +633,6 @@ export const Home: React.FC<HomeProps> = ({
                   to={`/blog/${post.slug}`}
                   key={post.id} 
                   className="group bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black hover:border-[2px] transition-all duration-300 cursor-pointer flex flex-col shadow-none" 
-                  onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
                 >
                   <div className="aspect-[16/10] rounded-[2rem] overflow-hidden mb-4 relative bg-[#F2F2F2] border border-[#E5E5E5]">
                     <img 

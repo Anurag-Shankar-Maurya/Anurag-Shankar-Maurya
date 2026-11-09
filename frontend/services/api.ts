@@ -36,6 +36,9 @@ const API_URL = (import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8000').replac
 const API_BASE_PATH = (import.meta.env.VITE_API_BASE_PATH ?? '/api').replace(/^\/?/, '/').replace(/\/+$/,'');
 const API_BASE_URL = `${API_URL}${API_BASE_PATH}`;
 
+const inFlightRequests = new Map<string, Promise<any>>();
+const shortCache = new Map<string, { data: any; expiry: number }>();
+
 async function fetchJson<T>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
   const url = new URL(`${API_BASE_URL}${endpoint}`);
   Object.keys(params).forEach(key => {
@@ -44,11 +47,34 @@ async function fetchJson<T>(endpoint: string, params: Record<string, any> = {}):
     }
   });
 
-  const response = await fetch(url.toString());
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
+  const cacheKey = url.toString();
+  const now = Date.now();
+
+  const cached = shortCache.get(cacheKey);
+  if (cached && cached.expiry > now) {
+    return cached.data as T;
   }
-  return response.json();
+
+  if (inFlightRequests.has(cacheKey)) {
+    return inFlightRequests.get(cacheKey)!;
+  }
+
+  const fetchPromise = (async () => {
+    try {
+      const response = await fetch(cacheKey);
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.statusText}`);
+      }
+      const data = await response.json();
+      shortCache.set(cacheKey, { data, expiry: Date.now() + 3000 });
+      return data as T;
+    } finally {
+      inFlightRequests.delete(cacheKey);
+    }
+  })();
+
+  inFlightRequests.set(cacheKey, fetchPromise);
+  return fetchPromise;
 }
 
 export const api = {

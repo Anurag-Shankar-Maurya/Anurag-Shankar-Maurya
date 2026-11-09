@@ -61,7 +61,6 @@ export const CertificatesView: React.FC<{ certificates: Certificate[], onNavigat
             <Link 
               key={cert.id} 
               to={`/certificates/${cert.slug || String(cert.id)}`}
-              onClick={() => onNavigate({ type: 'CERTIFICATE_DETAIL', slug: cert.slug || String(cert.id) })}
               className="block bg-white border border-[#E5E5E5] rounded-[3rem] overflow-hidden hover:border-black transition-all cursor-pointer group shadow-none" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >

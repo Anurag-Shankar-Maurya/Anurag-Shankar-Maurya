@@ -33,8 +33,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
     isViewActive('CERTIFICATES') || 
     isViewActive('ACHIEVEMENTS');
 
-  const handleLinkClick = (view: ViewState) => {
-    onNavigate(view);
+  const handleLinkClick = () => {
     setIsMegaMenuOpen(false);
   };
 
@@ -43,7 +42,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
       {/* Home Link */}
       <Link 
         to="/"
-        onClick={() => handleLinkClick({ type: 'HOME' })}
+        onClick={handleLinkClick}
         className={`relative px-3.5 py-2.5 text-sm font-medium transition-colors duration-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
           isViewActive('HOME') ? 'text-black font-semibold' : 'text-[#4c4546] hover:text-black'
         }`}
@@ -62,7 +61,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
       {/* Projects Link */}
       <Link 
         to="/projects"
-        onClick={() => handleLinkClick({ type: 'PROJECTS' })}
+        onClick={handleLinkClick}
         className={`relative px-3.5 py-2.5 text-sm font-medium transition-colors duration-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
           isViewActive('PROJECTS') ? 'text-black font-semibold' : 'text-[#4c4546] hover:text-black'
         }`}
@@ -81,7 +80,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
       {/* Blog Link */}
       <Link 
         to="/blog"
-        onClick={() => handleLinkClick({ type: 'BLOG' })}
+        onClick={handleLinkClick}
         className={`relative px-3.5 py-2.5 text-sm font-medium transition-colors duration-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
           isViewActive('BLOG') ? 'text-black font-semibold' : 'text-[#4c4546] hover:text-black'
         }`}
@@ -100,7 +99,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
       {/* Gallery Link */}
       <Link 
         to="/gallery"
-        onClick={() => handleLinkClick({ type: 'GALLERY' })}
+        onClick={handleLinkClick}
         className={`relative px-3.5 py-2.5 text-sm font-medium transition-colors duration-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
           isViewActive('GALLERY') ? 'text-black font-semibold' : 'text-[#4c4546] hover:text-black'
         }`}
@@ -162,7 +161,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
                     
                     <Link 
                       to="/experience"
-                      onClick={() => handleLinkClick({ type: 'EXPERIENCE' })} 
+                      onClick={handleLinkClick} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -176,7 +175,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
                     
                     <Link 
                       to="/education"
-                      onClick={() => handleLinkClick({ type: 'EDUCATION' })} 
+                      onClick={handleLinkClick} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -190,7 +189,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
                     
                     <Link 
                       to="/testimonials"
-                      onClick={() => handleLinkClick({ type: 'TESTIMONIALS' })} 
+                      onClick={handleLinkClick} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -209,7 +208,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
                     
                     <Link 
                       to="/skills"
-                      onClick={() => handleLinkClick({ type: 'SKILLS' })} 
+                      onClick={handleLinkClick} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -223,7 +222,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
                     
                     <Link 
                       to="/certificates"
-                      onClick={() => handleLinkClick({ type: 'CERTIFICATES' })} 
+                      onClick={handleLinkClick} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -237,7 +236,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
                     
                     <Link 
                       to="/achievements"
-                      onClick={() => handleLinkClick({ type: 'ACHIEVEMENTS' })} 
+                      onClick={handleLinkClick} 
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-[#f3f3f3] cursor-pointer transition-all duration-300 group border border-transparent hover:border-[#cfc4c5]"
                     >
                       <div className="p-2.5 bg-[#eeeeee] rounded-xl text-black group-hover:scale-110 transition-all duration-300">
@@ -259,7 +258,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ currentView, onNavigate 
       {/* Primary Monochromatic CTA Button as Link */}
       <Link 
         to="/contact"
-        onClick={() => handleLinkClick({ type: 'CONTACT' })}
+        onClick={handleLinkClick}
         className="relative ml-2 px-6 py-3 text-sm font-medium text-white rounded-full bg-black hover:bg-neutral-800 border border-black transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black inline-flex items-center"
       >
         <span className="relative z-10 flex items-center gap-1.5">

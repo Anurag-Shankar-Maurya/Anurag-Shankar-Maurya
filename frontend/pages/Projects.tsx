@@ -257,7 +257,6 @@ export const ProjectsView: React.FC<{ projects: Project[], onNavigate: (view: Vi
                 key={project.id} 
                 className={`group bg-white border border-[#E5E5E5] rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-10 hover:border-black hover:border-[2px] transition-all duration-500 cursor-pointer shadow-none ${viewMode === 'list' ? 'flex flex-row gap-4 sm:gap-8' : 'flex flex-col'}`}
                 style={{ animationDelay: `${index * 0.1}s` }}
-                onClick={() => onNavigate({ type: 'PROJECT_DETAIL', slug: project.slug })}
               >
                 <div className={`${viewMode === 'list' ? 'w-24 min-w-24 sm:w-[320px] sm:min-w-[320px] mb-0' : 'mb-6'} aspect-video bg-[#F2F2F2] rounded-[1rem] sm:rounded-[2rem] overflow-hidden relative`}>
                   <img src={project.featured_image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" loading="lazy" />

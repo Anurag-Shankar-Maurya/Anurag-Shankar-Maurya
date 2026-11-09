@@ -60,7 +60,6 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, onNavigate, class
           <li>
             <Link
               to="/"
-              onClick={() => onNavigate({ type: 'HOME' })}
               className="flex items-center gap-1.5 text-[#7e7576] hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 rounded px-1 font-semibold"
               aria-label="Go to home"
             >
@@ -85,7 +84,6 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, onNavigate, class
                 ) : (
                   <Link
                     to={pathFromView(item.view)}
-                    onClick={() => item.view && onNavigate(item.view)}
                     className="text-[#7e7576] hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 rounded px-1 max-w-[200px] sm:max-w-[300px] truncate font-semibold block"
                   >
                     {item.label}

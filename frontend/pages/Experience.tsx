@@ -3,18 +3,29 @@ import { Link } from 'react-router-dom';
 import { Briefcase, ArrowLeft, MapPin, HelpCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
+import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import Gallery from '../components/Gallery';
 import { WorkExperience, ViewState } from '../types';
 import { api } from '../services/api';
 import { SkeletonLoader } from '../components/SkeletonLoader';
 import { EmptyState } from '../components/EmptyState';
 
-export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate: (view: ViewState) => void }> = ({ experience, onNavigate }) => (
+export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate: (view: ViewState) => void }> = ({ experience, onNavigate }) => {
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Work Experience | Anurag Shankar Maurya",
+    "description": "Professional journey, engineering leadership, and employment history of Anurag Shankar Maurya.",
+    "url": "https://www.anuragshankarmaurya.in/experience"
+  };
+
+  return (
   <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
     <MetaTags 
       title="Work Experience | Anurag Shankar Maurya" 
       description="Professional journey, engineering leadership, and employment history of Anurag Shankar Maurya." 
       canonical="https://www.anuragshankarmaurya.in/experience"
+      schemaData={schemaData}
     />
     <div className="flex items-center gap-4 mb-12">
       <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Briefcase className="w-8 h-8"/></div>
@@ -74,7 +85,8 @@ export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate
       </div>
     )}
   </main>
-);
+  );
+};
 
 export const ExperienceDetailView: React.FC<{ id: number, onNavigate: (view: ViewState) => void }> = ({ id, onNavigate }) => {
   const [experience, setExperience] = useState<WorkExperience | null>(null);
@@ -101,17 +113,32 @@ export const ExperienceDetailView: React.FC<{ id: number, onNavigate: (view: Vie
     );
   }
 
+  const schemaData = experience ? {
+    "@context": "https://schema.org",
+    "@type": "Occupation",
+    "name": experience.job_title,
+    "description": experience.description,
+    "occupationLocation": experience.location ? {
+      "@type": "City",
+      "name": experience.location
+    } : undefined,
+    "skills": experience.technologies_used,
+    "url": `https://www.anuragshankarmaurya.in/experience/${experience.id || id}`
+  } : undefined;
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
       <MetaTags 
         title={experience?.job_title ? `${experience.job_title} at ${experience.company_name} | Experience | Anurag Shankar Maurya` : 'Work Experience | Anurag Shankar Maurya'} 
         description={experience?.description} 
-        canonical={`https://www.anuragshankarmaurya.in/experience/${id}`}
+        canonical={`https://www.anuragshankarmaurya.in/experience/${experience?.id || id}`}
         ogImage={experience.company_logo}
+        schemaData={schemaData}
       />
-      <Link to="/experience" onClick={() => onNavigate({ type: 'EXPERIENCE' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
-        <ArrowLeft className="w-4 h-4 mr-2"/> Back to Experience
-      </Link>
+      <Breadcrumb 
+        items={generateBreadcrumbs({ type: 'EXPERIENCE_DETAIL', id: String(id) }, experience.job_title)} 
+        onNavigate={onNavigate} 
+      />
       <div className="bg-white border border-[#E5E5E5] rounded-[3rem] p-10 md:p-12 relative overflow-hidden shadow-none">
         
         <div className="flex flex-col md:flex-row gap-6 items-start justify-between mb-8 border-b border-[#E5E5E5] pb-8 relative z-10">

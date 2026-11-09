@@ -5,6 +5,7 @@ import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
 import { MetaTags } from '../components/MetaTags';
+import { Breadcrumb, generateBreadcrumbs } from '../components/Breadcrumb';
 import { Achievement, ViewState } from '../types';
 import { api } from '../services/api';
 import { SkeletonLoader } from '../components/SkeletonLoader';
@@ -21,12 +22,21 @@ export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigat
     setLbOpen(true);
   };
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Honors & Achievements | Anurag Shankar Maurya",
+    "description": "Recognitions, awards, hackathons, and professional milestones earned by Anurag Shankar Maurya.",
+    "url": "https://www.anuragshankarmaurya.in/achievements"
+  };
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade-in-up">
        <MetaTags 
          title="Honors & Achievements | Anurag Shankar Maurya" 
          description="Recognitions, awards, hackathons, and professional milestones earned by Anurag Shankar Maurya." 
          canonical="https://www.anuragshankarmaurya.in/achievements"
+         schemaData={schemaData}
        />
        <div className="flex items-center gap-4 mb-12">
         <div className="p-3 bg-white border border-[#E5E5E5] rounded-[1.5rem] text-black shadow-none"><Trophy className="w-8 h-8"/></div>
@@ -115,17 +125,33 @@ export const AchievementDetailView: React.FC<{ slug: string, onNavigate: (view: 
     );
   }
 
+  const schemaData = ach ? {
+    "@context": "https://schema.org",
+    "@type": "Award",
+    "name": ach.title,
+    "description": ach.description,
+    "dateCreated": ach.date,
+    "award": ach.title,
+    "creator": ach.issuer ? {
+      "@type": "Organization",
+      "name": ach.issuer
+    } : undefined,
+    "url": `https://www.anuragshankarmaurya.in/achievements/${ach.slug || slug}`
+  } : undefined;
+
   return (
     <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto animate-fade-in-up">
       <MetaTags 
         title={ach?.title ? `${ach.title} | Achievements | Anurag Shankar Maurya` : 'Achievements | Anurag Shankar Maurya'} 
         description={ach?.description} 
-        canonical={`https://www.anuragshankarmaurya.in/achievements/${slug}`}
+        canonical={`https://www.anuragshankarmaurya.in/achievements/${ach?.slug || slug}`}
         ogImage={ach?.image} 
+        schemaData={schemaData}
       />
-      <Link to="/achievements" onClick={() => onNavigate({ type: 'ACHIEVEMENTS' })} className="inline-flex items-center text-sm font-semibold text-[#4c4546] hover:text-black mb-8 hover:pl-2 transition-all">
-        <ArrowLeft className="w-4 h-4 mr-2"/> Back to Achievements
-      </Link>
+      <Breadcrumb 
+        items={generateBreadcrumbs({ type: 'ACHIEVEMENT_DETAIL', slug: ach?.slug || slug }, ach?.title)} 
+        onNavigate={onNavigate} 
+      />
       
       <div className="bg-white border border-[#E5E5E5] rounded-[3rem] overflow-hidden mb-10 shadow-none">
          <div className="w-full h-80 bg-[#F2F2F2] border-b border-[#E5E5E5] relative overflow-hidden">

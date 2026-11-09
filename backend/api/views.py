@@ -931,19 +931,75 @@ def clear_portfolio_cache(sender, **kwargs):
     cache.delete(CACHE_KEY)
     cache.delete('sitemap_xml_payload')
     cache.delete('llms_txt_payload')
-    cache.delete('bot_html:/blog')
-    cache.delete('bot_html:/blog/')
-    cache.delete('bot_html:/projects')
-    cache.delete('bot_html:/projects/')
+
+    # Invalidate static / archive bot cache pages
+    static_bot_keys = [
+        '/',
+        '/blog', '/blog/',
+        '/projects', '/projects/',
+        '/experience', '/experience/',
+        '/education', '/education/',
+        '/skills', '/skills/',
+        '/certificates', '/certificates/',
+        '/achievements', '/achievements/',
+        '/testimonials', '/testimonials/',
+        '/contact', '/contact/',
+        '/gallery', '/gallery/',
+    ]
+    for k in static_bot_keys:
+        cache.delete(f'bot_html:{k}')
 
     instance = kwargs.get('instance')
-    if instance and hasattr(instance, 'slug') and instance.slug:
-        if sender.__name__ == 'BlogPost':
-            cache.delete(f'bot_html:/blog/{instance.slug}')
-            cache.delete(f'bot_html:/blog/{instance.slug}/')
-        elif sender.__name__ == 'Project':
-            cache.delete(f'bot_html:/projects/{instance.slug}')
-            cache.delete(f'bot_html:/projects/{instance.slug}/')
+    if instance:
+        slug_val = getattr(instance, 'slug', None)
+        id_val = getattr(instance, 'id', None)
+
+        if sender.__name__ == 'BlogPost' and slug_val:
+            cache.delete(f'bot_html:/blog/{slug_val}')
+            cache.delete(f'bot_html:/blog/{slug_val}/')
+        elif sender.__name__ == 'BlogCategory' and slug_val:
+            cache.delete(f'bot_html:/blog/category/{slug_val}')
+            cache.delete(f'bot_html:/blog/category/{slug_val}/')
+        elif sender.__name__ == 'BlogTag' and slug_val:
+            cache.delete(f'bot_html:/blog/tag/{slug_val}')
+            cache.delete(f'bot_html:/blog/tag/{slug_val}/')
+        elif sender.__name__ == 'Project' and slug_val:
+            cache.delete(f'bot_html:/projects/{slug_val}')
+            cache.delete(f'bot_html:/projects/{slug_val}/')
+        elif sender.__name__ == 'WorkExperience' and id_val:
+            cache.delete(f'bot_html:/experience/{id_val}')
+            cache.delete(f'bot_html:/experience/{id_val}/')
+        elif sender.__name__ == 'Education':
+            if slug_val:
+                cache.delete(f'bot_html:/education/{slug_val}')
+                cache.delete(f'bot_html:/education/{slug_val}/')
+            if id_val:
+                cache.delete(f'bot_html:/education/{id_val}')
+                cache.delete(f'bot_html:/education/{id_val}/')
+        elif sender.__name__ == 'Skill' and slug_val:
+            cache.delete(f'bot_html:/skills/{slug_val}')
+            cache.delete(f'bot_html:/skills/{slug_val}/')
+        elif sender.__name__ == 'Certificate':
+            if slug_val:
+                cache.delete(f'bot_html:/certificates/{slug_val}')
+                cache.delete(f'bot_html:/certificates/{slug_val}/')
+            if id_val:
+                cache.delete(f'bot_html:/certificates/{id_val}')
+                cache.delete(f'bot_html:/certificates/{id_val}/')
+        elif sender.__name__ == 'Achievement':
+            if slug_val:
+                cache.delete(f'bot_html:/achievements/{slug_val}')
+                cache.delete(f'bot_html:/achievements/{slug_val}/')
+            if id_val:
+                cache.delete(f'bot_html:/achievements/{id_val}')
+                cache.delete(f'bot_html:/achievements/{id_val}/')
+        elif sender.__name__ == 'Testimonial':
+            if slug_val:
+                cache.delete(f'bot_html:/testimonials/{slug_val}')
+                cache.delete(f'bot_html:/testimonials/{slug_val}/')
+            if id_val:
+                cache.delete(f'bot_html:/testimonials/{id_val}')
+                cache.delete(f'bot_html:/testimonials/{id_val}/')
 
     print(f"\n>>> [PORTFOLIO-DATA-CACHE] Cache invalidated due to model update: {sender.__name__}\n")
 

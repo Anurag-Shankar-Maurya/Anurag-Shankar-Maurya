@@ -75,7 +75,6 @@ export const TestimonialsView: React.FC<{ testimonials: Testimonial[], onNavigat
             <Link 
               key={test.id} 
               to={`/testimonials/${test.slug || String(test.id)}`}
-              onClick={() => onNavigate({ type: 'TESTIMONIAL_DETAIL', slug: test.slug || String(test.id) })}
               className="block bg-white border border-[#E5E5E5] p-10 rounded-[3rem] break-inside-avoid hover:border-black transition-all cursor-pointer group shadow-none relative overflow-hidden flex flex-col mb-6" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >

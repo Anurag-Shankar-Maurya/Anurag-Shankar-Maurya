@@ -61,7 +61,6 @@ export const AchievementsView: React.FC<{ achievements: Achievement[], onNavigat
               <Link 
                 key={ach.id} 
                 to={`/achievements/${ach.slug || String(ach.id)}`}
-                onClick={() => onNavigate({ type: 'ACHIEVEMENT_DETAIL', slug: ach.slug || String(ach.id) })}
                 className="block bg-white border border-[#E5E5E5] flex flex-col md:flex-row md:items-center gap-8 rounded-[3rem] p-10 hover:border-black transition-all cursor-pointer group shadow-none" 
                 style={{ animationDelay: `${index * 0.1}s` }}
               >

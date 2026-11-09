@@ -49,7 +49,6 @@ export const EducationView: React.FC<{ education: Education[], onNavigate: (view
           <Link 
             key={edu.id} 
             to={`/education/${edu.slug || String(edu.id)}`}
-            onClick={() => onNavigate({ type: 'EDUCATION_DETAIL', slug: edu.slug || String(edu.id) })}
             className="block bg-white border border-[#E5E5E5] rounded-[3rem] p-10 hover:border-black transition-all cursor-pointer group shadow-none" 
             style={{ animationDelay: `${index * 0.1}s` }}
           >

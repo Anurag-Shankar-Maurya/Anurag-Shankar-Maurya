@@ -30,9 +30,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
     { icon: Mail, label: 'Contact', view: 'CONTACT', color: 'text-black', bg: 'bg-[#eeeeee]' },
   ];
 
-  const handleNavigate = (view: ViewState) => {
+  const handleNavigate = () => {
     setIsMenuOpen(false);
-    onNavigate(view);
   };
 
   return (
@@ -46,7 +45,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
                 <Link
                   key={item.label}
                   to={pathFromView({ type: item.view } as ViewState)}
-                  onClick={() => handleNavigate({ type: item.view } as ViewState)}
+                  onClick={handleNavigate}
                   className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#f3f3f3] transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
                 >
                   <div className={`p-2 rounded-lg ${item.bg} ${item.color}`}>
@@ -71,7 +70,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, onNavigate })
               <Link
                 key={item.label}
                 to={pathFromView({ type: item.view } as ViewState)}
-                onClick={() => { setIsMenuOpen(false); onNavigate({ type: item.view } as ViewState); }}
+                onClick={handleNavigate}
                 className={`relative p-3 rounded-full transition-all duration-300 ${
                   isActive ? 'bg-black text-white shadow-none' : 'text-[#7e7576] hover:text-black hover:bg-[#eeeeee]'
                 } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black inline-flex items-center justify-center`}

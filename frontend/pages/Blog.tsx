@@ -274,7 +274,6 @@ export const BlogView: React.FC<{ posts: BlogPost[], onNavigate: (view: ViewStat
                 to={`/blog/${post.slug}`}
                 key={post.id} 
                 className={`group bg-white border border-[#E5E5E5] rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-10 hover:border-black hover:border-[2px] transition-all duration-300 cursor-pointer shadow-none ${viewMode === 'list' ? 'flex flex-row gap-4 sm:gap-8' : 'flex flex-col'}`}
-                onClick={() => onNavigate({ type: 'BLOG_DETAIL', slug: post.slug })}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className={`${viewMode === 'list' ? 'w-24 min-w-24 sm:w-72 sm:min-w-72 mb-0' : 'mb-4'} aspect-[16/10] w-full rounded-[1rem] sm:rounded-[2rem] overflow-hidden relative bg-[#F2F2F2] border border-[#E5E5E5]`}>
@@ -372,6 +371,11 @@ export const BlogDetailView: React.FC<{
   const [needsTruncate, setNeedsTruncate] = useState(false);
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
 
+  const postsRef = useRef(posts);
+  useEffect(() => {
+    postsRef.current = posts;
+  }, [posts]);
+
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -388,7 +392,7 @@ export const BlogDetailView: React.FC<{
           setNextPost(fetchedPost.next_post);
         } else {
           try {
-            let allPosts = posts;
+            let allPosts = postsRef.current;
             if (!allPosts || allPosts.length === 0) {
               const res = await api.getBlogPosts({ limit: 100 });
               allPosts = res.results || [];
@@ -422,7 +426,7 @@ export const BlogDetailView: React.FC<{
     return () => {
       isMounted = false;
     };
-  }, [slug, posts]);
+  }, [slug]);
 
   useEffect(() => {
     if (!post) return;
@@ -561,10 +565,6 @@ export const BlogDetailView: React.FC<{
           {prevPost ? (
             <Link
               to={`/blog/${prevPost.slug}`}
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                onNavigate({ type: 'BLOG_DETAIL', slug: prevPost.slug });
-              }}
               className="group flex items-center gap-4 p-4 sm:p-5 rounded-[1.5rem] bg-white border border-[#E5E5E5] hover:border-black transition-all text-left shadow-none"
             >
               <div className="w-10 h-10 rounded-full bg-[#F2F2F2] group-hover:bg-black group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
@@ -598,10 +598,6 @@ export const BlogDetailView: React.FC<{
           {nextPost ? (
             <Link
               to={`/blog/${nextPost.slug}`}
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                onNavigate({ type: 'BLOG_DETAIL', slug: nextPost.slug });
-              }}
               className="group flex items-center justify-end gap-4 p-4 sm:p-5 rounded-[1.5rem] bg-white border border-[#E5E5E5] hover:border-black transition-all text-right shadow-none"
             >
               <div className="min-w-0 flex-1 order-1">
@@ -636,10 +632,6 @@ export const BlogDetailView: React.FC<{
         <div className="mt-8 flex justify-center">
           <Link
             to="/blog"
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-              onNavigate({ type: 'BLOG' });
-            }}
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] text-xs font-bold text-[#4c4546] hover:text-black hover:border-black transition-all"
           >
             <BookOpen className="w-4 h-4" />

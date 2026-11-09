@@ -49,7 +49,6 @@ export const ExperienceView: React.FC<{ experience: WorkExperience[], onNavigate
           <Link 
             key={exp.id} 
             to={`/experience/${exp.id}`}
-            onClick={() => onNavigate({ type: 'EXPERIENCE_DETAIL', id: exp.id })}
             className="block relative pl-12 group cursor-pointer" 
             style={{ animationDelay: `${index * 0.1}s` }}
           >

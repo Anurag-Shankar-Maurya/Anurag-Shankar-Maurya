@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "https://backend.anuragshankarmaurya.in/api/sitemap/"
+      "destination": "https://aic.anuragshankarmaurya.in/api/sitemap/"
     },
     {
       "source": "/llms.txt",
-      "destination": "https://backend.anuragshankarmaurya.in/api/llms.txt/"
+      "destination": "https://aic.anuragshankarmaurya.in/api/llms.txt/"
     },
     {
       "source": "/",
@@ -17,7 +17,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/"
+      "destination": "https://aic.anuragshankarmaurya.in/"
     },
     {
       "source": "/blog",
@@ -28,7 +28,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/blog"
+      "destination": "https://aic.anuragshankarmaurya.in/blog"
     },
     {
       "source": "/blog/",
@@ -39,7 +39,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/blog"
+      "destination": "https://aic.anuragshankarmaurya.in/blog"
     },
     {
       "source": "/blog/:slug*",
@@ -50,7 +50,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/blog/:slug*"
+      "destination": "https://aic.anuragshankarmaurya.in/blog/:slug*"
     },
     {
       "source": "/projects",
@@ -61,7 +61,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/projects"
+      "destination": "https://aic.anuragshankarmaurya.in/projects"
     },
     {
       "source": "/projects/",
@@ -72,7 +72,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/projects"
+      "destination": "https://aic.anuragshankarmaurya.in/projects"
     },
     {
       "source": "/projects/:slug*",
@@ -83,7 +83,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/projects/:slug*"
+      "destination": "https://aic.anuragshankarmaurya.in/projects/:slug*"
     },
     {
       "source": "/experience",
@@ -94,7 +94,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/experience"
+      "destination": "https://aic.anuragshankarmaurya.in/experience"
     },
     {
       "source": "/experience/",
@@ -105,7 +105,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/experience"
+      "destination": "https://aic.anuragshankarmaurya.in/experience"
     },
     {
       "source": "/experience/:slug*",
@@ -116,7 +116,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/experience/:slug*"
+      "destination": "https://aic.anuragshankarmaurya.in/experience/:slug*"
     },
     {
       "source": "/education",
@@ -127,7 +127,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/education"
+      "destination": "https://aic.anuragshankarmaurya.in/education"
     },
     {
       "source": "/education/",
@@ -138,7 +138,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/education"
+      "destination": "https://aic.anuragshankarmaurya.in/education"
     },
     {
       "source": "/education/:slug*",
@@ -149,7 +149,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/education/:slug*"
+      "destination": "https://aic.anuragshankarmaurya.in/education/:slug*"
     },
     {
       "source": "/skills",
@@ -160,7 +160,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/skills"
+      "destination": "https://aic.anuragshankarmaurya.in/skills"
     },
     {
       "source": "/skills/",
@@ -171,7 +171,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/skills"
+      "destination": "https://aic.anuragshankarmaurya.in/skills"
     },
     {
       "source": "/skills/:slug*",
@@ -182,7 +182,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/skills/:slug*"
+      "destination": "https://aic.anuragshankarmaurya.in/skills/:slug*"
     },
     {
       "source": "/certificates",
@@ -193,7 +193,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/certificates"
+      "destination": "https://aic.anuragshankarmaurya.in/certificates"
     },
     {
       "source": "/certificates/",
@@ -204,7 +204,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/certificates"
+      "destination": "https://aic.anuragshankarmaurya.in/certificates"
     },
     {
       "source": "/certificates/:slug*",
@@ -215,7 +215,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/certificates/:slug*"
+      "destination": "https://aic.anuragshankarmaurya.in/certificates/:slug*"
     },
     {
       "source": "/achievements",
@@ -226,7 +226,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/achievements"
+      "destination": "https://aic.anuragshankarmaurya.in/achievements"
     },
     {
       "source": "/achievements/",
@@ -237,7 +237,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/achievements"
+      "destination": "https://aic.anuragshankarmaurya.in/achievements"
     },
     {
       "source": "/achievements/:slug*",
@@ -248,7 +248,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/achievements/:slug*"
+      "destination": "https://aic.anuragshankarmaurya.in/achievements/:slug*"
     },
     {
       "source": "/testimonials",
@@ -259,7 +259,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/testimonials"
+      "destination": "https://aic.anuragshankarmaurya.in/testimonials"
     },
     {
       "source": "/testimonials/",
@@ -270,7 +270,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/testimonials"
+      "destination": "https://aic.anuragshankarmaurya.in/testimonials"
     },
     {
       "source": "/testimonials/:slug*",
@@ -281,7 +281,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/testimonials/:slug*"
+      "destination": "https://aic.anuragshankarmaurya.in/testimonials/:slug*"
     },
     {
       "source": "/contact",
@@ -292,7 +292,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/contact"
+      "destination": "https://aic.anuragshankarmaurya.in/contact"
     },
     {
       "source": "/contact/",
@@ -303,7 +303,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/contact"
+      "destination": "https://aic.anuragshankarmaurya.in/contact"
     },
     {
       "source": "/gallery",
@@ -314,7 +314,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/gallery"
+      "destination": "https://aic.anuragshankarmaurya.in/gallery"
     },
     {
       "source": "/gallery/",
@@ -325,7 +325,7 @@
           "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|discordbot|slackbot|telegrambot|applebot|skypeuripreview|vkshare|gptbot|chatgpt-user|perplexitybot|claudebot|anthropic|google-inspectiontool|google-extended|googlebot|googleother|chrome-lighthouse|lighthouse|bingbot|duckduckbot|yandex|slurp|baiduspider|curl|wget|python-requests|aiohttp|httpx|web_extract|postmanruntime).*"
         }
       ],
-      "destination": "https://backend.anuragshankarmaurya.in/gallery"
+      "destination": "https://aic.anuragshankarmaurya.in/gallery"
     },
     {
       "source": "/(.*)",

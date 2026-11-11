@@ -849,6 +849,9 @@ class LLMsTxtView(APIView):
             else "Android & Full-Stack Developer | AI & Software Developer | Django Backend Architect specializing in Generative AI, React, Kotlin, and scalable distributed systems."
         )
 
+        backend_url = os.environ.get('BACKEND_URL') or getattr(settings, 'BACKEND_URL', None) or request.build_absolute_uri('/').rstrip('/')
+        api_url = f"{backend_url}/api/"
+
         lines = [
             f"# {full_name}",
             "",
@@ -857,7 +860,7 @@ class LLMsTxtView(APIView):
             "## Profile Summary",
             f"- Name: {full_name}",
             f"- Website: {base_url}",
-            f"- Portfolio API: https://backend.anuragshankarmaurya.in/api/",
+            f"- Portfolio API: {api_url}",
         ]
 
         # Social links

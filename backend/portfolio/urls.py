@@ -20,7 +20,10 @@ def backend_robots_txt(request):
     """
     Prevent search engines from indexing the API and admin backend,
     while permitting sitemap discovery and media serving.
+    Dynamically generates the sitemap URL using settings.BACKEND_URL or current request.
     """
+    backend_url = getattr(settings, 'BACKEND_URL', None) or request.build_absolute_uri('/').rstrip('/')
+    sitemap_url = f"{backend_url}/api/sitemap/"
     lines = [
         "User-agent: *",
         "Disallow: /admin/",
@@ -30,7 +33,7 @@ def backend_robots_txt(request):
         "Allow: /llms.txt",
         "Allow: /media/",
         "",
-        "Sitemap: https://backend.anuragshankarmaurya.in/api/sitemap/",
+        f"Sitemap: {sitemap_url}",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 

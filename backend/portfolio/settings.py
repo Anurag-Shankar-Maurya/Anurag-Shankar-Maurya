@@ -35,6 +35,8 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Site URL for sitemap generation and absolute URLs
 SITE_URL = os.getenv('SITE_URL', 'https://www.anuragshankarmaurya.in')
+# Optional explicit backend URL override; if not set, views dynamically resolve request.build_absolute_uri()
+BACKEND_URL = os.getenv('BACKEND_URL', '').rstrip('/')
 
 # ============================================
 # CORS CONFIGURATION

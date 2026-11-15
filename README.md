@@ -33,10 +33,13 @@ My work spans backend architecture, API design, Generative AI integration, RAG p
 ## Selected work
 
 <div align="center">
-<a href="https://github.com/Anurag-Shankar-Maurya/byok"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Anurag-Shankar-Maurya&repo=byok&theme=tokyonight&hide_border=true" alt="BYOK repository card" /></a>
-<a href="https://github.com/Anurag-Shankar-Maurya/DeepTranscribe"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Anurag-Shankar-Maurya&repo=DeepTranscribe&theme=tokyonight&hide_border=true" alt="DeepTranscribe repository card" /></a>
-<a href="https://github.com/Anurag-Shankar-Maurya/AI-Builder-Pro"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Anurag-Shankar-Maurya&repo=AI-Builder-Pro&theme=tokyonight&hide_border=true" alt="AI Builder Pro repository card" /></a>
-<a href="https://github.com/Anurag-Shankar-Maurya/Whatsapp-Router"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Anurag-Shankar-Maurya&repo=Whatsapp-Router&theme=tokyonight&hide_border=true" alt="WhatsApp Router repository card" /></a>
+
+| 🤖 AI & LLM Applications | ⚙️ Backend & Product Systems |
+|:---:|:---:|
+| **[BYOK](https://github.com/Anurag-Shankar-Maurya/byok)**<br/>Multi-provider AI client with 30+ model providers | **[WhatsApp Router](https://github.com/Anurag-Shankar-Maurya/Whatsapp-Router)**<br/>Multi-project WhatsApp API and live inbox |
+| **[DeepTranscribe](https://github.com/Anurag-Shankar-Maurya/DeepTranscribe)**<br/>Live transcription, diarization and RAG assistant | **[Kumbh Connect](https://github.com/Anurag-Shankar-Maurya/Kumbh_Connect)**<br/>Kumbh digital platform and campaign workflows |
+| **[AI Builder Pro](https://github.com/Anurag-Shankar-Maurya/AI-Builder-Pro)**<br/>Prompt-to-UI and visual code builder | **[Content Flow](https://github.com/Anurag-Shankar-Maurya/Content_Flow)**<br/>Creator collaboration and review workflows |
+
 </div>
 
 ### More projects
@@ -132,12 +135,20 @@ Central University of Haryana · 2021–2025 · **81.6%**
 
 <div align="center">
 
-<img height="165" src="https://github-readme-stats.vercel.app/api?username=Anurag-Shankar-Maurya&show_icons=true&hide_border=true&rank_icon=github&include_all_commits=true&theme=tokyonight" alt="GitHub statistics" />
-<img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Anurag-Shankar-Maurya&layout=compact&hide_border=true&theme=tokyonight&langs_count=8" alt="Most used languages" />
-
 <img width="70%" src="https://streak-stats.demolab.com?user=Anurag-Shankar-Maurya&theme=tokyonight&hide_border=true" alt="GitHub contribution streak" />
 
+<br/>
+
+<a href="https://github.com/Anurag-Shankar-Maurya?tab=repositories">
+  <img src="https://img.shields.io/badge/Explore-All%20repositories-2563EB?style=for-the-badge&logo=github&logoColor=white" alt="Explore all repositories" />
+</a>
+<a href="https://github.com/Anurag-Shankar-Maurya?tab=overview&from=2026-01-01&to=2026-12-31">
+  <img src="https://img.shields.io/badge/View-Contribution%20activity-0F766E?style=for-the-badge&logo=github&logoColor=white" alt="View contribution activity" />
+</a>
+
 </div>
+
+> GitHub's contribution graph and repository pages are the source of truth for activity. I removed the third-party stats cards that were failing to load in the profile preview.
 
 ## A little more
 

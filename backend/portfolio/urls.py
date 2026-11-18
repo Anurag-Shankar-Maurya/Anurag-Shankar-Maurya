@@ -38,9 +38,18 @@ def backend_robots_txt(request):
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
+def indexnow_key_view(request):
+    """
+    Serve IndexNow key verification file for search engines.
+    """
+    key = getattr(settings, 'INDEXNOW_KEY', '5a81a08dfa98441485d3eb40be011e28')
+    return HttpResponse(key, content_type="text/plain; charset=utf-8")
+
+
 urlpatterns = [
     path('robots.txt', backend_robots_txt, name='backend_robots_txt'),
     path('llms.txt', views.LLMsTxtView.as_view(), name='root_llms_txt'),
+    path('5a81a08dfa98441485d3eb40be011e28.txt', indexnow_key_view, name='indexnow_key_file'),
     path('admin/load-test/', staff_member_required(TemplateView.as_view(template_name='load_test.html')), name='load_test_gui'),
     path('admin/', portfolio_admin_site.urls),
     path('api/', include('api.urls')),

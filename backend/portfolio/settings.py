@@ -38,6 +38,10 @@ SITE_URL = os.getenv('SITE_URL', 'https://www.anuragshankarmaurya.in')
 # Optional explicit backend URL override; if not set, views dynamically resolve request.build_absolute_uri()
 BACKEND_URL = os.getenv('BACKEND_URL', '').rstrip('/')
 
+# IndexNow Configuration for Bing Webmaster Tools & Real-time Indexing
+INDEXNOW_KEY = os.getenv('INDEXNOW_KEY', '5a81a08dfa98441485d3eb40be011e28')
+INDEXNOW_AUTO_PING = os.getenv('INDEXNOW_AUTO_PING', 'False') == 'True'
+
 # ============================================
 # CORS CONFIGURATION
 # ============================================

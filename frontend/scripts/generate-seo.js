@@ -45,3 +45,11 @@ if (!fs.existsSync(publicDir)) {
 
 fs.writeFileSync(path.join(publicDir, 'robots.txt'), robotsContent);
 console.log(`Generated robots.txt pointing to ${SITE_URL}/sitemap.xml`);
+
+// IndexNow Key File Generation
+const INDEXNOW_KEY = process.env.VITE_INDEXNOW_KEY || '5a81a08dfa98441485d3eb40be011e28';
+if (INDEXNOW_KEY) {
+  const indexNowFilePath = path.join(publicDir, `${INDEXNOW_KEY}.txt`);
+  fs.writeFileSync(indexNowFilePath, INDEXNOW_KEY, 'utf8');
+  console.log(`Ensured IndexNow key file: ${INDEXNOW_KEY}.txt`);
+}

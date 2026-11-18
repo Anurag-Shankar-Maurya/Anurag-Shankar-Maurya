@@ -502,6 +502,7 @@ class SiteConfigurationViewSet(viewsets.ReadOnlyModelViewSet):
 
 from rest_framework.views import APIView
 import time
+import threading
 import logging
 from django.core.cache import cache
 from django.db.models.signals import post_save, post_delete
@@ -953,37 +954,46 @@ def clear_portfolio_cache(sender, **kwargs):
         cache.delete(f'bot_html:{k}')
 
     instance = kwargs.get('instance')
+    changed_path = None
     if instance:
         slug_val = getattr(instance, 'slug', None)
         id_val = getattr(instance, 'id', None)
 
         if sender.__name__ == 'BlogPost' and slug_val:
+            changed_path = f"/blog/{slug_val}"
             cache.delete(f'bot_html:/blog/{slug_val}')
             cache.delete(f'bot_html:/blog/{slug_val}/')
         elif sender.__name__ == 'BlogCategory' and slug_val:
+            changed_path = f"/blog/category/{slug_val}"
             cache.delete(f'bot_html:/blog/category/{slug_val}')
             cache.delete(f'bot_html:/blog/category/{slug_val}/')
         elif sender.__name__ == 'BlogTag' and slug_val:
+            changed_path = f"/blog/tag/{slug_val}"
             cache.delete(f'bot_html:/blog/tag/{slug_val}')
             cache.delete(f'bot_html:/blog/tag/{slug_val}/')
         elif sender.__name__ == 'Project' and slug_val:
+            changed_path = f"/projects/{slug_val}"
             cache.delete(f'bot_html:/projects/{slug_val}')
             cache.delete(f'bot_html:/projects/{slug_val}/')
         elif sender.__name__ == 'WorkExperience' and id_val:
+            changed_path = f"/experience/{id_val}"
             cache.delete(f'bot_html:/experience/{id_val}')
             cache.delete(f'bot_html:/experience/{id_val}/')
         elif sender.__name__ == 'Education':
             if slug_val:
+                changed_path = f"/education/{slug_val}"
                 cache.delete(f'bot_html:/education/{slug_val}')
                 cache.delete(f'bot_html:/education/{slug_val}/')
             if id_val:
                 cache.delete(f'bot_html:/education/{id_val}')
                 cache.delete(f'bot_html:/education/{id_val}/')
         elif sender.__name__ == 'Skill' and slug_val:
+            changed_path = f"/skills/{slug_val}"
             cache.delete(f'bot_html:/skills/{slug_val}')
             cache.delete(f'bot_html:/skills/{slug_val}/')
         elif sender.__name__ == 'Certificate':
             if slug_val:
+                changed_path = f"/certificates/{slug_val}"
                 cache.delete(f'bot_html:/certificates/{slug_val}')
                 cache.delete(f'bot_html:/certificates/{slug_val}/')
             if id_val:
@@ -991,6 +1001,7 @@ def clear_portfolio_cache(sender, **kwargs):
                 cache.delete(f'bot_html:/certificates/{id_val}/')
         elif sender.__name__ == 'Achievement':
             if slug_val:
+                changed_path = f"/achievements/{slug_val}"
                 cache.delete(f'bot_html:/achievements/{slug_val}')
                 cache.delete(f'bot_html:/achievements/{slug_val}/')
             if id_val:
@@ -998,6 +1009,7 @@ def clear_portfolio_cache(sender, **kwargs):
                 cache.delete(f'bot_html:/achievements/{id_val}/')
         elif sender.__name__ == 'Testimonial':
             if slug_val:
+                changed_path = f"/testimonials/{slug_val}"
                 cache.delete(f'bot_html:/testimonials/{slug_val}')
                 cache.delete(f'bot_html:/testimonials/{slug_val}/')
             if id_val:
@@ -1005,6 +1017,20 @@ def clear_portfolio_cache(sender, **kwargs):
                 cache.delete(f'bot_html:/testimonials/{id_val}/')
 
     print(f"\n>>> [PORTFOLIO-DATA-CACHE] Cache invalidated due to model update: {sender.__name__}\n")
+
+    # Real-time IndexNow ping if enabled
+    if changed_path and getattr(settings, 'INDEXNOW_AUTO_PING', False):
+        def _ping_indexnow(target_path):
+            try:
+                import requests
+                key = getattr(settings, 'INDEXNOW_KEY', '5a81a08dfa98441485d3eb40be011e28')
+                base_url = str(getattr(settings, 'SITE_URL', 'https://www.anuragshankarmaurya.in')).rstrip('/')
+                full_url = f"{base_url}{'' if target_path.startswith('/') else '/'}{target_path}"
+                requests.get(f"https://api.indexnow.org/indexnow?url={full_url}&key={key}", timeout=5)
+            except Exception:
+                pass
+
+        threading.Thread(target=_ping_indexnow, args=(changed_path,), daemon=True).start()
 
 # Auto-clear cache when any model that constructs the homepage payload is edited/deleted
 for model in [Profile, SocialLink, Skill, Education, WorkExperience, Project, Certificate, Achievement, BlogCategory, BlogTag, BlogPost, Testimonial, Image]:

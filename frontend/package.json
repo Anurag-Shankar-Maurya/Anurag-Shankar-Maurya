@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/generate-seo.js && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "submit:indexnow": "node scripts/submit-indexnow.js"
   },
   "dependencies": {
     "framer-motion": "^12.34.3",

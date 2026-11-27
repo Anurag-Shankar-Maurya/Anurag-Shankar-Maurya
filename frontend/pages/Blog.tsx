@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, BookOpen, Calendar, Loader2, Search, X, List, LayoutGrid, HelpCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, Calendar, Loader2, Search, X, List, LayoutGrid, HelpCircle, Share2, Link2, Check } from 'lucide-react';
+import { FaXTwitter, FaLinkedin, FaWhatsapp, FaReddit } from 'react-icons/fa6';
 import Lightbox from '../components/Lightbox';
 import Gallery from '../components/Gallery';
 import { Button } from '../components/Button';
@@ -371,6 +372,62 @@ export const BlogDetailView: React.FC<{
   const [needsTruncate, setNeedsTruncate] = useState(false);
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
 
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const shareMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const COLLAPSED_LINES = 32;
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(event.target as Node)) {
+        setShareMenuOpen(false);
+      }
+    };
+    if (shareMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [shareMenuOpen]);
+
+  const getShareUrl = () => {
+    if (typeof window !== 'undefined') {
+      return post?.canonical_url || window.location.href;
+    }
+    return post?.canonical_url || '';
+  };
+
+  const handleCopy = async () => {
+    const url = getShareUrl();
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link', err);
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try {
+        await navigator.share({
+          title: post?.title,
+          text: post?.excerpt || post?.title,
+          url: getShareUrl(),
+        });
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error('Error sharing:', err);
+        }
+      }
+    } else {
+      handleCopy();
+    }
+  };
+
   const postsRef = useRef(posts);
   useEffect(() => {
     postsRef.current = posts;
@@ -433,12 +490,13 @@ export const BlogDetailView: React.FC<{
     const el = contentRef.current;
     if (!el) return;
     const style = window.getComputedStyle(el);
-    const lineHeight = parseFloat(style.lineHeight || '20');
+    const parsedLineHeight = parseFloat(style.lineHeight);
+    const lineHeight = (!isNaN(parsedLineHeight) && parsedLineHeight > 0) ? parsedLineHeight : 26;
     const height = el.scrollHeight;
     const lines = Math.round(height / lineHeight);
-    if (lines > 15) {
+    if (lines > COLLAPSED_LINES) {
       setNeedsTruncate(true);
-      setMaxHeight(lineHeight * 15);
+      setMaxHeight(lineHeight * COLLAPSED_LINES);
     } else {
       setNeedsTruncate(false);
       setMaxHeight(null);
@@ -515,18 +573,103 @@ export const BlogDetailView: React.FC<{
              ))}
            </div>
          )}
-         <div className="flex items-center justify-center gap-6 text-[#7e7576] text-sm font-semibold">
+         <div className="flex items-center justify-center gap-3 sm:gap-6 text-[#7e7576] text-sm font-semibold flex-wrap">
             <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-black"/> {new Date(post.published_at).toLocaleDateString()}</span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#cfc4c5]"></span>
             <span>{post.reading_time} min read</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#cfc4c5]"></span>
+            <div className="relative inline-block" ref={shareMenuRef}>
+              <button
+                onClick={() => setShareMenuOpen(prev => !prev)}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F2F2F2] hover:bg-black hover:text-white text-black text-xs font-semibold transition-all border border-[#E5E5E5] hover:border-black cursor-pointer shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+                title="Share this article"
+                aria-label="Share this article"
+                aria-expanded={shareMenuOpen}
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Share2 className="w-3.5 h-3.5" />}
+                <span>{copied ? 'Copied!' : 'Share'}</span>
+              </button>
+
+              {shareMenuOpen && (
+                <div className="absolute right-0 sm:left-1/2 sm:-translate-x-1/2 mt-2 w-56 bg-white border border-[#E5E5E5] rounded-2xl shadow-xl p-2 z-30 animate-fade-in text-left">
+                  <div className="px-3 py-1.5 text-[10px] font-bold text-[#7e7576] uppercase tracking-wider border-b border-[#E5E5E5] mb-1">
+                    Share Article
+                  </div>
+                  <button
+                    onClick={() => { handleCopy(); setShareMenuOpen(false); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-black hover:bg-[#F2F2F2] transition-colors cursor-pointer"
+                  >
+                    {copied ? <Check className="w-4 h-4 text-green-600" /> : <Link2 className="w-4 h-4 text-[#7e7576]" />}
+                    <span>{copied ? 'Link Copied!' : 'Copy Link'}</span>
+                  </button>
+                  <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(getShareUrl())}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setShareMenuOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-black hover:bg-[#F2F2F2] transition-colors"
+                  >
+                    <FaXTwitter className="w-4 h-4 text-black" />
+                    <span>Share on X</span>
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setShareMenuOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-black hover:bg-[#F2F2F2] transition-colors"
+                  >
+                    <FaLinkedin className="w-4 h-4 text-[#0A66C2]" />
+                    <span>Share on LinkedIn</span>
+                  </a>
+                  <a
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(post.title + ' ' + getShareUrl())}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setShareMenuOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-black hover:bg-[#F2F2F2] transition-colors"
+                  >
+                    <FaWhatsapp className="w-4 h-4 text-[#25D366]" />
+                    <span>Share on WhatsApp</span>
+                  </a>
+                  <a
+                    href={`https://reddit.com/submit?url=${encodeURIComponent(getShareUrl())}&title=${encodeURIComponent(post.title)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setShareMenuOpen(false)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-black hover:bg-[#F2F2F2] transition-colors"
+                  >
+                    <FaReddit className="w-4 h-4 text-[#FF4500]" />
+                    <span>Share on Reddit</span>
+                  </a>
+                  {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
+                    <button
+                      onClick={() => { handleNativeShare(); setShareMenuOpen(false); }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-black hover:bg-[#F2F2F2] transition-colors border-t border-[#E5E5E5] mt-1 cursor-pointer"
+                    >
+                      <Share2 className="w-4 h-4 text-[#7e7576]" />
+                      <span>More options...</span>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
          </div>
       </div>
 
       {post.featured_image && post.featured_image.trim() !== '' && (
-        <div className="w-full rounded-[3rem] overflow-hidden bg-white border border-[#E5E5E5] p-4 mb-12 shadow-none">
+        <div className="w-full rounded-[3rem] overflow-hidden bg-white border border-[#E5E5E5] p-4 mb-8 shadow-none">
            <button onClick={() => { setLbImages([{ src: post.featured_image, alt: post.title }]); setLbOpen(true); }} className="w-full block">
              <img src={post.featured_image} alt={post.title} loading="lazy" className="w-full h-auto max-h-[550px] object-contain rounded-[2rem] cursor-pointer mx-auto" />
            </button>
+        </div>
+      )}
+
+      {post.excerpt && post.excerpt.trim() !== '' && (
+        <div className="mb-10 px-5 py-4 rounded-2xl bg-[#F9F9F9] border-l-4 border-black">
+          <p className="italic text-[#4c4546] text-base sm:text-lg leading-relaxed font-normal">
+            {post.excerpt}
+          </p>
         </div>
       )}
 
@@ -537,15 +680,20 @@ export const BlogDetailView: React.FC<{
            <MarkdownRenderer content={post.content} />
         </div>
         {needsTruncate && !expanded && (
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#FBFBFB] via-[#FBFBFB]/80 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-[#FBFBFB] via-[#FBFBFB]/80 to-transparent pointer-events-none" />
         )}
       </div>
       
       {needsTruncate && (
         <div className="flex justify-center mt-8 relative z-20">
           <Button 
-            onClick={() => setExpanded(prev => !prev)} 
-            className="px-8 py-3 rounded-full bg-black text-white hover:bg-neutral-800 transition-all font-bold text-sm shadow-none"
+            onClick={() => {
+              if (expanded && contentRef.current) {
+                contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+              setExpanded(prev => !prev);
+            }} 
+            className="px-8 py-3 rounded-full bg-black text-white hover:bg-neutral-800 transition-all font-bold text-sm shadow-none cursor-pointer"
           >
             {expanded ? 'Read Less' : 'Read More'}
           </Button>
@@ -558,6 +706,74 @@ export const BlogDetailView: React.FC<{
           <Gallery images={post.images} />
         </div>
       )}
+
+      {/* Share Section at bottom */}
+      <div className="mt-12 py-5 px-6 rounded-[2rem] bg-white border border-[#E5E5E5] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-none">
+        <div className="text-center sm:text-left">
+          <h4 className="text-sm font-bold text-black">Share this article</h4>
+          <p className="text-xs text-[#7e7576]">Found this interesting? Share it with your friends or network!</p>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          <button
+            onClick={handleCopy}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] hover:border-black text-xs font-semibold text-black transition-all cursor-pointer"
+            title="Copy link to clipboard"
+          >
+            {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Link2 className="w-3.5 h-3.5" />}
+            <span>{copied ? 'Copied!' : 'Copy Link'}</span>
+          </button>
+          <a
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(getShareUrl())}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] hover:border-black text-black hover:bg-black hover:text-white transition-all"
+            title="Share on X"
+            aria-label="Share on X"
+          >
+            <FaXTwitter className="w-3.5 h-3.5" />
+          </a>
+          <a
+            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] hover:border-black text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white transition-all"
+            title="Share on LinkedIn"
+            aria-label="Share on LinkedIn"
+          >
+            <FaLinkedin className="w-3.5 h-3.5" />
+          </a>
+          <a
+            href={`https://api.whatsapp.com/send?text=${encodeURIComponent(post.title + ' ' + getShareUrl())}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] hover:border-black text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all"
+            title="Share on WhatsApp"
+            aria-label="Share on WhatsApp"
+          >
+            <FaWhatsapp className="w-3.5 h-3.5" />
+          </a>
+          <a
+            href={`https://reddit.com/submit?url=${encodeURIComponent(getShareUrl())}&title=${encodeURIComponent(post.title)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] hover:border-black text-[#FF4500] hover:bg-[#FF4500] hover:text-white transition-all"
+            title="Share on Reddit"
+            aria-label="Share on Reddit"
+          >
+            <FaReddit className="w-3.5 h-3.5" />
+          </a>
+          {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
+            <button
+              onClick={handleNativeShare}
+              className="p-2 rounded-full bg-[#f9f9f9] border border-[#E5E5E5] hover:border-black text-black hover:bg-black hover:text-white transition-all cursor-pointer"
+              title="More share options"
+              aria-label="More share options"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Bottom Navigation: Previous & Next Post Buttons */}
       <nav aria-label="Article navigation" className="mt-14 pt-8 border-t border-[#E5E5E5]">
